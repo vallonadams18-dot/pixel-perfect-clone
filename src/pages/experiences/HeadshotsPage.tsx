@@ -3,6 +3,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import { Link } from 'react-router-dom';
 import { Camera, Check, ArrowRight, Briefcase, Users, Sparkles, X } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -16,6 +17,10 @@ import headshot5 from '@/assets/headshot-5.jpg';
 import headshot6 from '@/assets/headshot-6.jpg';
 import headshot7 from '@/assets/headshot-7.jpg';
 import headshot8 from '@/assets/headshot-8.jpg';
+
+// Before/After images
+import headshotBefore from '@/assets/headshot-before.jpg';
+import headshotAfter from '@/assets/headshot-after.jpg';
 
 const headshotGallery = [
   { id: 1, src: headshot1, alt: 'AI professional headshot - executive male portrait with navy suit' },
@@ -108,15 +113,14 @@ const HeadshotsPage = () => {
                 </div>
               </div>
               
-              <div className="relative aspect-square rounded-3xl overflow-hidden glass glow">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-card to-accent/20 flex items-center justify-center">
-                  <div className="text-center p-8">
-                    <Camera size={80} className="mx-auto text-primary mb-6 animate-float" />
-                    <h3 className="font-display text-2xl font-bold text-foreground">Pro Headshots</h3>
-                    <p className="text-muted-foreground mt-2">AI-Enhanced Portraits</p>
-                  </div>
-                </div>
-              </div>
+              <BeforeAfterSlider
+                beforeImage={headshotBefore}
+                afterImage={headshotAfter}
+                beforeLabel="Original"
+                afterLabel="AI Enhanced"
+                beforeAlt="Original photo before AI headshot transformation"
+                afterAlt="AI-enhanced professional corporate headshot with clean background"
+              />
             </div>
           </div>
         </section>
