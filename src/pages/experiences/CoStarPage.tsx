@@ -5,6 +5,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { Users, Check, ArrowRight, Star, Camera, Award } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
+import coStarDemoImage from '@/assets/co-star-demo.jpg';
 
 const features = [
   {
@@ -85,15 +86,15 @@ const CoStarPage = () => {
                 </div>
               </div>
               
-              <div className="relative aspect-square rounded-3xl overflow-hidden glass glow">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-card to-accent/20 flex items-center justify-center">
-                  <div className="text-center p-8">
-                    <Users size={80} className="mx-auto text-primary mb-6 animate-float" />
-                    <h3 className="font-display text-2xl font-bold text-foreground">Celebrity Portraits</h3>
-                    <p className="text-muted-foreground mt-2">Studio-Quality AI Compositing</p>
-                  </div>
-                </div>
-              </div>
+              <figure className="relative aspect-[3/4] rounded-3xl overflow-hidden glass glow">
+                <img 
+                  src={coStarDemoImage}
+                  alt="Co-Star AI celebrity photo experience - guest posing with pop star on red carpet VIP event"
+                  className="w-full h-full object-cover"
+                  loading="eager"
+                />
+                <figcaption className="sr-only">Co-Star AI technology creates realistic celebrity photo opportunities at events</figcaption>
+              </figure>
             </div>
           </div>
         </section>
