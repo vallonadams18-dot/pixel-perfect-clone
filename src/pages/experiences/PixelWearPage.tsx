@@ -9,19 +9,25 @@ import usePageMeta from '@/hooks/usePageMeta';
 import pixelwearDemo from '@/assets/pixelwear-demo.jpg';
 import pixelwearBefore from '@/assets/pixelwear-before.jpg';
 import pixelwearGucci from '@/assets/pixelwear-gucci.jpg';
+import pixelwearGucciBefore from '@/assets/pixelwear-gucci-before.jpg';
 import pixelwearAdidas from '@/assets/pixelwear-adidas.jpg';
+import pixelwearAdidasBefore from '@/assets/pixelwear-adidas-before.jpg';
 import pixelwearLV from '@/assets/pixelwear-lv.jpg';
+import pixelwearLVBefore from '@/assets/pixelwear-lv-before.jpg';
 import pixelwearVersace from '@/assets/pixelwear-versace.jpg';
+import pixelwearVersaceBefore from '@/assets/pixelwear-versace-before.jpg';
 import pixelwearSupreme from '@/assets/pixelwear-supreme.jpg';
+import pixelwearSupremeBefore from '@/assets/pixelwear-supreme-before.jpg';
 import pixelwearPuma from '@/assets/pixelwear-puma.jpg';
+import pixelwearPumaBefore from '@/assets/pixelwear-puma-before.jpg';
 
 const brandGallery = [
-  { src: pixelwearGucci, brand: 'Gucci', alt: 'PixelWear AI virtual try-on with Gucci branded outfit' },
-  { src: pixelwearAdidas, brand: 'Adidas', alt: 'PixelWear AI virtual try-on with Adidas sportswear' },
-  { src: pixelwearLV, brand: 'Louis Vuitton', alt: 'PixelWear AI virtual try-on with Louis Vuitton outfit' },
-  { src: pixelwearVersace, brand: 'Versace', alt: 'PixelWear AI virtual try-on with Versace designer outfit' },
-  { src: pixelwearSupreme, brand: 'Supreme', alt: 'PixelWear AI virtual try-on with Supreme streetwear' },
-  { src: pixelwearPuma, brand: 'Puma', alt: 'PixelWear AI virtual try-on with Puma athletic wear' },
+  { before: pixelwearGucciBefore, after: pixelwearGucci, brand: 'Gucci' },
+  { before: pixelwearAdidasBefore, after: pixelwearAdidas, brand: 'Adidas' },
+  { before: pixelwearLVBefore, after: pixelwearLV, brand: 'Louis Vuitton' },
+  { before: pixelwearVersaceBefore, after: pixelwearVersace, brand: 'Versace' },
+  { before: pixelwearSupremeBefore, after: pixelwearSupreme, brand: 'Supreme' },
+  { before: pixelwearPumaBefore, after: pixelwearPuma, brand: 'Puma' },
 ];
 
 const features = [
@@ -125,23 +131,25 @@ const PixelWearPage = () => {
             <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
               See how PixelWear transforms guests into brand ambassadors for the world's most iconic fashion and sportswear brands.
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {brandGallery.map((item) => (
-                <figure key={item.brand} className="relative aspect-[3/4] rounded-2xl overflow-hidden group cursor-pointer">
-                  <img 
-                    src={item.src}
-                    alt={item.alt}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
-                    <span className="inline-block bg-primary/90 text-white text-xs md:text-sm font-semibold px-3 py-1 rounded-full mb-2">
+                <div key={item.brand} className="relative">
+                  <div className="aspect-[3/4] rounded-2xl overflow-hidden">
+                    <BeforeAfterSlider
+                      beforeImage={item.before}
+                      afterImage={item.after}
+                      beforeLabel="Original"
+                      afterLabel={item.brand}
+                      beforeAlt={`Original photo before ${item.brand} virtual try-on`}
+                      afterAlt={`AI transformed with ${item.brand} branded apparel`}
+                    />
+                  </div>
+                  <div className="mt-4 text-center">
+                    <span className="inline-block bg-primary/90 text-white text-sm font-semibold px-4 py-2 rounded-full">
                       {item.brand}
                     </span>
-                    <p className="text-white/80 text-xs md:text-sm">AI Virtual Try-On</p>
                   </div>
-                </figure>
+                </div>
               ))}
             </div>
           </div>
