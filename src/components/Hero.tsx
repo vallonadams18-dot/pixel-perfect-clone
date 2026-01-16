@@ -5,17 +5,17 @@ const Hero = () => {
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Animated Background */}
-      <div className="absolute inset-0 animated-gradient" />
+      <div className="absolute inset-0 animated-gradient opacity-30" />
       
       {/* Hero Background Image */}
       <div className="absolute inset-0">
         <img 
           src={heroImage} 
           alt="AI Photo Booth Rental NYC - Brand Activation Event Experience" 
-          className="w-full h-full object-cover opacity-70 blur-[1px] scale-105"
+          className="w-full h-full object-cover opacity-90 blur-[0.5px] scale-105"
           loading="eager"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/55 via-background/35 to-background/70" />
       </div>
       
       {/* Gradient Orbs */}
