@@ -8,6 +8,21 @@ import { Shirt, Check, ArrowRight, Zap, Share2, Palette } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
 import pixelwearDemo from '@/assets/pixelwear-demo.jpg';
 import pixelwearBefore from '@/assets/pixelwear-before.jpg';
+import pixelwearGucci from '@/assets/pixelwear-gucci.jpg';
+import pixelwearAdidas from '@/assets/pixelwear-adidas.jpg';
+import pixelwearLV from '@/assets/pixelwear-lv.jpg';
+import pixelwearVersace from '@/assets/pixelwear-versace.jpg';
+import pixelwearSupreme from '@/assets/pixelwear-supreme.jpg';
+import pixelwearPuma from '@/assets/pixelwear-puma.jpg';
+
+const brandGallery = [
+  { src: pixelwearGucci, brand: 'Gucci', alt: 'PixelWear AI virtual try-on with Gucci branded outfit' },
+  { src: pixelwearAdidas, brand: 'Adidas', alt: 'PixelWear AI virtual try-on with Adidas sportswear' },
+  { src: pixelwearLV, brand: 'Louis Vuitton', alt: 'PixelWear AI virtual try-on with Louis Vuitton outfit' },
+  { src: pixelwearVersace, brand: 'Versace', alt: 'PixelWear AI virtual try-on with Versace designer outfit' },
+  { src: pixelwearSupreme, brand: 'Supreme', alt: 'PixelWear AI virtual try-on with Supreme streetwear' },
+  { src: pixelwearPuma, brand: 'Puma', alt: 'PixelWear AI virtual try-on with Puma athletic wear' },
+];
 
 const features = [
   {
@@ -97,6 +112,37 @@ const PixelWearPage = () => {
                 afterAlt="AI transformed photo with branded Nike apparel via PixelWear"
               />
               
+            </div>
+          </div>
+        </section>
+
+        {/* Brand Gallery Section */}
+        <section className="section-padding">
+          <div className="container-custom">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
+              Multi-Brand <span className="gradient-text">Gallery</span>
+            </h2>
+            <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
+              See how PixelWear transforms guests into brand ambassadors for the world's most iconic fashion and sportswear brands.
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+              {brandGallery.map((item) => (
+                <figure key={item.brand} className="relative aspect-[3/4] rounded-2xl overflow-hidden group cursor-pointer">
+                  <img 
+                    src={item.src}
+                    alt={item.alt}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
+                    <span className="inline-block bg-primary/90 text-white text-xs md:text-sm font-semibold px-3 py-1 rounded-full mb-2">
+                      {item.brand}
+                    </span>
+                    <p className="text-white/80 text-xs md:text-sm">AI Virtual Try-On</p>
+                  </div>
+                </figure>
+              ))}
             </div>
           </div>
         </section>
