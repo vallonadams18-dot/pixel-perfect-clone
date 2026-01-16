@@ -1,18 +1,50 @@
+import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Link } from 'react-router-dom';
-import { Users, Check, ArrowRight } from 'lucide-react';
+import { Users, Check, ArrowRight, Star, Camera, Award } from 'lucide-react';
 
 const features = [
-  'Celebrity & athlete digital doubles',
-  'Professional studio-quality portraits',
-  'Seamless compositing technology',
-  'Extensive talent library',
-  'Custom celebrity partnerships',
-  'Instant social sharing',
+  {
+    icon: Star,
+    title: 'Celebrity Digital Doubles',
+    description: 'Access our extensive library of licensed celebrity and athlete likenesses for authentic meet-and-greet experiences.'
+  },
+  {
+    icon: Camera,
+    title: 'Studio-Quality Compositing',
+    description: 'Professional lighting matching and seamless integration that looks like an actual celebrity photo op.'
+  },
+  {
+    icon: Award,
+    title: 'Custom Talent Partnerships',
+    description: 'Work with your brand ambassadors or secure licensed partnerships with our network of celebrity talent.'
+  },
+  {
+    icon: Users,
+    title: 'Group Photo Support',
+    description: 'Capture entire groups with celebrities—perfect for corporate events and team-building activations.'
+  },
+];
+
+const benefits = [
+  'No scheduling conflicts or celebrity availability issues',
+  'Fraction of the cost of live celebrity appearances',
+  '24/7 availability for multi-day events',
+  'Perfect for global campaign rollouts',
+  'Consistent quality across all locations',
+  'Instant sharing with branded frames',
 ];
 
 const CoStarPage = () => {
+  useEffect(() => {
+    document.title = 'Co-Star - AI Celebrity Photo Experience | Digital Meet-and-Greet';
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Create memorable celebrity photo experiences with Co-Star AI technology. Place guests in professional portraits next to any celebrity or athlete. Perfect for fan experiences, brand activations, and entertainment marketing.');
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -33,12 +65,22 @@ const CoStarPage = () => {
                 <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
                   Co-<span className="gradient-text">Star</span>
                 </h1>
-                <p className="text-xl text-muted-foreground mb-8">
-                  Digital Meet-and-Greet. Place your guests in a professional portrait next to any celebrity or athlete.
+                <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-4">
+                  Digital Celebrity Meet-and-Greet
                 </p>
-                <Link to="/contact" className="btn-primary inline-flex items-center gap-2">
-                  Book This Experience <ArrowRight size={20} />
-                </Link>
+                <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+                  Give every guest the VIP treatment with AI-powered celebrity photo experiences. Co-Star 
+                  creates studio-quality portraits placing your attendees next to their favorite celebrities, 
+                  athletes, or brand ambassadors—without the logistical challenges of live appearances.
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  <Link to="/contact" className="btn-primary inline-flex items-center gap-2">
+                    Book This Experience <ArrowRight size={20} />
+                  </Link>
+                  <Link to="/portfolio" className="btn-secondary inline-flex items-center gap-2">
+                    View Examples
+                  </Link>
+                </div>
               </div>
               
               <div className="relative aspect-square rounded-3xl overflow-hidden glass glow">
@@ -46,6 +88,7 @@ const CoStarPage = () => {
                   <div className="text-center p-8">
                     <Users size={80} className="mx-auto text-primary mb-6 animate-float" />
                     <h3 className="font-display text-2xl font-bold text-foreground">Celebrity Portraits</h3>
+                    <p className="text-muted-foreground mt-2">Studio-Quality AI Compositing</p>
                   </div>
                 </div>
               </div>
@@ -53,19 +96,85 @@ const CoStarPage = () => {
           </div>
         </section>
 
+        {/* How It Works */}
+        <section className="section-padding bg-card/50">
+          <div className="container-custom">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
+              How <span className="gradient-text">Co-Star</span> Works
+            </h2>
+            <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
+              Professional celebrity photo experiences powered by advanced AI compositing technology.
+            </p>
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                { step: '01', title: 'Choose Celebrity', desc: 'Select from our talent library or use your brand ambassadors.' },
+                { step: '02', title: 'Strike a Pose', desc: 'Guest poses in front of our green screen or themed backdrop.' },
+                { step: '03', title: 'Instant Magic', desc: 'AI creates a seamless celebrity photo ready for sharing.' },
+              ].map((item) => (
+                <div key={item.step} className="text-center">
+                  <div className="text-6xl font-display font-bold gradient-text mb-4">{item.step}</div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">{item.title}</h3>
+                  <p className="text-muted-foreground">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Features Section */}
         <section className="section-padding">
           <div className="container-custom">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
               Key <span className="gradient-text">Features</span>
             </h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
+              Enterprise-grade celebrity photo technology for memorable fan experiences.
+            </p>
+            <div className="grid md:grid-cols-2 gap-8">
               {features.map((feature) => (
-                <div key={feature} className="glass rounded-xl p-6 flex items-start gap-4">
+                <div key={feature.title} className="glass rounded-xl p-8 flex items-start gap-6">
+                  <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
+                    <feature.icon size={28} className="text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-foreground mb-2">{feature.title}</h3>
+                    <p className="text-muted-foreground">{feature.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Benefits Section */}
+        <section className="section-padding bg-card/50">
+          <div className="container-custom">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">
+              Why Brands Choose <span className="gradient-text">Co-Star</span>
+            </h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {benefits.map((benefit) => (
+                <div key={benefit} className="glass rounded-xl p-6 flex items-start gap-4">
                   <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
                     <Check size={16} className="text-primary" />
                   </div>
-                  <span className="text-foreground">{feature}</span>
+                  <span className="text-foreground">{benefit}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Use Cases */}
+        <section className="section-padding">
+          <div className="container-custom">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">
+              Popular <span className="gradient-text">Use Cases</span>
+            </h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {['Sports Fan Zones', 'Movie Premieres', 'Music Festivals', 'Brand Ambassador Events'].map((useCase) => (
+                <div key={useCase} className="glass rounded-xl p-6 text-center">
+                  <h3 className="font-bold text-foreground">{useCase}</h3>
                 </div>
               ))}
             </div>
@@ -77,13 +186,14 @@ const CoStarPage = () => {
           <div className="container-custom">
             <div className="glass rounded-3xl p-12 text-center">
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-6">
-                Ready to Transform Your Event?
+                Create Star-Studded Experiences
               </h2>
               <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Let's discuss how Co-Star can create unforgettable celebrity encounters for your guests.
+                Give your guests unforgettable celebrity photo moments without the complexity of live talent. 
+                Explore our celebrity library and custom partnership options.
               </p>
               <Link to="/contact" className="btn-primary inline-flex items-center gap-2">
-                Get Started <ArrowRight size={20} />
+                Schedule Your Demo <ArrowRight size={20} />
               </Link>
             </div>
           </div>

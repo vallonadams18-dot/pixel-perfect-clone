@@ -1,18 +1,50 @@
+import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Link } from 'react-router-dom';
-import { Shirt, Check, ArrowRight } from 'lucide-react';
+import { Shirt, Check, ArrowRight, Zap, Share2, Palette } from 'lucide-react';
 
 const features = [
-  'Instant virtual try-on technology',
-  'Supports unlimited branded apparel options',
-  'No physical inventory required',
-  'Social-ready shareable content',
-  'Real-time rendering in under 3 seconds',
-  'Custom branding overlays',
+  {
+    icon: Zap,
+    title: 'Instant Virtual Try-On',
+    description: 'AI-powered technology renders realistic apparel on guests in under 3 seconds with photorealistic accuracy.'
+  },
+  {
+    icon: Shirt,
+    title: 'Unlimited Apparel Options',
+    description: 'Showcase your entire merchandise catalog without physical inventory—jerseys, t-shirts, hoodies, and more.'
+  },
+  {
+    icon: Palette,
+    title: 'Custom Branding Overlays',
+    description: 'Add logos, event themes, and sponsor branding seamlessly integrated into every virtual try-on image.'
+  },
+  {
+    icon: Share2,
+    title: 'Social-Ready Content',
+    description: 'Optimized image formats for Instagram, TikTok, and LinkedIn with built-in sharing capabilities.'
+  },
+];
+
+const benefits = [
+  'Zero logistics—no sizes, inventory, or shipping required',
+  'Increase merchandise engagement by 400%',
+  'Perfect for product launches and retail activations',
+  'Works with existing brand assets and photography',
+  'Real-time analytics on try-on engagement',
+  'Seamless integration with e-commerce platforms',
 ];
 
 const PixelWearPage = () => {
+  useEffect(() => {
+    document.title = 'PixelWear - AI Virtual Try-On Photo Booth | Digital Apparel Experience';
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Transform event engagement with PixelWear AI virtual try-on technology. Guests instantly see themselves in your branded apparel—no inventory needed. Perfect for retail activations, product launches, and brand experiences.');
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -33,19 +65,30 @@ const PixelWearPage = () => {
                 <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
                   Pixel<span className="gradient-text">Wear</span>
                 </h1>
-                <p className="text-xl text-muted-foreground mb-8">
-                  The Digital Wardrobe. Guests "try on" your branded apparel instantly. No sizes, no logistics, pure engagement.
+                <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-4">
+                  AI Virtual Try-On Experience
                 </p>
-                <Link to="/contact" className="btn-primary inline-flex items-center gap-2">
-                  Book This Experience <ArrowRight size={20} />
-                </Link>
+                <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+                  The future of retail engagement. PixelWear uses advanced AI to let guests instantly "try on" 
+                  your branded apparel—creating shareable moments without the logistics of physical inventory. 
+                  Perfect for product launches, sports events, and retail activations.
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  <Link to="/contact" className="btn-primary inline-flex items-center gap-2">
+                    Book This Experience <ArrowRight size={20} />
+                  </Link>
+                  <Link to="/portfolio" className="btn-secondary inline-flex items-center gap-2">
+                    View Examples
+                  </Link>
+                </div>
               </div>
               
               <div className="relative aspect-square rounded-3xl overflow-hidden glass glow">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-card to-accent/20 flex items-center justify-center">
                   <div className="text-center p-8">
                     <Shirt size={80} className="mx-auto text-primary mb-6 animate-float" />
-                    <h3 className="font-display text-2xl font-bold text-foreground">Virtual Try-On</h3>
+                    <h3 className="font-display text-2xl font-bold text-foreground">Virtual Try-On Technology</h3>
+                    <p className="text-muted-foreground mt-2">Powered by Neural Networks</p>
                   </div>
                 </div>
               </div>
@@ -53,19 +96,85 @@ const PixelWearPage = () => {
           </div>
         </section>
 
+        {/* How It Works */}
+        <section className="section-padding bg-card/50">
+          <div className="container-custom">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
+              How <span className="gradient-text">PixelWear</span> Works
+            </h2>
+            <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
+              Three simple steps to transform your brand activation with AI-powered virtual try-on technology.
+            </p>
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                { step: '01', title: 'Capture', desc: 'Guest stands in front of our AI photo booth for a quick portrait capture.' },
+                { step: '02', title: 'Select', desc: 'Choose from your branded apparel catalog displayed on the interactive screen.' },
+                { step: '03', title: 'Share', desc: 'AI renders the virtual try-on in seconds—ready to share on social media.' },
+              ].map((item) => (
+                <div key={item.step} className="text-center">
+                  <div className="text-6xl font-display font-bold gradient-text mb-4">{item.step}</div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">{item.title}</h3>
+                  <p className="text-muted-foreground">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Features Section */}
         <section className="section-padding">
           <div className="container-custom">
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
               Key <span className="gradient-text">Features</span>
             </h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
+              Enterprise-grade virtual try-on technology designed for high-traffic brand activations and events.
+            </p>
+            <div className="grid md:grid-cols-2 gap-8">
               {features.map((feature) => (
-                <div key={feature} className="glass rounded-xl p-6 flex items-start gap-4">
+                <div key={feature.title} className="glass rounded-xl p-8 flex items-start gap-6">
+                  <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
+                    <feature.icon size={28} className="text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-foreground mb-2">{feature.title}</h3>
+                    <p className="text-muted-foreground">{feature.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Benefits Section */}
+        <section className="section-padding bg-card/50">
+          <div className="container-custom">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">
+              Why Brands Choose <span className="gradient-text">PixelWear</span>
+            </h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {benefits.map((benefit) => (
+                <div key={benefit} className="glass rounded-xl p-6 flex items-start gap-4">
                   <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
                     <Check size={16} className="text-primary" />
                   </div>
-                  <span className="text-foreground">{feature}</span>
+                  <span className="text-foreground">{benefit}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Use Cases */}
+        <section className="section-padding">
+          <div className="container-custom">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">
+              Perfect For <span className="gradient-text">Every Industry</span>
+            </h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {['Sports Teams & Leagues', 'Retail & Fashion Brands', 'Corporate Events', 'Music & Entertainment'].map((useCase) => (
+                <div key={useCase} className="glass rounded-xl p-6 text-center">
+                  <h3 className="font-bold text-foreground">{useCase}</h3>
                 </div>
               ))}
             </div>
@@ -77,13 +186,14 @@ const PixelWearPage = () => {
           <div className="container-custom">
             <div className="glass rounded-3xl p-12 text-center">
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-6">
-                Ready to Transform Your Event?
+                Ready to Revolutionize Your Brand Activation?
               </h2>
               <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Let's discuss how PixelWear can elevate your brand activation with virtual try-on technology.
+                Join leading brands using PixelWear to create unforgettable virtual try-on experiences. 
+                Get a custom demo tailored to your merchandise and event goals.
               </p>
               <Link to="/contact" className="btn-primary inline-flex items-center gap-2">
-                Get Started <ArrowRight size={20} />
+                Schedule Your Demo <ArrowRight size={20} />
               </Link>
             </div>
           </div>
