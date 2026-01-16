@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { Camera, Check, ArrowRight, Briefcase, Users, Sparkles } from 'lucide-react';
 
@@ -57,9 +58,10 @@ const HeadshotsPage = () => {
           <div className="container-custom relative z-10">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div>
-                <Link to="/services" className="inline-flex items-center gap-2 text-primary mb-6 hover:underline">
-                  ← Back to Services
-                </Link>
+                <Breadcrumbs items={[
+                  { label: 'AI Photo Booth Services', href: '/services' },
+                  { label: 'AI Headshots NYC' }
+                ]} />
                 <div className="w-20 h-20 rounded-2xl bg-gradient-primary flex items-center justify-center mb-6">
                   <Camera size={40} className="text-white" />
                 </div>
