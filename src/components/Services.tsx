@@ -1,44 +1,53 @@
 import { Shirt, User, Users, Bot, CreditCard, Video, Camera, Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const services = [
   {
     icon: Shirt,
     title: 'PixelWear',
+    slug: 'pixelwear',
     description: 'The Digital Wardrobe. Guests "try on" your branded apparel instantly. No sizes, no logistics, pure engagement.',
   },
   {
     icon: User,
     title: 'Identity',
+    slug: 'identity',
     description: 'Roleplay AI. Seamlessly swap guest faces onto brand mascots or campaign heroes with 99% accuracy.',
   },
   {
     icon: Users,
     title: 'Co-Star',
+    slug: 'co-star',
     description: 'Digital Meet-and-Greet. Place your guests in a professional portrait next to any celebrity or athlete.',
   },
   {
     icon: Bot,
     title: 'AXON AI',
+    slug: 'axon-ai',
     description: 'AXON AI navigates your event using LIDAR, identifying guests to capture high-fidelity, studio-quality portraits.',
   },
   {
     icon: CreditCard,
     title: 'Persona Pop',
+    slug: 'persona-pop',
     description: 'Guests capture a portrait; our engine renders a bespoke, data-driven trading card featuring your brand\'s custom stats.',
   },
   {
     icon: Video,
     title: 'AI Video Booths',
+    slug: 'ai-video-booths',
     description: 'Neural networks transform footage into stylized masterpieces, turning guests into protagonists of branded motion stories.',
   },
   {
     icon: Camera,
     title: 'Headshots',
+    slug: 'headshots',
     description: 'Neural engine captures your likeness, instantly rendering professional headshots optimized for executive branding.',
   },
   {
     icon: Sparkles,
     title: 'AI Trading Cards',
+    slug: 'ai-trading-cards',
     description: 'Transform guests into high-fidelity, branded collectibles featuring custom stats and stylized aesthetics.',
   },
 ];
@@ -66,9 +75,10 @@ const Services = () => {
         {/* Services Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {services.map((service, index) => (
-            <div
+            <Link
+              to={`/experiences/${service.slug}`}
               key={service.title}
-              className="group relative glass rounded-2xl p-6 card-hover gradient-border"
+              className="group relative glass rounded-2xl p-6 card-hover gradient-border block"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               {/* Icon */}
@@ -90,7 +100,7 @@ const Services = () => {
                   <span className="text-primary">→</span>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
