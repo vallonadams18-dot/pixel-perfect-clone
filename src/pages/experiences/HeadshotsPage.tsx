@@ -1,10 +1,32 @@
+import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
-import { Camera, Check, ArrowRight, Briefcase, Users, Sparkles } from 'lucide-react';
+import { Camera, Check, ArrowRight, Briefcase, Users, Sparkles, X } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
+
+// Headshot gallery images
+import headshot1 from '@/assets/headshot-1.jpg';
+import headshot2 from '@/assets/headshot-2.jpg';
+import headshot3 from '@/assets/headshot-3.jpg';
+import headshot4 from '@/assets/headshot-4.jpg';
+import headshot5 from '@/assets/headshot-5.jpg';
+import headshot6 from '@/assets/headshot-6.jpg';
+import headshot7 from '@/assets/headshot-7.jpg';
+import headshot8 from '@/assets/headshot-8.jpg';
+
+const headshotGallery = [
+  { id: 1, src: headshot1, alt: 'AI professional headshot - executive male portrait with navy suit' },
+  { id: 2, src: headshot2, alt: 'AI professional headshot - business professional with glasses' },
+  { id: 3, src: headshot3, alt: 'AI professional headshot - corporate executive portrait' },
+  { id: 4, src: headshot4, alt: 'AI professional headshot - business professional portrait' },
+  { id: 5, src: headshot5, alt: 'AI professional headshot - female executive portrait' },
+  { id: 6, src: headshot6, alt: 'AI professional headshot - corporate professional portrait' },
+  { id: 7, src: headshot7, alt: 'AI professional headshot - senior executive portrait' },
+  { id: 8, src: headshot8, alt: 'AI professional headshot - professional female portrait' },
+];
 
 const features = [
   {
@@ -39,6 +61,7 @@ const benefits = [
 ];
 
 const HeadshotsPage = () => {
+  const [selectedImage, setSelectedImage] = useState<typeof headshotGallery[0] | null>(null);
   usePageMeta({
     title: 'AI Headshots NYC - Professional Portrait Photo Booth | PixelAI Pro',
     description: 'Capture LinkedIn-ready professional headshots with AI technology. Neural enhancement delivers executive-grade portraits instantly at NYC events. Perfect for corporate conferences, networking events, and team building activations.',
@@ -98,8 +121,36 @@ const HeadshotsPage = () => {
           </div>
         </section>
 
-        {/* How It Works */}
+        {/* Gallery Section */}
         <section className="section-padding bg-card/50">
+          <div className="container-custom">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
+              Our <span className="gradient-text">AI Headshots</span> Gallery
+            </h2>
+            <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
+              Real examples of our AI-enhanced professional headshots, delivering studio-quality results in seconds.
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {headshotGallery.map((image) => (
+                <div 
+                  key={image.id} 
+                  className="aspect-[3/4] rounded-xl overflow-hidden cursor-pointer group"
+                  onClick={() => setSelectedImage(image)}
+                >
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* How It Works */}
+        <section className="section-padding">
           <div className="container-custom">
             <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
               How <span className="gradient-text">AI Headshots</span> Work
@@ -204,6 +255,34 @@ const HeadshotsPage = () => {
         {/* Related Services */}
         <RelatedServices currentSlug="headshots" />
       </div>
+
+      {/* Lightbox Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button 
+            className="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+            onClick={() => setSelectedImage(null)}
+          >
+            <X size={24} />
+          </button>
+          <div 
+            className="max-w-2xl max-h-[85vh] relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={selectedImage.src}
+              alt={selectedImage.alt}
+              className="w-full h-full object-contain rounded-lg"
+              loading="eager"
+            />
+            <p className="text-center text-white/80 mt-4 text-sm">{selectedImage.alt}</p>
+          </div>
+        </div>
+      )}
+      
       <Footer />
     </div>
   );
