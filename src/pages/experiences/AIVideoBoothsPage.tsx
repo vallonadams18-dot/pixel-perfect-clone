@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import RelatedServices from '@/components/RelatedServices';
 import { Link } from 'react-router-dom';
 import { Video, Check, ArrowRight, Film, Palette, Share2 } from 'lucide-react';
 
@@ -198,6 +199,9 @@ const AIVideoBoothsPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Related Services */}
+        <RelatedServices currentSlug="ai-video-booths" />
       </div>
       <Footer />
     </div>

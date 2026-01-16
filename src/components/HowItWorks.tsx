@@ -1,4 +1,5 @@
 import { Scan, Cpu, MonitorPlay, Share2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const steps = [
   {
@@ -40,7 +41,10 @@ const HowItWorks = () => {
             How It <span className="gradient-text">Works</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-            From capture to share in under 60 seconds. Experience the future of brand activations.
+            From capture to share in under 60 seconds. Experience the future of brand activations with our 
+            <Link to="/experiences/ai-trading-cards" className="text-primary hover:underline"> AI trading cards</Link>, 
+            <Link to="/experiences/headshots" className="text-primary hover:underline"> professional headshots</Link>, and 
+            <Link to="/experiences/ai-video-booths" className="text-primary hover:underline"> AI video booths</Link>.
           </p>
         </div>
 

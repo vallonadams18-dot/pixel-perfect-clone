@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import RelatedServices from '@/components/RelatedServices';
 import { Link } from 'react-router-dom';
 import { CreditCard, Check, ArrowRight, BarChart3, Printer, QrCode } from 'lucide-react';
 
@@ -198,6 +199,9 @@ const PersonaPopPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Related Services */}
+        <RelatedServices currentSlug="persona-pop" />
       </div>
       <Footer />
     </div>
