@@ -1,19 +1,19 @@
 import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 
 const navLinks = [
-  { name: 'Home', href: '#home' },
-  { name: 'About', href: '#about' },
-  { name: 'Services', href: '#services' },
-  { name: 'How It Works', href: '#how-it-works' },
-  { name: 'Portfolio', href: '#portfolio' },
-  { name: 'FAQ', href: '#faq' },
-  { name: 'Contact', href: '#contact' },
+  { name: 'Home', href: '/' },
+  { name: 'About', href: '/about' },
+  { name: 'Services', href: '/services' },
+  { name: 'Portfolio', href: '/portfolio' },
+  { name: 'Contact', href: '/contact' },
 ];
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,33 +31,37 @@ const Header = () => {
     >
       <div className="container-custom flex items-center justify-between">
         {/* Logo */}
-        <a href="#home" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center">
             <span className="font-display font-bold text-xl text-white">P</span>
           </div>
           <span className="font-display font-bold text-xl text-foreground">
             Pixel<span className="gradient-text">AI</span> Pro
           </span>
-        </a>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.name}
-              href={link.href}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+              to={link.href}
+              className={`text-sm transition-colors duration-200 ${
+                location.pathname === link.href
+                  ? 'text-primary font-semibold'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
             >
               {link.name}
-            </a>
+            </Link>
           ))}
         </nav>
 
         {/* CTA Button */}
         <div className="hidden lg:block">
-          <a href="#contact" className="btn-primary text-sm">
+          <Link to="/contact" className="btn-primary text-sm">
             Book a Demo
-          </a>
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
@@ -74,18 +78,22 @@ const Header = () => {
         <div className="lg:hidden glass mt-4 mx-4 rounded-2xl p-6">
           <nav className="flex flex-col gap-4">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
-                href={link.href}
-                className="text-foreground hover:text-primary transition-colors"
+                to={link.href}
+                className={`transition-colors ${
+                  location.pathname === link.href
+                    ? 'text-primary font-semibold'
+                    : 'text-foreground hover:text-primary'
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
-            <a href="#contact" className="btn-primary text-center mt-4">
+            <Link to="/contact" className="btn-primary text-center mt-4" onClick={() => setIsMobileMenuOpen(false)}>
               Book a Demo
-            </a>
+            </Link>
           </nav>
         </div>
       )}
