@@ -26,23 +26,28 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 relative overflow-hidden ${
-        isScrolled ? 'glass py-4' : 'py-6'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 overflow-hidden ${
+        isScrolled ? 'py-4' : 'py-6'
       }`}
     >
-      {/* Header background image (top of page) */}
-      {!isScrolled && (
-        <div className="absolute inset-0 pointer-events-none">
-          <img
-            src={heroImage}
-            alt=""
-            aria-hidden="true"
-            className="w-full h-full object-cover opacity-70 blur-[0.5px] scale-110"
-            loading="eager"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background/95" />
-        </div>
-      )}
+      {/* Header background image - always visible */}
+      <div className="absolute inset-0 pointer-events-none">
+        <img
+          src={heroImage}
+          alt=""
+          aria-hidden="true"
+          className={`w-full h-full object-cover scale-110 transition-all duration-300 ${
+            isScrolled ? 'opacity-60 blur-[1px]' : 'opacity-70 blur-[0.5px]'
+          }`}
+          loading="eager"
+        />
+        {/* Stronger glass overlay when scrolled for readability */}
+        <div className={`absolute inset-0 transition-all duration-300 ${
+          isScrolled 
+            ? 'bg-background/80 backdrop-blur-md' 
+            : 'bg-gradient-to-b from-background/40 via-background/70 to-background/95'
+        }`} />
+      </div>
 
       <div className="container-custom relative z-10 flex items-center justify-between">
         {/* Logo */}
