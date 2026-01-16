@@ -1,5 +1,5 @@
 import { ArrowRight, Play } from 'lucide-react';
-import heroImage from '@/assets/hero-transformation.jpg';
+import heroImage from '@/assets/hero-background.jpg';
 
 const Hero = () => {
   return (
