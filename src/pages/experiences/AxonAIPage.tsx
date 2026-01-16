@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import RelatedServices from '@/components/RelatedServices';
 import { Link } from 'react-router-dom';
 import { Bot, Check, ArrowRight, Navigation, Eye, Cpu } from 'lucide-react';
 
@@ -198,6 +199,9 @@ const AxonAIPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Related Services */}
+        <RelatedServices currentSlug="axon-ai" />
       </div>
       <Footer />
     </div>

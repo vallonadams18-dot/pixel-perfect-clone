@@ -1,4 +1,5 @@
 import { Zap, Shield, Sparkles, Award } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import BeforeAfterSlider from './BeforeAfterSlider';
 import beforeImage from '@/assets/before-transformation-4k.jpg';
 import afterImage from '@/assets/after-transformation.jpg';
@@ -40,14 +41,15 @@ const About = () => {
               NYC's Leading <span className="gradient-text">AI Photo Booth</span> Company
             </h2>
             <p className="text-muted-foreground text-lg mb-6">
-              PixelAI Pro is New York City's #1 AI photo booth rental for corporate events, 
+              PixelAI Pro is New York City's #1 <Link to="/services" className="text-primary hover:underline">AI photo booth rental</Link> for corporate events, 
               trade shows, and experiential marketing activations. We power brand experiences 
-              at Javits Center, Pier 60, and premium NYC venues.
+              at Javits Center, Pier 60, and premium NYC venues with our <Link to="/experiences/ai-trading-cards" className="text-primary hover:underline">AI trading cards</Link>, 
+              <Link to="/experiences/headshots" className="text-primary hover:underline"> professional headshots</Link>, and <Link to="/experiences/ai-video-booths" className="text-primary hover:underline">AI video booths</Link>.
             </p>
             <p className="text-muted-foreground mb-8">
               Our proprietary AI delivers measurable ROI: 95% email capture rates, 77% increased 
               brand recall, and instant social amplification. From product launches to fashion 
-              weeks, we transform events into viral marketing moments.
+              weeks, we transform events into viral marketing moments. Explore our <Link to="/portfolio" className="text-primary hover:underline">AI photo booth portfolio</Link> or <Link to="/contact" className="text-primary hover:underline">book a demo</Link>.
             </p>
 
             {/* Feature Grid */}
