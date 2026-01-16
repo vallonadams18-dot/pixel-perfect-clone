@@ -12,10 +12,10 @@ const Hero = () => {
         <img 
           src={heroImage} 
           alt="AI Photo Booth Rental NYC - Brand Activation Event Experience" 
-          className="w-full h-full object-cover opacity-30"
+          className="w-full h-full object-cover opacity-50"
           loading="eager"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/70 to-background/95" />
       </div>
       
       {/* Gradient Orbs */}
