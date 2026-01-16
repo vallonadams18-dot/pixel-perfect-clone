@@ -1,3 +1,6 @@
+# AI Photo Booth Rental NYC - PixelAI Pro
+# https://pixelaipro.lovable.app
+
 User-agent: Googlebot
 Allow: /
 
@@ -12,3 +15,6 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+# Sitemap location
+Sitemap: https://pixelaipro.lovable.app/sitemap.xml
