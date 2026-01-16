@@ -2,10 +2,12 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import { Link } from 'react-router-dom';
 import { Shirt, Check, ArrowRight, Zap, Share2, Palette } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
 import pixelwearDemo from '@/assets/pixelwear-demo.jpg';
+import pixelwearBefore from '@/assets/pixelwear-before.jpg';
 
 const features = [
   {
@@ -86,21 +88,15 @@ const PixelWearPage = () => {
                 </div>
               </div>
               
-              <figure className="relative aspect-[3/4] rounded-3xl overflow-hidden glass glow group">
-                <img 
-                  src={pixelwearDemo}
-                  alt="PixelWear AI virtual try-on - branded apparel transformation"
-                  className="w-full h-full object-cover"
-                  loading="eager"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex flex-col justify-end p-6">
-                  <p className="text-white/90 text-sm font-medium uppercase tracking-wider mb-1">Virtual Try-On</p>
-                  <h3 className="text-white font-display text-2xl md:text-3xl font-bold leading-tight">
-                    Wear Your<br />Brand Instantly
-                  </h3>
-                </div>
-                <figcaption className="sr-only">AI-powered virtual try-on with PixelWear branding</figcaption>
-              </figure>
+              <BeforeAfterSlider
+                beforeImage={pixelwearBefore}
+                afterImage={pixelwearDemo}
+                beforeLabel="Original"
+                afterLabel="PixelWear"
+                beforeAlt="Original photo before PixelWear AI virtual try-on"
+                afterAlt="AI transformed photo with branded Nike apparel via PixelWear"
+              />
+              
             </div>
           </div>
         </section>
