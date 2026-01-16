@@ -86,13 +86,20 @@ const CoStarPage = () => {
                 </div>
               </div>
               
-              <figure className="relative aspect-[3/4] rounded-3xl overflow-hidden glass glow">
+              <figure className="relative aspect-[3/4] rounded-3xl overflow-hidden glass glow group">
                 <img 
                   src={coStarDemoImage}
                   alt="Co-Star AI celebrity photo experience - guest posing with pop star on red carpet VIP event"
                   className="w-full h-full object-cover"
                   loading="eager"
                 />
+                {/* Text overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex flex-col justify-end p-6">
+                  <p className="text-white/90 text-sm font-medium uppercase tracking-wider mb-1">AI Photo Experience</p>
+                  <h3 className="text-white font-display text-2xl md:text-3xl font-bold leading-tight">
+                    Pose With Your<br />Favorite Celebrity
+                  </h3>
+                </div>
                 <figcaption className="sr-only">Co-Star AI technology creates realistic celebrity photo opportunities at events</figcaption>
               </figure>
             </div>
