@@ -11,8 +11,9 @@ const Hero = () => {
       <div className="absolute inset-0">
         <img 
           src={heroImage} 
-          alt="AI Photo Booth Transformation" 
+          alt="AI Photo Booth Rental NYC - Brand Activation Event Experience" 
           className="w-full h-full object-cover opacity-30"
+          loading="eager"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
       </div>
