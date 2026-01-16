@@ -66,6 +66,7 @@ const Portfolio = () => {
                 <img 
                   src={image.src} 
                   alt={image.alt}
+                  loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
               </div>
@@ -111,6 +112,7 @@ const Portfolio = () => {
             <img 
               src={selectedImage.src} 
               alt={selectedImage.alt}
+              loading="eager"
               className="w-full h-auto"
             />
             <div className="p-6 bg-card">

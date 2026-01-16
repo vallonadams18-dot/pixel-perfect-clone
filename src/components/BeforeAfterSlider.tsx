@@ -5,13 +5,17 @@ interface BeforeAfterSliderProps {
   afterImage: string;
   beforeLabel?: string;
   afterLabel?: string;
+  beforeAlt?: string;
+  afterAlt?: string;
 }
 
 const BeforeAfterSlider = ({ 
   beforeImage, 
   afterImage, 
   beforeLabel = "Before", 
-  afterLabel = "After" 
+  afterLabel = "After",
+  beforeAlt = "Original photo before AI transformation NYC photo booth",
+  afterAlt = "AI transformed portrait after photo booth experience NYC"
 }: BeforeAfterSliderProps) => {
   const [sliderPosition, setSliderPosition] = useState(50);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -43,7 +47,8 @@ const BeforeAfterSlider = ({
       {/* After Image (Background) */}
       <img 
         src={afterImage} 
-        alt={afterLabel}
+        alt={afterAlt}
+        loading="lazy"
         className="absolute inset-0 w-full h-full object-cover"
       />
       
@@ -54,7 +59,8 @@ const BeforeAfterSlider = ({
       >
         <img 
           src={beforeImage} 
-          alt={beforeLabel}
+          alt={beforeAlt}
+          loading="lazy"
           className="absolute inset-0 w-full h-full object-cover"
         />
       </div>
