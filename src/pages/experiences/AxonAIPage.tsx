@@ -5,6 +5,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { Bot, Check, ArrowRight, Navigation, Eye, Cpu } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
+import axonRobotImage from '@/assets/axon-ai-robot.png';
 
 const features = [
   {
@@ -40,8 +41,8 @@ const benefits = [
 
 const AxonAIPage = () => {
   usePageMeta({
-    title: 'AXON AI - Autonomous Robot Photo Booth NYC | PixelAI Pro',
-    description: 'Meet AXON AI—the autonomous robot photo booth that navigates your event using LIDAR technology. Capture studio-quality portraits on-the-go with AI-powered guest detection. Perfect for NYC large venues and experiential marketing.',
+    title: 'AXON AI Robot Photo Booth NYC | Autonomous Event Photography | PixelAI Pro',
+    description: 'AXON AI autonomous robot photo booth navigates your NYC event with LIDAR technology, capturing studio-quality portraits automatically. Perfect for trade shows, conferences, and large venues. Book your robot photographer today.',
     ogImage: '/og-axon-ai.jpg',
     canonicalPath: '/experiences/axon-ai',
   });
@@ -85,15 +86,15 @@ const AxonAIPage = () => {
                 </div>
               </div>
               
-              <div className="relative aspect-square rounded-3xl overflow-hidden glass glow">
-                <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-card to-primary/20 flex items-center justify-center">
-                  <div className="text-center p-8">
-                    <Bot size={80} className="mx-auto text-primary mb-6 animate-float" />
-                    <h3 className="font-display text-2xl font-bold text-foreground">Autonomous Robot</h3>
-                    <p className="text-muted-foreground mt-2">LIDAR-Powered Navigation</p>
-                  </div>
-                </div>
-              </div>
+              <figure className="relative aspect-square rounded-3xl overflow-hidden glass glow">
+                <img 
+                  src={axonRobotImage}
+                  alt="AXON AI autonomous robot photo booth with LIDAR navigation for NYC events - futuristic AI-powered event photography robot"
+                  className="w-full h-full object-cover"
+                  loading="eager"
+                />
+                <figcaption className="sr-only">AXON AI robot photo booth featuring advanced LIDAR navigation technology for autonomous event photography</figcaption>
+              </figure>
             </div>
           </div>
         </section>
