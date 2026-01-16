@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { CreditCard, Check, ArrowRight, BarChart3, Printer, QrCode } from 'lucide-react';
+import usePageMeta from '@/hooks/usePageMeta';
 
 const features = [
   {
@@ -39,13 +39,12 @@ const benefits = [
 ];
 
 const PersonaPopPage = () => {
-  useEffect(() => {
-    document.title = 'Persona Pop - AI Trading Card Photo Booth | Custom Collectible Cards';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Transform guests into collectible trading cards with Persona Pop. AI-generated portraits with custom stats, branded designs, and instant print/digital delivery. Perfect for sports teams, gaming events, and brand activations.');
-    }
-  }, []);
+  usePageMeta({
+    title: 'Persona Pop - AI Trading Card Photo Booth NYC | PixelAI Pro',
+    description: 'Transform guests into collectible trading cards with Persona Pop. AI-generated portraits with custom stats, branded designs, and instant print/digital delivery. Perfect for NYC sports teams, gaming events, and brand activations.',
+    ogImage: '/og-persona-pop.jpg',
+    canonicalPath: '/experiences/persona-pop',
+  });
 
   return (
     <div className="min-h-screen bg-background">

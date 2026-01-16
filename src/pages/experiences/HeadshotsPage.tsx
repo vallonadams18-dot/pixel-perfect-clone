@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { Camera, Check, ArrowRight, Briefcase, Users, Sparkles } from 'lucide-react';
+import usePageMeta from '@/hooks/usePageMeta';
 
 const features = [
   {
@@ -39,13 +39,12 @@ const benefits = [
 ];
 
 const HeadshotsPage = () => {
-  useEffect(() => {
-    document.title = 'AI Headshots - Professional Portrait Photo Booth | Executive Photography';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Capture LinkedIn-ready professional headshots with AI technology. Neural enhancement delivers executive-grade portraits instantly at events. Perfect for corporate conferences, networking events, and team building activations.');
-    }
-  }, []);
+  usePageMeta({
+    title: 'AI Headshots NYC - Professional Portrait Photo Booth | PixelAI Pro',
+    description: 'Capture LinkedIn-ready professional headshots with AI technology. Neural enhancement delivers executive-grade portraits instantly at NYC events. Perfect for corporate conferences, networking events, and team building activations.',
+    ogImage: '/og-headshots.jpg',
+    canonicalPath: '/experiences/headshots',
+  });
 
   return (
     <div className="min-h-screen bg-background">

@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { Shirt, Check, ArrowRight, Zap, Share2, Palette } from 'lucide-react';
+import usePageMeta from '@/hooks/usePageMeta';
 
 const features = [
   {
@@ -39,13 +39,12 @@ const benefits = [
 ];
 
 const PixelWearPage = () => {
-  useEffect(() => {
-    document.title = 'PixelWear - AI Virtual Try-On Photo Booth | Digital Apparel Experience';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Transform event engagement with PixelWear AI virtual try-on technology. Guests instantly see themselves in your branded apparel—no inventory needed. Perfect for retail activations, product launches, and brand experiences.');
-    }
-  }, []);
+  usePageMeta({
+    title: 'PixelWear - AI Virtual Try-On Photo Booth NYC | PixelAI Pro',
+    description: 'Transform event engagement with PixelWear AI virtual try-on technology. Guests instantly see themselves in your branded apparel—no inventory needed. Perfect for NYC retail activations, product launches, and brand experiences.',
+    ogImage: '/og-pixelwear.jpg',
+    canonicalPath: '/experiences/pixelwear',
+  });
 
   return (
     <div className="min-h-screen bg-background">
