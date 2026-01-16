@@ -5,7 +5,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { CreditCard, Check, ArrowRight, BarChart3, Printer, QrCode } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
-
+import personaPopDemo from '@/assets/persona-pop-demo.jpg';
 const features = [
   {
     icon: BarChart3,
@@ -85,15 +85,22 @@ const PersonaPopPage = () => {
                 </div>
               </div>
               
-              <div className="relative aspect-square rounded-3xl overflow-hidden glass glow">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-card to-accent/20 flex items-center justify-center">
-                  <div className="text-center p-8">
-                    <CreditCard size={80} className="mx-auto text-primary mb-6 animate-float" />
-                    <h3 className="font-display text-2xl font-bold text-foreground">Trading Cards</h3>
-                    <p className="text-muted-foreground mt-2">Personalized Collectibles</p>
-                  </div>
+              <figure className="relative aspect-[3/4] rounded-3xl overflow-hidden glass glow group">
+                <img 
+                  src={personaPopDemo}
+                  alt="Persona Pop AI trading card - pop art style portrait transformation"
+                  className="w-full h-full object-cover"
+                  loading="eager"
+                />
+                {/* Text overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex flex-col justify-end p-6">
+                  <p className="text-white/90 text-sm font-medium uppercase tracking-wider mb-1">Pop Art Trading Card</p>
+                  <h3 className="text-white font-display text-2xl md:text-3xl font-bold leading-tight">
+                    Become A<br />Collectible Legend
+                  </h3>
                 </div>
-              </div>
+                <figcaption className="sr-only">AI-generated pop art style trading card transformation</figcaption>
+              </figure>
             </div>
           </div>
         </section>
