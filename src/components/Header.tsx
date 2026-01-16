@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import heroImage from '@/assets/hero-background.jpg';
 
 const navLinks = [
   { name: 'Home', href: '/' },
@@ -25,11 +26,25 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'glass py-4' : 'bg-transparent py-6'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 relative overflow-hidden ${
+        isScrolled ? 'glass py-4' : 'py-6'
       }`}
     >
-      <div className="container-custom flex items-center justify-between">
+      {/* Header background image (top of page) */}
+      {!isScrolled && (
+        <div className="absolute inset-0 pointer-events-none">
+          <img
+            src={heroImage}
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-cover opacity-70 blur-[0.5px] scale-110"
+            loading="eager"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background/95" />
+        </div>
+      )}
+
+      <div className="container-custom relative z-10 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
           <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center">
@@ -75,7 +90,7 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden glass mt-4 mx-4 rounded-2xl p-6">
+        <div className="lg:hidden glass mt-4 mx-4 rounded-2xl p-6 relative z-10">
           <nav className="flex flex-col gap-4">
             {navLinks.map((link) => (
               <Link
@@ -91,7 +106,11 @@ const Header = () => {
                 {link.name}
               </Link>
             ))}
-            <Link to="/contact" className="btn-primary text-center mt-4" onClick={() => setIsMobileMenuOpen(false)}>
+            <Link
+              to="/contact"
+              className="btn-primary text-center mt-4"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               Book a Demo
             </Link>
           </nav>
