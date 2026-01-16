@@ -1,4 +1,7 @@
 import { Zap, Shield, Sparkles, Award } from 'lucide-react';
+import BeforeAfterSlider from './BeforeAfterSlider';
+import beforeImage from '@/assets/before-transformation.jpg';
+import afterImage from '@/assets/after-transformation.jpg';
 
 const features = [
   {
@@ -69,19 +72,14 @@ const About = () => {
 
           {/* Right Column - Visual */}
           <div className="relative">
-            {/* Main Image Area */}
-            <div className="relative aspect-square rounded-3xl overflow-hidden glass glow">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-card to-accent/20 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-24 h-24 mx-auto rounded-2xl bg-gradient-primary flex items-center justify-center mb-6 animate-float">
-                    <span className="text-5xl">🤖</span>
-                  </div>
-                  <h3 className="font-display text-2xl font-bold text-foreground mb-2">
-                    AI-Powered
-                  </h3>
-                  <p className="text-muted-foreground">Neural Network Technology</p>
-                </div>
-              </div>
+            {/* Before/After Slider */}
+            <div className="glow">
+              <BeforeAfterSlider
+                beforeImage={beforeImage}
+                afterImage={afterImage}
+                beforeLabel="Original"
+                afterLabel="AI Transformed"
+              />
             </div>
 
             {/* Floating Stats Cards */}
