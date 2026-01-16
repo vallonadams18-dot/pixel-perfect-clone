@@ -11,6 +11,7 @@ import tradingCardBaseball from '@/assets/ai-trading-cards-baseball-custom-portr
 import tradingCardAthlete from '@/assets/ai-trading-cards-athlete-personalized-cards.jpg';
 import tradingCardCollection from '@/assets/ai-trading-cards-collection-sports-showcase.jpg';
 import tradingCardMultiSport from '@/assets/ai-trading-cards-multi-sport-collection.jpg';
+import tradingCardHero from '@/assets/ai-trading-cards-hero-collection.jpg';
 
 const galleryImages = [
   {
@@ -119,14 +120,12 @@ const AITradingCardsPage = () => {
                 </div>
               </div>
               
-              <div className="relative aspect-square rounded-3xl overflow-hidden glass glow">
-                <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-card to-primary/20 flex items-center justify-center">
-                  <div className="text-center p-8">
-                    <Sparkles size={80} className="mx-auto text-primary mb-6 animate-float" />
-                    <h3 className="font-display text-2xl font-bold text-foreground">Premium Collectibles</h3>
-                    <p className="text-muted-foreground mt-2">Stylized AI Portraits</p>
-                  </div>
-                </div>
+              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden glass glow">
+                <img 
+                  src={tradingCardHero} 
+                  alt="AI trading cards collection featuring custom sports portraits with baseball, football, basketball and hockey player designs"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
           </div>
