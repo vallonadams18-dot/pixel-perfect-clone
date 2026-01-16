@@ -37,19 +37,19 @@ const Hero = () => {
           <span className="text-sm text-muted-foreground">The Future of Event Activations</span>
         </div>
 
-        {/* Main Headline */}
+        {/* Main Headline - SEO Optimized */}
         <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold text-foreground leading-tight mb-6 fade-in-up" style={{ animationDelay: '0.1s' }}>
-          AI Photo Booth for
+          #1 AI Photo Booth
           <br />
-          <span className="gradient-text">High-Performance</span>
+          <span className="gradient-text">Rental in NYC</span>
           <br />
-          Brands in NYC
+          for Brand Activations
         </h1>
 
-        {/* Subtitle */}
+        {/* Subtitle - ROI Focused */}
         <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-10 fade-in-up" style={{ animationDelay: '0.2s' }}>
-          Transform your brand activations with cutting-edge neural technology. 
-          Our AI-powered photo experiences create viral moments that amplify your brand's digital presence.
+          Transform corporate events & trade shows with AI-powered photo experiences. 
+          Real-time lead capture, CRM integration, and instant social sharing—trusted by Fortune 500 brands at Javits Center, Pier 60 & top NYC venues.
         </p>
 
         {/* CTA Buttons */}
@@ -64,13 +64,13 @@ const Hero = () => {
           </a>
         </div>
 
-        {/* Stats */}
+        {/* Stats - ROI Metrics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 pt-10 border-t border-border/30 fade-in-up" style={{ animationDelay: '0.4s' }}>
           {[
-            { value: '500+', label: 'Events Completed' },
-            { value: '2M+', label: 'Photos Generated' },
-            { value: '99%', label: 'Client Satisfaction' },
-            { value: '<3s', label: 'Generation Time' },
+            { value: '500+', label: 'NYC Events' },
+            { value: '95%', label: 'Email Capture Rate' },
+            { value: '77%', label: 'Brand Recall Lift' },
+            { value: '<3s', label: 'AI Processing' },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
               <div className="font-display text-3xl md:text-4xl font-bold gradient-text mb-2">

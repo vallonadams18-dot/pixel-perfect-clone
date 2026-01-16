@@ -3,23 +3,23 @@ import { Zap, Shield, Sparkles, Award } from 'lucide-react';
 const features = [
   {
     icon: Zap,
-    title: 'Lightning Fast',
-    description: 'AI transformations in under 3 seconds with real-time neural processing.',
+    title: 'Real-Time Lead Capture',
+    description: 'Collect emails & data instantly with 95% opt-in rates and CRM integration.',
   },
   {
     icon: Shield,
-    title: 'Enterprise Ready',
-    description: 'GDPR compliant with secure data handling and custom privacy options.',
+    title: 'Enterprise Analytics',
+    description: 'Track engagement, social shares, and ROI with real-time dashboards.',
   },
   {
     icon: Sparkles,
-    title: 'Custom Branding',
-    description: 'Every experience tailored to your brand identity and campaign goals.',
+    title: 'Custom Brand Integration',
+    description: 'White-label AI experiences tailored to your campaign and visual identity.',
   },
   {
     icon: Award,
-    title: 'Award Winning',
-    description: 'Recognized by leading marketing and technology industry awards.',
+    title: 'Fortune 500 Trusted',
+    description: 'Powering activations for Nike, Meta, Coca-Cola, and top NYC agencies.',
   },
 ];
 
@@ -34,16 +34,17 @@ const About = () => {
               About Us
             </span>
             <h2 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-              Pioneering the Future of <span className="gradient-text">Brand Activations</span>
+              NYC's Leading <span className="gradient-text">AI Photo Booth</span> Company
             </h2>
             <p className="text-muted-foreground text-lg mb-6">
-              PixelAI Pro is New York City's premier AI photo booth company, merging cutting-edge 
-              generative AI with experiential marketing to create unforgettable brand moments.
+              PixelAI Pro is New York City's #1 AI photo booth rental for corporate events, 
+              trade shows, and experiential marketing activations. We power brand experiences 
+              at Javits Center, Pier 60, and premium NYC venues.
             </p>
             <p className="text-muted-foreground mb-8">
-              Our proprietary neural networks power experiences for Fortune 500 companies, 
-              luxury brands, and innovative startups. From fashion weeks to product launches, 
-              we transform ordinary events into viral sensations.
+              Our proprietary AI delivers measurable ROI: 95% email capture rates, 77% increased 
+              brand recall, and instant social amplification. From product launches to fashion 
+              weeks, we transform events into viral marketing moments.
             </p>
 
             {/* Feature Grid */}
