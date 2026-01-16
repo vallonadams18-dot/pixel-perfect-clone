@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { Bot, Check, ArrowRight, Navigation, Eye, Cpu } from 'lucide-react';
+import usePageMeta from '@/hooks/usePageMeta';
 
 const features = [
   {
@@ -39,13 +39,12 @@ const benefits = [
 ];
 
 const AxonAIPage = () => {
-  useEffect(() => {
-    document.title = 'AXON AI - Autonomous Robot Photo Booth | Mobile Event Photography';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Meet AXON AI—the autonomous robot photo booth that navigates your event using LIDAR technology. Capture studio-quality portraits on-the-go with AI-powered guest detection. Perfect for large venues and experiential marketing.');
-    }
-  }, []);
+  usePageMeta({
+    title: 'AXON AI - Autonomous Robot Photo Booth NYC | PixelAI Pro',
+    description: 'Meet AXON AI—the autonomous robot photo booth that navigates your event using LIDAR technology. Capture studio-quality portraits on-the-go with AI-powered guest detection. Perfect for NYC large venues and experiential marketing.',
+    ogImage: '/og-axon-ai.jpg',
+    canonicalPath: '/experiences/axon-ai',
+  });
 
   return (
     <div className="min-h-screen bg-background">

@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { Users, Check, ArrowRight, Star, Camera, Award } from 'lucide-react';
+import usePageMeta from '@/hooks/usePageMeta';
 
 const features = [
   {
@@ -39,13 +39,12 @@ const benefits = [
 ];
 
 const CoStarPage = () => {
-  useEffect(() => {
-    document.title = 'Co-Star - AI Celebrity Photo Experience | Digital Meet-and-Greet';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Create memorable celebrity photo experiences with Co-Star AI technology. Place guests in professional portraits next to any celebrity or athlete. Perfect for fan experiences, brand activations, and entertainment marketing.');
-    }
-  }, []);
+  usePageMeta({
+    title: 'Co-Star - AI Celebrity Photo Experience NYC | PixelAI Pro',
+    description: 'Create memorable celebrity photo experiences with Co-Star AI technology. Place guests in professional portraits next to any celebrity or athlete. Perfect for NYC fan experiences, brand activations, and entertainment marketing.',
+    ogImage: '/og-co-star.jpg',
+    canonicalPath: '/experiences/co-star',
+  });
 
   return (
     <div className="min-h-screen bg-background">

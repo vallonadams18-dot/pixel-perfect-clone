@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { Video, Check, ArrowRight, Film, Palette, Share2 } from 'lucide-react';
+import usePageMeta from '@/hooks/usePageMeta';
 
 const features = [
   {
@@ -39,13 +39,12 @@ const benefits = [
 ];
 
 const AIVideoBoothsPage = () => {
-  useEffect(() => {
-    document.title = 'AI Video Booths - Neural Video Transformation | Stylized Video Content';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Transform event video into stunning stylized content with AI Video Booths. Neural networks create anime, cyberpunk, and custom artistic styles in real-time. Perfect for brand activations, trade shows, and experiential marketing.');
-    }
-  }, []);
+  usePageMeta({
+    title: 'AI Video Booths NYC - Neural Video Transformation | PixelAI Pro',
+    description: 'Transform event video into stunning stylized content with AI Video Booths. Neural networks create anime, cyberpunk, and custom artistic styles in real-time. Perfect for NYC brand activations, trade shows, and experiential marketing.',
+    ogImage: '/og-ai-video-booths.jpg',
+    canonicalPath: '/experiences/ai-video-booths',
+  });
 
   return (
     <div className="min-h-screen bg-background">

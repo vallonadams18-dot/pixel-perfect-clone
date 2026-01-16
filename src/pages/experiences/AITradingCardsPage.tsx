@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { Sparkles, Check, ArrowRight, Layers, Smartphone, Gem } from 'lucide-react';
+import usePageMeta from '@/hooks/usePageMeta';
 
 // AI Trading Cards Gallery Images
 import tradingCardSportsDisplay from '@/assets/ai-trading-cards-sports-collectibles-display.jpg';
@@ -75,13 +75,12 @@ const benefits = [
 ];
 
 const AITradingCardsPage = () => {
-  useEffect(() => {
-    document.title = 'AI Trading Cards - Collectible Card Photo Booth | Premium Trading Cards';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Create premium AI-generated trading cards with stylized portraits, custom stats, and collectible rarity tiers. Perfect for sports teams, gaming events, and brand activations. NFC and AR integration available.');
-    }
-  }, []);
+  usePageMeta({
+    title: 'AI Trading Cards NYC - Collectible Card Photo Booth | PixelAI Pro',
+    description: 'Create premium AI-generated trading cards with stylized portraits, custom stats, and collectible rarity tiers. Perfect for sports teams, gaming events, and NYC brand activations. NFC and AR integration available.',
+    ogImage: '/og-ai-trading-cards.jpg',
+    canonicalPath: '/experiences/ai-trading-cards',
+  });
 
   return (
     <div className="min-h-screen bg-background">

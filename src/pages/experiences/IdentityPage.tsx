@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { User, Check, ArrowRight, Wand2, Shield, Sparkles } from 'lucide-react';
+import usePageMeta from '@/hooks/usePageMeta';
 
 const features = [
   {
@@ -39,13 +39,12 @@ const benefits = [
 ];
 
 const IdentityPage = () => {
-  useEffect(() => {
-    document.title = 'Identity - AI Face Swap Photo Booth | Brand Character Transformation';
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Create unforgettable brand experiences with Identity AI face-swap technology. Transform guests into brand mascots, superheroes, or campaign characters with 99% accuracy. Perfect for entertainment marketing and brand activations.');
-    }
-  }, []);
+  usePageMeta({
+    title: 'Identity - AI Face Swap Photo Booth NYC | PixelAI Pro',
+    description: 'Create unforgettable brand experiences with Identity AI face-swap technology. Transform guests into brand mascots, superheroes, or campaign characters with 99% accuracy. Perfect for NYC entertainment marketing and brand activations.',
+    ogImage: '/og-identity.jpg',
+    canonicalPath: '/experiences/identity',
+  });
 
   return (
     <div className="min-h-screen bg-background">
