@@ -1,6 +1,6 @@
 import { Zap, Shield, Sparkles, Award } from 'lucide-react';
 import BeforeAfterSlider from './BeforeAfterSlider';
-import beforeImage from '@/assets/before-transformation.jpg';
+import beforeImage from '@/assets/before-transformation-enhanced.jpg';
 import afterImage from '@/assets/after-transformation.jpg';
 
 const features = [
