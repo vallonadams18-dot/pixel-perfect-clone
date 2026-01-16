@@ -4,6 +4,41 @@ import Footer from '@/components/Footer';
 import { Link } from 'react-router-dom';
 import { Sparkles, Check, ArrowRight, Layers, Smartphone, Gem } from 'lucide-react';
 
+// AI Trading Cards Gallery Images
+import tradingCardSportsDisplay from '@/assets/ai-trading-cards-sports-collectibles-display.jpg';
+import tradingCardPrinter from '@/assets/ai-trading-cards-printer-custom-design.jpg';
+import tradingCardBaseball from '@/assets/ai-trading-cards-baseball-custom-portrait.jpg';
+import tradingCardAthlete from '@/assets/ai-trading-cards-athlete-personalized-cards.jpg';
+import tradingCardCollection from '@/assets/ai-trading-cards-collection-sports-showcase.jpg';
+import tradingCardMultiSport from '@/assets/ai-trading-cards-multi-sport-collection.jpg';
+
+const galleryImages = [
+  {
+    src: tradingCardMultiSport,
+    alt: 'AI trading cards collection featuring custom sports portraits with baseball, football, basketball and hockey player designs'
+  },
+  {
+    src: tradingCardCollection,
+    alt: 'Premium AI-generated trading cards display showcasing collectible athlete portraits with holographic effects'
+  },
+  {
+    src: tradingCardSportsDisplay,
+    alt: 'Person holding custom AI trading cards featuring personalized basketball and sports player portraits'
+  },
+  {
+    src: tradingCardBaseball,
+    alt: 'Custom AI trading cards with baseball player portrait and personalized athlete card designs'
+  },
+  {
+    src: tradingCardAthlete,
+    alt: 'AI-generated personalized trading cards featuring athletic portrait transformations and custom stats'
+  },
+  {
+    src: tradingCardPrinter,
+    alt: 'AI trading card printer producing custom collectible cards with professional sports player designs'
+  },
+];
+
 const features = [
   {
     icon: Sparkles,
@@ -185,6 +220,31 @@ const AITradingCardsPage = () => {
                     <Check size={16} className="text-primary" />
                   </div>
                   <span className="text-foreground">{benefit}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Gallery Section */}
+        <section className="section-padding">
+          <div className="container-custom">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
+              Trading Card <span className="gradient-text">Gallery</span>
+            </h2>
+            <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
+              Explore our collection of AI-generated trading cards featuring custom sports portraits and collectible designs.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {galleryImages.map((image, index) => (
+                <div key={index} className="group relative overflow-hidden rounded-2xl glass">
+                  <img 
+                    src={image.src} 
+                    alt={image.alt}
+                    loading="lazy"
+                    className="w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
               ))}
             </div>
