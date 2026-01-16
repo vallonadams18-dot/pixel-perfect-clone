@@ -1,10 +1,21 @@
 import { ArrowRight, Play } from 'lucide-react';
+import heroImage from '@/assets/hero-transformation.jpg';
 
 const Hero = () => {
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Animated Background */}
       <div className="absolute inset-0 animated-gradient" />
+      
+      {/* Hero Background Image */}
+      <div className="absolute inset-0">
+        <img 
+          src={heroImage} 
+          alt="AI Photo Booth Transformation" 
+          className="w-full h-full object-cover opacity-30"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
+      </div>
       
       {/* Gradient Orbs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/30 rounded-full blur-[120px] animate-float" />
