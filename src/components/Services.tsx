@@ -62,13 +62,13 @@ const Services = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <span className="text-sm uppercase tracking-widest text-primary font-semibold mb-4 block">
-            Our Services
+            AI Photo Booth Services NYC
           </span>
           <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
-            Next-Gen AI <span className="gradient-text">Experiences</span>
+            Experiential Marketing <span className="gradient-text">Activations</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
-            Our suite of proprietary AI activations transforms ordinary events into extraordinary brand moments.
+            Custom AI photo booth rentals for corporate events, trade shows, product launches & brand activations in New York City.
           </p>
         </div>
 
