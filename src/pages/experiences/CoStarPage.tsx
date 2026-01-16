@@ -6,6 +6,21 @@ import { Link } from 'react-router-dom';
 import { Users, Check, ArrowRight, Star, Camera, Award } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
 import coStarDemoImage from '@/assets/co-star-demo.jpg';
+import coStarGuest1 from '@/assets/co-star-guest-1.jpg';
+import coStarGuest2 from '@/assets/co-star-guest-2.jpg';
+import coStarGuest3 from '@/assets/co-star-guest-3.jpg';
+import coStarGuest4 from '@/assets/co-star-guest-4.jpg';
+import coStarGuest5 from '@/assets/co-star-guest-5.jpg';
+import coStarGuest6 from '@/assets/co-star-guest-6.jpg';
+
+const galleryImages = [
+  { src: coStarGuest1, alt: 'Guest posing with pop superstar on red carpet', label: 'Red Carpet Premiere' },
+  { src: coStarGuest2, alt: 'Guest posing with action movie star at premiere', label: 'Movie Premiere' },
+  { src: coStarGuest3, alt: 'Guest posing with basketball legend at arena', label: 'Sports Legend' },
+  { src: coStarGuest4, alt: 'Guest posing with R&B singer at music awards', label: 'Music Awards' },
+  { src: coStarGuest5, alt: 'Guest on talk show set with famous host', label: 'Talk Show Experience' },
+  { src: coStarGuest6, alt: 'Guest posing with NFL quarterback on field', label: 'Football Legend' },
+];
 
 const features = [
   {
@@ -102,6 +117,33 @@ const CoStarPage = () => {
                 </div>
                 <figcaption className="sr-only">Co-Star AI technology creates realistic celebrity photo opportunities at events</figcaption>
               </figure>
+            </div>
+          </div>
+        </section>
+
+        {/* Gallery Section */}
+        <section className="section-padding">
+          <div className="container-custom">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
+              Real Guest <span className="gradient-text">Experiences</span>
+            </h2>
+            <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
+              See how our AI technology creates unforgettable celebrity moments for event guests.
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+              {galleryImages.map((image, index) => (
+                <figure key={index} className="relative aspect-[3/4] rounded-2xl overflow-hidden group">
+                  <img 
+                    src={image.src}
+                    alt={image.alt}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                    <span className="text-white font-semibold text-sm md:text-base">{image.label}</span>
+                  </div>
+                </figure>
+              ))}
             </div>
           </div>
         </section>
