@@ -5,6 +5,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { Shirt, Check, ArrowRight, Zap, Share2, Palette } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
+import pixelwearDemo from '@/assets/pixelwear-demo.jpg';
 
 const features = [
   {
@@ -85,15 +86,21 @@ const PixelWearPage = () => {
                 </div>
               </div>
               
-              <div className="relative aspect-square rounded-3xl overflow-hidden glass glow">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-card to-accent/20 flex items-center justify-center">
-                  <div className="text-center p-8">
-                    <Shirt size={80} className="mx-auto text-primary mb-6 animate-float" />
-                    <h3 className="font-display text-2xl font-bold text-foreground">Virtual Try-On Technology</h3>
-                    <p className="text-muted-foreground mt-2">Powered by Neural Networks</p>
-                  </div>
+              <figure className="relative aspect-[3/4] rounded-3xl overflow-hidden glass glow group">
+                <img 
+                  src={pixelwearDemo}
+                  alt="PixelWear AI virtual try-on - branded apparel transformation"
+                  className="w-full h-full object-cover"
+                  loading="eager"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex flex-col justify-end p-6">
+                  <p className="text-white/90 text-sm font-medium uppercase tracking-wider mb-1">Virtual Try-On</p>
+                  <h3 className="text-white font-display text-2xl md:text-3xl font-bold leading-tight">
+                    Wear Your<br />Brand Instantly
+                  </h3>
                 </div>
-              </div>
+                <figcaption className="sr-only">AI-powered virtual try-on with PixelWear branding</figcaption>
+              </figure>
             </div>
           </div>
         </section>
