@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 
-// Import portfolio images
+// Import portfolio images - SEO optimized file names
 import animeImage from '@/assets/portfolio-anime.jpg';
 import superheroImage from '@/assets/portfolio-superhero.jpg';
 import fantasyImage from '@/assets/portfolio-fantasy.jpg';
@@ -9,15 +9,23 @@ import retroImage from '@/assets/portfolio-retro.jpg';
 import corporateImage from '@/assets/portfolio-corporate.jpg';
 import cyberpunkImage from '@/assets/portfolio-cyberpunk.jpg';
 import vintageImage from '@/assets/portfolio-vintage.jpg';
+import pirateCosplayImage from '@/assets/ai-photo-booth-pirate-cosplay-transformation.jpg';
+import footballPlayerBlueImage from '@/assets/ai-sports-portrait-football-player-stadium.jpg';
+import nflPlayerGreenImage from '@/assets/ai-generated-nfl-player-professional-headshot.jpg';
+import femaleAthleteImage from '@/assets/ai-photo-booth-female-athlete-football-portrait.jpg';
 
 const portfolioImages = [
-  { id: 1, src: animeImage, alt: 'Anime Style Transformation', category: 'Anime', aspect: 'portrait' },
-  { id: 2, src: superheroImage, alt: 'Superhero Portrait', category: 'Superhero', aspect: 'portrait' },
-  { id: 3, src: fantasyImage, alt: 'Fantasy Elf Warrior', category: 'Fantasy', aspect: 'portrait' },
-  { id: 4, src: retroImage, alt: '80s Synthwave Retro', category: 'Retro', aspect: 'portrait' },
-  { id: 5, src: corporateImage, alt: 'Professional Headshot', category: 'Corporate', aspect: 'portrait' },
-  { id: 6, src: cyberpunkImage, alt: 'Cyberpunk Street Samurai', category: 'Cyberpunk', aspect: 'portrait' },
-  { id: 7, src: vintageImage, alt: 'Vintage Hollywood Glamour', category: 'Vintage', aspect: 'portrait' },
+  { id: 1, src: animeImage, alt: 'AI Photo Booth Anime Style Portrait Transformation NYC Event', category: 'Anime', aspect: 'portrait' },
+  { id: 2, src: superheroImage, alt: 'AI Generated Superhero Portrait for Brand Activation Event', category: 'Superhero', aspect: 'portrait' },
+  { id: 3, src: fantasyImage, alt: 'Fantasy Elf Warrior AI Photo Booth Corporate Event NYC', category: 'Fantasy', aspect: 'portrait' },
+  { id: 4, src: retroImage, alt: 'AI Photo Booth 80s Synthwave Retro Style Transformation', category: 'Retro', aspect: 'portrait' },
+  { id: 5, src: corporateImage, alt: 'Professional AI Headshot Photo Booth for Corporate Events', category: 'Corporate', aspect: 'portrait' },
+  { id: 6, src: cyberpunkImage, alt: 'Cyberpunk Street Samurai AI Photo Booth Experience NYC', category: 'Cyberpunk', aspect: 'portrait' },
+  { id: 7, src: vintageImage, alt: 'Vintage Hollywood Glamour AI Portrait Photo Booth Rental', category: 'Vintage', aspect: 'portrait' },
+  { id: 8, src: pirateCosplayImage, alt: 'AI Photo Booth Pirate Cosplay Group Transformation Event', category: 'Cosplay', aspect: 'portrait' },
+  { id: 9, src: footballPlayerBlueImage, alt: 'AI Sports Portrait Football Player Stadium Photo Booth', category: 'Sports', aspect: 'portrait' },
+  { id: 10, src: nflPlayerGreenImage, alt: 'AI Generated NFL Player Professional Headshot Photo Booth', category: 'Sports', aspect: 'portrait' },
+  { id: 11, src: femaleAthleteImage, alt: 'AI Photo Booth Female Athlete Football Portrait Experience', category: 'Sports', aspect: 'portrait' },
 ];
 
 const Portfolio = () => {
