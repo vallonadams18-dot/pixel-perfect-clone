@@ -22,8 +22,8 @@ import pixelwearPuma from '@/assets/pixelwear-puma.jpg';
 import pixelwearPumaBefore from '@/assets/pixelwear-puma-before.jpg';
 
 const brandGallery = [
+  { before: pixelwearAdidasBefore, after: pixelwearAdidas, brand: 'Nike' },
   { before: pixelwearGucciBefore, after: pixelwearGucci, brand: 'Gucci' },
-  { before: pixelwearAdidasBefore, after: pixelwearAdidas, brand: 'Adidas' },
   { before: pixelwearLVBefore, after: pixelwearLV, brand: 'Louis Vuitton' },
   { before: pixelwearVersaceBefore, after: pixelwearVersace, brand: 'Versace' },
   { before: pixelwearSupremeBefore, after: pixelwearSupreme, brand: 'Supreme' },
