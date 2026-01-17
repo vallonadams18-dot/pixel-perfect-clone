@@ -6,7 +6,7 @@ import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import { Link } from 'react-router-dom';
 import { Shirt, Check, ArrowRight, Zap, Share2, Palette } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
-import pixelwearDemo from '@/assets/pixelwear-demo.jpg';
+import pixelwearSportsJersey from '@/assets/pixelwear-sports-jersey.jpg';
 import pixelwearBefore from '@/assets/pixelwear-before.jpg';
 import pixelwearGucci from '@/assets/pixelwear-gucci.jpg';
 import pixelwearGucciBefore from '@/assets/pixelwear-gucci-before.jpg';
@@ -157,11 +157,11 @@ const PixelWearPage = () => {
               
               <BeforeAfterSlider
                 beforeImage={pixelwearBefore}
-                afterImage={pixelwearDemo}
+                afterImage={pixelwearSportsJersey}
                 beforeLabel="Original"
-                afterLabel="Dior"
+                afterLabel="Sports Jersey"
                 beforeAlt="Original photo before PixelWear AI virtual try-on"
-                afterAlt="AI transformed photo with Dior branded apparel via PixelWear"
+                afterAlt="AI transformed photo with branded sports jersey via PixelWear"
               />
               
             </div>
