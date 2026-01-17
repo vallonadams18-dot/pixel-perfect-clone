@@ -7,6 +7,27 @@ import { Sparkles, Check, ArrowRight, Zap, Target, Image, Clock, Calendar } from
 import usePageMeta from '@/hooks/usePageMeta';
 import personaPopDemo from '@/assets/persona-pop-demo.jpg';
 
+// Gallery images with SEO-optimized filenames
+import corporateEventCaricature from '@/assets/persona-pop-corporate-event-caricature.jpg';
+import conferenceCaricature from '@/assets/persona-pop-conference-caricature-portrait.jpg';
+import pixarStyleCharacter from '@/assets/persona-pop-3d-pixar-style-character.jpg';
+import celebrationCaricature from '@/assets/persona-pop-celebration-caricature-art.jpg';
+import partyCaricature from '@/assets/persona-pop-party-caricature-portrait.jpg';
+import teamEventCaricature from '@/assets/persona-pop-team-event-caricature.jpg';
+import superheroFemale from '@/assets/persona-pop-superhero-transformation-female.jpg';
+import superheroMale from '@/assets/persona-pop-superhero-transformation-male.jpg';
+
+const galleryImages = [
+  { src: corporateEventCaricature, alt: 'Persona Pop AI caricature for corporate conference event with ServiceNow branding' },
+  { src: conferenceCaricature, alt: 'AI-generated caricature portrait for Knowledge conference NYC event attendee' },
+  { src: pixarStyleCharacter, alt: 'Persona Pop 3D Pixar-style AI character transformation with colorful city background' },
+  { src: celebrationCaricature, alt: 'AI photo booth celebration caricature art with confetti and elegant style' },
+  { src: partyCaricature, alt: 'Party caricature portrait from AI photo booth with music notes and stars' },
+  { src: teamEventCaricature, alt: 'Team event AI caricature transformation for corporate conference with matching shirts' },
+  { src: superheroFemale, alt: 'Persona Pop superhero transformation for female guest at NYC AI photo booth' },
+  { src: superheroMale, alt: 'AI photo booth superhero character transformation with cape and dynamic pose' },
+];
+
 const features = [
   {
     icon: Sparkles,
@@ -128,6 +149,34 @@ const PersonaPopPage = () => {
                 </div>
                 <figcaption className="sr-only">AI-powered character transformation maintaining guest likeness</figcaption>
               </figure>
+            </div>
+          </div>
+        </section>
+
+        {/* Gallery Section */}
+        <section className="section-padding">
+          <div className="container-custom">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
+              Transformation <span className="gradient-text">Gallery</span>
+            </h2>
+            <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
+              See the magic of Persona Pop in action—from caricatures to superheroes, every transformation is unique.
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {galleryImages.map((image, index) => (
+                <figure 
+                  key={index} 
+                  className="relative aspect-square rounded-xl overflow-hidden glass group cursor-pointer"
+                >
+                  <img 
+                    src={image.src}
+                    alt={image.alt}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </figure>
+              ))}
             </div>
           </div>
         </section>
