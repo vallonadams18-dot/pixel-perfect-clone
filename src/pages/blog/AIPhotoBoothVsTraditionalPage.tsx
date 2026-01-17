@@ -1,8 +1,9 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import SocialShareButtons from '@/components/SocialShareButtons';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Calendar, Clock, User, Linkedin, Twitter, Check, X } from 'lucide-react';
+import { ArrowRight, Calendar, Clock, User, Check, X } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
 import RelatedServices from '@/components/RelatedServices';
 
@@ -246,18 +247,10 @@ const AIPhotoBoothVsTraditionalPage = () => {
               </div>
             </article>
 
-            {/* Share Section */}
-            <div className="border-t border-border/30 pt-8 mt-12">
-              <div className="flex items-center gap-4">
-                <span className="text-muted-foreground">Share this article:</span>
-                <a href="#" className="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-primary/20 transition-colors">
-                  <Linkedin size={18} className="text-muted-foreground" />
-                </a>
-                <a href="#" className="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-primary/20 transition-colors">
-                  <Twitter size={18} className="text-muted-foreground" />
-                </a>
-              </div>
-            </div>
+            <SocialShareButtons 
+              title="AI Photo Booth vs Traditional Photo Booth: Which is Right for Your Event?"
+              url="https://pixelaipro.lovable.app/blog/ai-photo-booth-vs-traditional-photo-booth"
+            />
           </div>
         </div>
       </section>
