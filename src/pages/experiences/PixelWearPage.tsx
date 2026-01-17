@@ -113,9 +113,9 @@ const PixelWearPage = () => {
                 beforeImage={pixelwearBefore}
                 afterImage={pixelwearDemo}
                 beforeLabel="Original"
-                afterLabel="PixelWear"
+                afterLabel="Dior"
                 beforeAlt="Original photo before PixelWear AI virtual try-on"
-                afterAlt="AI transformed photo with branded Nike apparel via PixelWear"
+                afterAlt="AI transformed photo with Dior branded apparel via PixelWear"
               />
               
             </div>
