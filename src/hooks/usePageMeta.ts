@@ -6,6 +6,8 @@ interface PageMetaOptions {
   ogImage?: string;
   ogType?: string;
   canonicalPath?: string;
+  schema?: object | object[];
+  keywords?: string;
 }
 
 const BASE_URL = 'https://pixelaipro.lovable.app';
@@ -16,6 +18,8 @@ export const usePageMeta = ({
   ogImage,
   ogType = 'website',
   canonicalPath,
+  schema,
+  keywords,
 }: PageMetaOptions) => {
   useEffect(() => {
     // Set document title
@@ -38,6 +42,11 @@ export const usePageMeta = ({
 
     // Set meta description
     setMeta('meta[name="description"]', 'content', description);
+
+    // Set keywords if provided
+    if (keywords) {
+      setMeta('meta[name="keywords"]', 'content', keywords);
+    }
 
     // Set Open Graph tags
     setMeta('meta[property="og:title"]', 'content', title);
@@ -69,7 +78,34 @@ export const usePageMeta = ({
       const fullImageUrl = ogImage.startsWith('http') ? ogImage : `${BASE_URL}${ogImage}`;
       setMeta('meta[name="twitter:image"]', 'content', fullImageUrl);
     }
-  }, [title, description, ogImage, ogType, canonicalPath]);
+
+    // Inject JSON-LD schema
+    if (schema) {
+      const schemas = Array.isArray(schema) ? schema : [schema];
+      const schemaId = 'page-schema-ld';
+      
+      // Remove existing page-specific schema
+      const existingSchema = document.getElementById(schemaId);
+      if (existingSchema) {
+        existingSchema.remove();
+      }
+
+      // Create new schema script
+      const scriptEl = document.createElement('script');
+      scriptEl.id = schemaId;
+      scriptEl.type = 'application/ld+json';
+      scriptEl.textContent = JSON.stringify(schemas.length === 1 ? schemas[0] : schemas);
+      document.head.appendChild(scriptEl);
+
+      // Cleanup on unmount
+      return () => {
+        const schemaToRemove = document.getElementById(schemaId);
+        if (schemaToRemove) {
+          schemaToRemove.remove();
+        }
+      };
+    }
+  }, [title, description, ogImage, ogType, canonicalPath, schema, keywords]);
 };
 
 export default usePageMeta;

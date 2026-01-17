@@ -109,10 +109,50 @@ const useCases = [{
 }];
 const PersonaPopPage = () => {
   usePageMeta({
-    title: 'Persona Pop - AI Character Transformation Photo Booth NYC | PixelAI Pro',
-    description: 'Step into a new reality with Persona Pop AI transformations. Transform guests into action heroes, vintage icons, or custom brand characters. High-resolution prints & instant digital sharing for NYC events.',
+    title: 'AI Character Transformation Photo Booth NYC | Persona Pop | PixelAI Pro',
+    description: 'Transform guests into superheroes, anime characters, vintage icons & custom brand personas with AI. High-res prints & instant social sharing. Perfect for galas, product launches & NYC brand activations. Book demo!',
     ogImage: '/og-persona-pop.jpg',
-    canonicalPath: '/experiences/persona-pop'
+    canonicalPath: '/experiences/persona-pop',
+    keywords: 'AI character transformation, persona photo booth NYC, superhero transformation booth, anime AI photo booth, custom character activation, corporate event entertainment, interactive guest engagement',
+    schema: [
+      {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "Persona Pop AI Character Transformation",
+        "serviceType": "AI Character Transformation Photo Booth",
+        "description": "Transform event guests into captivating characters—superheroes, vintage icons, anime styles, or custom brand personas—using advanced AI that maintains their unique likeness.",
+        "provider": {
+          "@type": "LocalBusiness",
+          "@id": "https://pixelaipro.lovable.app/#business"
+        },
+        "areaServed": {
+          "@type": "City",
+          "name": "New York City"
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What character styles are available with Persona Pop?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Persona Pop offers unlimited styles including superheroes, anime, vintage fashion icons, futuristic cyborgs, classic paintings, fantasy characters, and fully custom brand personas designed specifically for your event theme."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How long does each AI transformation take?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Each transformation takes just seconds. Guests strike a pose, our AI seamlessly blends their likeness into the selected character, and they receive high-resolution digital images and optional premium prints within moments."
+            }
+          }
+        ]
+      }
+    ]
   });
   return <div className="min-h-screen bg-background">
       <Header />

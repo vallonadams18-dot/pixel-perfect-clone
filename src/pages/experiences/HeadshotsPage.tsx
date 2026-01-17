@@ -68,10 +68,66 @@ const benefits = [
 const HeadshotsPage = () => {
   const [selectedImage, setSelectedImage] = useState<typeof headshotGallery[0] | null>(null);
   usePageMeta({
-    title: 'AI Headshots NYC - Professional Portrait Photo Booth | PixelAI Pro',
-    description: 'Capture LinkedIn-ready professional headshots with AI technology. Neural enhancement delivers executive-grade portraits instantly at NYC events. Perfect for corporate conferences, networking events, and team building activations.',
+    title: 'AI Headshots for Events NYC | Corporate Conference Photo Booth | PixelAI Pro',
+    description: 'Instant AI-generated professional headshots for conferences & corporate events in NYC. LinkedIn-ready portraits in under 60 seconds. Trusted at Javits Center, trade shows & networking events. Book your demo!',
     ogImage: '/og-headshots.jpg',
     canonicalPath: '/experiences/headshots',
+    keywords: 'AI headshots NYC, corporate headshots event, conference headshot booth, professional portrait photo booth, LinkedIn headshots NYC, trade show headshots, instant AI portraits',
+    schema: [
+      {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "AI Headshots for Corporate Events",
+        "serviceType": "AI Professional Headshot Photo Booth",
+        "description": "Professional AI-enhanced headshots for conferences, trade shows, and corporate events. LinkedIn-ready portraits delivered instantly.",
+        "provider": {
+          "@type": "LocalBusiness",
+          "@id": "https://pixelaipro.lovable.app/#business"
+        },
+        "areaServed": {
+          "@type": "City",
+          "name": "New York City"
+        },
+        "offers": {
+          "@type": "Offer",
+          "availability": "https://schema.org/InStock",
+          "priceSpecification": {
+            "@type": "PriceSpecification",
+            "priceCurrency": "USD"
+          }
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How fast are AI headshots generated?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Our AI headshot booth generates professional, LinkedIn-ready portraits in under 60 seconds. Guests receive their enhanced headshot via email, SMS, or QR code instantly."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are AI headshots suitable for LinkedIn profiles?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes! Our AI optimizes portraits specifically for LinkedIn with proper dimensions, professional lighting enhancement, and clean backgrounds that meet corporate standards."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can you process entire teams at conferences?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Absolutely. Our batch processing handles high-volume events efficiently, capturing consistent professional headshots for entire teams with matching branding and quality."
+            }
+          }
+        ]
+      }
+    ]
   });
 
   return (
