@@ -73,9 +73,9 @@ const About = () => {
           </div>
 
           {/* Right Column - Visual */}
-          <div className="relative">
+          <div className="relative overflow-hidden">
             {/* Before/After Slider */}
-            <div className="glow">
+            <div className="glow mx-4 md:mx-0">
               <BeforeAfterSlider
                 beforeImage={beforeImage}
                 afterImage={afterImage}
@@ -84,13 +84,13 @@ const About = () => {
               />
             </div>
 
-            {/* Floating Stats Cards */}
-            <div className="absolute -top-6 -right-6 glass rounded-2xl p-4 animate-float">
+            {/* Floating Stats Cards - Hidden on mobile to prevent overflow */}
+            <div className="hidden md:block absolute -top-6 -right-6 glass rounded-2xl p-4 animate-float">
               <div className="font-display text-2xl font-bold gradient-text">500+</div>
               <div className="text-muted-foreground text-sm">Events</div>
             </div>
 
-            <div className="absolute -bottom-6 -left-6 glass rounded-2xl p-4 animate-float" style={{ animationDelay: '-2s' }}>
+            <div className="hidden md:block absolute -bottom-6 -left-6 glass rounded-2xl p-4 animate-float" style={{ animationDelay: '-2s' }}>
               <div className="font-display text-2xl font-bold gradient-text">2M+</div>
               <div className="text-muted-foreground text-sm">Photos Created</div>
             </div>
