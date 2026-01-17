@@ -44,6 +44,46 @@ const IdentityPage = () => {
     description: 'Create unforgettable brand experiences with Identity AI face-swap technology. Transform guests into brand mascots, superheroes, or campaign characters with 99% accuracy. Perfect for NYC entertainment marketing and brand activations.',
     ogImage: '/og-identity.jpg',
     canonicalPath: '/experiences/identity',
+    keywords: 'AI face swap photo booth, brand mascot transformation, character face swap NYC, superhero transformation booth, entertainment marketing activation',
+    schema: [
+      {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "Identity AI Face Swap",
+        "serviceType": "AI Face-Swap Photo Booth",
+        "description": "Enterprise-grade face-swap technology that transforms guests into brand mascots, superheroes, or campaign characters with 99% accuracy.",
+        "provider": {
+          "@type": "LocalBusiness",
+          "@id": "https://pixelaipro.lovable.app/#business"
+        },
+        "areaServed": {
+          "@type": "City",
+          "name": "New York City"
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How accurate is the Identity AI face-swap?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Identity achieves 99% face-swap accuracy using industry-leading neural networks. The technology ensures seamless, realistic face integration with brand characters and mascots while processing on-device for privacy."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can we create custom characters for Identity?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes! We build unlimited custom character templates for seasonal campaigns, product launches, and themed activations. Transform guests into your brand mascots, movie characters, sports legends, or any custom campaign hero."
+            }
+          }
+        ]
+      }
+    ]
   });
 
   return (
