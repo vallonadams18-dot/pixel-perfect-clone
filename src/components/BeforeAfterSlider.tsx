@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 interface BeforeAfterSliderProps {
   beforeImage: string;
@@ -7,6 +7,8 @@ interface BeforeAfterSliderProps {
   afterLabel?: string;
   beforeAlt?: string;
   afterAlt?: string;
+  autoplay?: boolean;
+  autoplayDuration?: number;
 }
 
 const BeforeAfterSlider = ({ 
@@ -15,13 +17,81 @@ const BeforeAfterSlider = ({
   beforeLabel = "Before", 
   afterLabel = "After",
   beforeAlt = "Original photo before AI transformation NYC photo booth",
-  afterAlt = "AI transformed portrait after photo booth experience NYC"
+  afterAlt = "AI transformed portrait after photo booth experience NYC",
+  autoplay = true,
+  autoplayDuration = 3000
 }: BeforeAfterSliderProps) => {
-  const [sliderPosition, setSliderPosition] = useState(50);
+  const [sliderPosition, setSliderPosition] = useState(85);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const [isUserInteracting, setIsUserInteracting] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<number>();
+
+  // Intersection Observer for autoplay
+  useEffect(() => {
+    if (!autoplay || hasAnimated) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasAnimated && !isUserInteracting) {
+            setIsAnimating(true);
+            setHasAnimated(true);
+            
+            // Animate from 85% (showing mostly before) to 15% (showing mostly after)
+            const startTime = performance.now();
+            const startPosition = 85;
+            const endPosition = 15;
+            
+            const animate = (currentTime: number) => {
+              const elapsed = currentTime - startTime;
+              const progress = Math.min(elapsed / autoplayDuration, 1);
+              
+              // Easing function for smooth animation
+              const easeInOutCubic = (t: number) => 
+                t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+              
+              const easedProgress = easeInOutCubic(progress);
+              const newPosition = startPosition + (endPosition - startPosition) * easedProgress;
+              
+              setSliderPosition(newPosition);
+              
+              if (progress < 1) {
+                animationRef.current = requestAnimationFrame(animate);
+              } else {
+                setIsAnimating(false);
+              }
+            };
+            
+            animationRef.current = requestAnimationFrame(animate);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [autoplay, autoplayDuration, hasAnimated, isUserInteracting]);
 
   const handleMove = (clientX: number) => {
     if (!containerRef.current) return;
+    
+    // Stop autoplay animation on user interaction
+    if (isAnimating && animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+      setIsAnimating(false);
+    }
+    setIsUserInteracting(true);
     
     const rect = containerRef.current.getBoundingClientRect();
     const x = clientX - rect.left;
