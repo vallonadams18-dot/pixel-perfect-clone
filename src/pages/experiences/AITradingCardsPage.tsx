@@ -76,10 +76,50 @@ const benefits = [
 
 const AITradingCardsPage = () => {
   usePageMeta({
-    title: 'AI Trading Cards NYC - Collectible Card Photo Booth | PixelAI Pro',
-    description: 'Create premium AI-generated trading cards with stylized portraits, custom stats, and collectible rarity tiers. Perfect for sports teams, gaming events, and NYC brand activations. NFC and AR integration available.',
+    title: 'AI Trading Cards Photo Booth NYC | Custom Collectible Cards | PixelAI Pro',
+    description: 'Create branded AI trading cards with custom stats & rarity tiers for sports events, conventions & brand activations in NYC. NFC & AR integration. Premium on-site printing. Book your demo!',
     ogImage: '/og-ai-trading-cards.jpg',
     canonicalPath: '/experiences/ai-trading-cards',
+    keywords: 'AI trading cards, custom trading card booth, sports trading cards event, collectible card photo booth NYC, branded trading cards, convention trading cards, NFC trading cards',
+    schema: [
+      {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "AI Trading Cards Photo Booth",
+        "serviceType": "Custom AI Trading Card Experience",
+        "description": "Premium AI-generated trading cards with stylized portraits, custom stats, rarity tiers, and optional NFC/AR integration for sports, gaming, and brand activations.",
+        "provider": {
+          "@type": "LocalBusiness",
+          "@id": "https://pixelaipro.lovable.app/#business"
+        },
+        "areaServed": {
+          "@type": "City",
+          "name": "New York City"
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What makes AI trading cards different from regular photo booth prints?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "AI trading cards transform guests into illustrated collectible art with custom stats, rarity tiers (Common, Rare, Legendary, Limited), holographic effects, and optional NFC chips that unlock digital experiences."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can we customize the trading card design for our brand?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes! We create fully custom card templates matching your brand identity, including logos, colors, custom stat categories, and themed art styles for sports teams, gaming events, or corporate activations."
+            }
+          }
+        ]
+      }
+    ]
   });
 
   return (

@@ -70,10 +70,50 @@ const benefits = [
 
 const PixelWearPage = () => {
   usePageMeta({
-    title: 'PixelWear - AI Virtual Try-On Photo Booth NYC | PixelAI Pro',
-    description: 'Transform event engagement with PixelWear AI virtual try-on technology. Guests instantly see themselves in your branded apparel—no inventory needed. Perfect for NYC retail activations, product launches, and brand experiences.',
+    title: 'AI Virtual Try-On Photo Booth NYC | Branded Apparel Activation | PixelAI Pro',
+    description: 'PixelWear AI lets guests instantly try on your branded apparel—no inventory needed. Perfect for retail activations, sports events & product launches in NYC. Increase merchandise engagement 400%. Book demo!',
     ogImage: '/og-pixelwear.jpg',
     canonicalPath: '/experiences/pixelwear',
+    keywords: 'AI virtual try-on, branded apparel photo booth, virtual merchandise booth NYC, retail activation photo booth, sports jersey try-on, fashion brand activation, product launch photo experience',
+    schema: [
+      {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "PixelWear AI Virtual Try-On",
+        "serviceType": "AI Virtual Try-On Photo Booth",
+        "description": "AI-powered virtual try-on technology that lets guests instantly see themselves in branded apparel without physical inventory. Perfect for retail activations and sports events.",
+        "provider": {
+          "@type": "LocalBusiness",
+          "@id": "https://pixelaipro.lovable.app/#business"
+        },
+        "areaServed": {
+          "@type": "City",
+          "name": "New York City"
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does AI virtual try-on work?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "PixelWear uses advanced AI to render realistic apparel on guests in under 3 seconds. Simply capture a photo, select from your merchandise catalog, and our AI creates a photorealistic try-on image ready for social sharing."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do we need to provide physical inventory?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No! That's the beauty of PixelWear. Showcase your entire merchandise catalog virtually—jerseys, t-shirts, hoodies—without any physical inventory, sizes, or shipping logistics."
+            }
+          }
+        ]
+      }
+    ]
   });
 
   return (
