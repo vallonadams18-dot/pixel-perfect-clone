@@ -103,6 +103,13 @@ const BeforeAfterSlider = ({
     handleMove(e.clientX);
   };
 
+  // Haptic feedback helper
+  const triggerHaptic = (duration: number = 10) => {
+    if ('vibrate' in navigator) {
+      navigator.vibrate(duration);
+    }
+  };
+
   const handleTouchMove = (e: TouchEvent) => {
     e.preventDefault();
     handleMove(e.touches[0].clientX);
@@ -111,6 +118,7 @@ const BeforeAfterSlider = ({
   const handleTouchStart = (e: TouchEvent) => {
     e.preventDefault();
     setIsUserInteracting(true);
+    triggerHaptic(15); // Initial haptic on touch start
     if (isAnimating && animationRef.current) {
       cancelAnimationFrame(animationRef.current);
       setIsAnimating(false);
