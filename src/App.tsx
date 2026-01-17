@@ -17,7 +17,18 @@ import PersonaPopPage from "./pages/experiences/PersonaPopPage";
 import AIVideoBoothsPage from "./pages/experiences/AIVideoBoothsPage";
 import HeadshotsPage from "./pages/experiences/HeadshotsPage";
 import AITradingCardsPage from "./pages/experiences/AITradingCardsPage";
+// Location Pages
 import NYCPage from "./pages/locations/NYCPage";
+import LosAngelesPage from "./pages/locations/LosAngelesPage";
+import NewJerseyPage from "./pages/locations/NewJerseyPage";
+import AtlantaPage from "./pages/locations/AtlantaPage";
+import LasVegasPage from "./pages/locations/LasVegasPage";
+import CaliforniaPage from "./pages/locations/CaliforniaPage";
+import SanFranciscoPage from "./pages/locations/SanFranciscoPage";
+import PennsylvaniaPage from "./pages/locations/PennsylvaniaPage";
+import OrlandoPage from "./pages/locations/OrlandoPage";
+import ChicagoPage from "./pages/locations/ChicagoPage";
+import MiamiPage from "./pages/locations/MiamiPage";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +55,26 @@ const App = () => (
           {/* Location Pages */}
           <Route path="/locations/nyc" element={<NYCPage />} />
           <Route path="/ai-photo-booth-rental-nyc" element={<NYCPage />} />
+          <Route path="/locations/los-angeles" element={<LosAngelesPage />} />
+          <Route path="/ai-photo-booth-rental-los-angeles" element={<LosAngelesPage />} />
+          <Route path="/locations/new-jersey" element={<NewJerseyPage />} />
+          <Route path="/ai-photo-booth-rental-new-jersey" element={<NewJerseyPage />} />
+          <Route path="/locations/atlanta" element={<AtlantaPage />} />
+          <Route path="/ai-photo-booth-rental-atlanta" element={<AtlantaPage />} />
+          <Route path="/locations/las-vegas" element={<LasVegasPage />} />
+          <Route path="/ai-photo-booth-rental-las-vegas" element={<LasVegasPage />} />
+          <Route path="/locations/california" element={<CaliforniaPage />} />
+          <Route path="/ai-photo-booth-rental-california" element={<CaliforniaPage />} />
+          <Route path="/locations/san-francisco" element={<SanFranciscoPage />} />
+          <Route path="/ai-photo-booth-rental-san-francisco" element={<SanFranciscoPage />} />
+          <Route path="/locations/pennsylvania" element={<PennsylvaniaPage />} />
+          <Route path="/ai-photo-booth-rental-pennsylvania" element={<PennsylvaniaPage />} />
+          <Route path="/locations/orlando" element={<OrlandoPage />} />
+          <Route path="/ai-photo-booth-rental-orlando" element={<OrlandoPage />} />
+          <Route path="/locations/chicago" element={<ChicagoPage />} />
+          <Route path="/ai-photo-booth-rental-chicago" element={<ChicagoPage />} />
+          <Route path="/locations/miami" element={<MiamiPage />} />
+          <Route path="/ai-photo-booth-rental-miami" element={<MiamiPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

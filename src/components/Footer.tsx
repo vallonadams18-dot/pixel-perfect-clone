@@ -5,11 +5,9 @@ const footerLinks = {
   services: [
     { name: 'AI Photo Booth Rental', href: '/services' },
     { name: 'AI Trading Cards', href: '/experiences/ai-trading-cards' },
-    { name: 'AI Headshots NYC', href: '/experiences/headshots' },
+    { name: 'AI Headshots', href: '/experiences/headshots' },
     { name: 'AI Video Booths', href: '/experiences/ai-video-booths' },
     { name: 'PixelWear Virtual Try-On', href: '/experiences/pixelwear' },
-    { name: 'Identity Face Swap', href: '/experiences/identity' },
-    { name: 'Co-Star Celebrity Photos', href: '/experiences/co-star' },
     { name: 'Persona Pop Cards', href: '/experiences/persona-pop' },
   ],
   company: [
@@ -18,10 +16,17 @@ const footerLinks = {
     { name: 'Contact Us', href: '/contact' },
   ],
   locations: [
-    { name: 'AI Photo Booth NYC', href: '/contact' },
-    { name: 'Javits Center Events', href: '/contact' },
-    { name: 'Manhattan Activations', href: '/contact' },
-    { name: 'Brooklyn Events', href: '/contact' },
+    { name: 'New York City', href: '/locations/nyc' },
+    { name: 'Los Angeles', href: '/locations/los-angeles' },
+    { name: 'Las Vegas', href: '/locations/las-vegas' },
+    { name: 'Chicago', href: '/locations/chicago' },
+    { name: 'Miami', href: '/locations/miami' },
+    { name: 'San Francisco', href: '/locations/san-francisco' },
+    { name: 'Atlanta', href: '/locations/atlanta' },
+    { name: 'Orlando', href: '/locations/orlando' },
+    { name: 'New Jersey', href: '/locations/new-jersey' },
+    { name: 'Pennsylvania', href: '/locations/pennsylvania' },
+    { name: 'California', href: '/locations/california' },
   ],
 };
 
@@ -100,10 +105,10 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* NYC Locations */}
+          {/* Service Locations */}
           <div>
-            <h4 className="font-display font-semibold text-foreground mb-4">NYC Locations</h4>
-            <ul className="space-y-3">
+            <h4 className="font-display font-semibold text-foreground mb-4">Service Areas</h4>
+            <ul className="space-y-2">
               {footerLinks.locations.map((link) => (
                 <li key={link.name}>
                   <Link to={link.href} className="text-muted-foreground hover:text-primary transition-colors text-sm">
