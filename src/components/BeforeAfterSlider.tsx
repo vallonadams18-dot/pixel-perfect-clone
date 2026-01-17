@@ -142,7 +142,8 @@ const BeforeAfterSlider = ({
   return (
     <div 
       ref={containerRef}
-      className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden cursor-ew-resize select-none group touch-none"
+      className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden cursor-ew-resize select-none group touch-none will-change-auto"
+      style={{ WebkitOverflowScrolling: 'touch', touchAction: 'none' }}
       onMouseMove={handleMouseMove}
     >
       {/* After Image (Background) */}
