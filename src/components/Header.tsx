@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown, MapPin } from 'lucide-react';
 import heroImage from '@/assets/hero-background.jpg';
+import logoImage from '@/assets/pixelai-pro-logo.png';
 
 const navLinks = [
   { name: 'Home', href: '/' },
@@ -69,11 +70,15 @@ const Header = () => {
 
       <div className="container-custom relative z-10 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center">
-            <span className="font-display font-bold text-xl text-white">P</span>
-          </div>
-          <span className="font-display font-bold text-xl text-foreground">
+        <Link to="/" className="flex items-center gap-3">
+          <img 
+            src={logoImage} 
+            alt="PixelAI Pro Logo" 
+            className="h-10 w-auto"
+            loading="eager"
+            decoding="async"
+          />
+          <span className="font-display font-bold text-xl text-foreground hidden sm:inline">
             Pixel<span className="gradient-text">AI</span> Pro
           </span>
         </Link>
