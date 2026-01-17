@@ -84,6 +84,8 @@ const AIPhotoBoothVsTraditionalPage = () => {
             <img
               src="/og-headshots.jpg"
               alt="AI photo booth vs traditional photo booth comparison"
+              loading="lazy"
+              decoding="async"
               className="w-full rounded-2xl"
             />
           </div>

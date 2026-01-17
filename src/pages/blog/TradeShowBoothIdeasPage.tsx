@@ -115,6 +115,8 @@ const TradeShowBoothIdeasPage = () => {
             <img
               src="/og-ai-trading-cards.jpg"
               alt="Trade show booth with AI-powered experiences"
+              loading="lazy"
+              decoding="async"
               className="w-full rounded-2xl"
             />
           </div>

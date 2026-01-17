@@ -198,7 +198,7 @@ const PersonaPopPage = () => {
               </div>
               
               <figure className="relative aspect-[3/4] rounded-3xl overflow-hidden glass glow group">
-                <img src={personaPopDemo} alt="Persona Pop AI character transformation - guest transformed into stylized portrait" className="w-full h-full object-cover" loading="eager" />
+                <img src={personaPopDemo} alt="Persona Pop AI character transformation - guest transformed into stylized portrait" className="w-full h-full object-cover" loading="eager" decoding="async" fetchPriority="high" />
                 {/* Text overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex flex-col justify-end p-6">
                   <p className="text-white/90 text-sm font-medium uppercase tracking-wider mb-1">AI Character Transformation</p>

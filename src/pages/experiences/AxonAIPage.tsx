@@ -92,6 +92,8 @@ const AxonAIPage = () => {
                   alt="AXON AI autonomous robot photo booth with LIDAR navigation for NYC events - futuristic AI-powered event photography robot"
                   className="w-full h-full object-cover"
                   loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
                 />
                 <figcaption className="sr-only">AXON AI robot photo booth featuring advanced LIDAR navigation technology for autonomous event photography</figcaption>
               </figure>

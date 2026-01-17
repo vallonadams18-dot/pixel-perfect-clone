@@ -32,6 +32,8 @@ const BrandTicker = () => {
               <img
                 src={`https://logo.clearbit.com/${brand.domain}`}
                 alt={`${brand.name} logo`}
+                loading="lazy"
+                decoding="async"
                 className="w-8 h-8 object-contain grayscale hover:grayscale-0 transition-all duration-300"
                 onError={(e) => {
                   // Fallback to placeholder if logo fails to load
