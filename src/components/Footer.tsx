@@ -15,6 +15,7 @@ const footerLinks = {
     { name: 'About PixelAI Pro', href: '/about' },
     { name: 'AI Photo Booth Portfolio', href: '/portfolio' },
     { name: 'Proposals & Case Studies', href: '/proposals' },
+    { name: 'Case Studies', href: '/case-studies' },
     { name: 'Contact Us', href: '/contact' },
   ],
   locations: [
