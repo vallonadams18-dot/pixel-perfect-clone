@@ -33,6 +33,9 @@ import MiamiPage from "./pages/locations/MiamiPage";
 import BlogPage from "./pages/BlogPage";
 import CustomAIFiltersPage from "./pages/blog/CustomAIFiltersPage";
 import InteractiveGuestEngagementPage from "./pages/blog/InteractiveGuestEngagementPage";
+import AIPhotoBoothVsTraditionalPage from "./pages/blog/AIPhotoBoothVsTraditionalPage";
+import TradeShowBoothIdeasPage from "./pages/blog/TradeShowBoothIdeasPage";
+import CorporateHeadshotTrendsPage from "./pages/blog/CorporateHeadshotTrendsPage";
 
 const queryClient = new QueryClient();
 
@@ -83,6 +86,9 @@ const App = () => (
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/custom-ai-filters-for-events" element={<CustomAIFiltersPage />} />
           <Route path="/blog/interactive-guest-engagement-ideas" element={<InteractiveGuestEngagementPage />} />
+          <Route path="/blog/ai-photo-booth-vs-traditional-photo-booth" element={<AIPhotoBoothVsTraditionalPage />} />
+          <Route path="/blog/trade-show-booth-ideas-that-drive-leads" element={<TradeShowBoothIdeasPage />} />
+          <Route path="/blog/corporate-headshot-trends" element={<CorporateHeadshotTrendsPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
