@@ -38,6 +38,7 @@ import TradeShowBoothIdeasPage from "./pages/blog/TradeShowBoothIdeasPage";
 import CorporateHeadshotTrendsPage from "./pages/blog/CorporateHeadshotTrendsPage";
 // Proposals Page
 import ProposalsPage from "./pages/ProposalsPage";
+import CaseStudiesPage from "./pages/CaseStudiesPage";
 
 const queryClient = new QueryClient();
 
@@ -93,6 +94,7 @@ const App = () => (
           <Route path="/blog/corporate-headshot-trends" element={<CorporateHeadshotTrendsPage />} />
           {/* Proposals Page */}
           <Route path="/proposals" element={<ProposalsPage />} />
+          <Route path="/case-studies" element={<CaseStudiesPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
