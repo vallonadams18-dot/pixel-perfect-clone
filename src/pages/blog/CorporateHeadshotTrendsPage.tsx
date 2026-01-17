@@ -1,5 +1,6 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Calendar, Clock, User, Linkedin, Twitter, Camera, Sparkles, Clock3, DollarSign } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -69,10 +70,10 @@ const CorporateHeadshotTrendsPage = () => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px]" />
         
         <div className="container-custom relative z-10">
-          <Link to="/blog" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-8 transition-colors">
-            <ArrowLeft size={16} />
-            Back to Blog
-          </Link>
+          <Breadcrumbs items={[
+            { label: 'Blog', href: '/blog' },
+            { label: 'Corporate Headshot Trends' }
+          ]} />
           
           <div className="max-w-4xl">
             <span className="text-sm font-semibold text-primary uppercase tracking-wider">

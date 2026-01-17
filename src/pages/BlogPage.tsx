@@ -1,5 +1,6 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Calendar, Clock, User } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -86,14 +87,17 @@ const BlogPage = () => {
       <section className="relative pt-32 pb-16 overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px]" />
         
-        <div className="container-custom relative z-10 text-center">
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
-            AI Photo Booth <span className="gradient-text">Insights</span>
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Expert tips on event marketing, AI technology, and experiential activations 
-            to help you create unforgettable brand experiences.
-          </p>
+        <div className="container-custom relative z-10">
+          <Breadcrumbs items={[{ label: 'Blog' }]} />
+          <div className="text-center">
+            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
+              AI Photo Booth <span className="gradient-text">Insights</span>
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Expert tips on event marketing, AI technology, and experiential activations 
+              to help you create unforgettable brand experiences.
+            </p>
+          </div>
         </div>
       </section>
 

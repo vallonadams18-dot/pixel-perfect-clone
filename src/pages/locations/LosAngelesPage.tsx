@@ -1,5 +1,6 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
 import { ArrowRight, MapPin, Star, Check, Building2, Calendar, Users, Trophy } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -155,6 +156,10 @@ const LosAngelesPage = () => {
         <div className="container-custom relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
+              <Breadcrumbs items={[
+                { label: 'Locations', href: '/locations/los-angeles' },
+                { label: 'Los Angeles' }
+              ]} />
               <div className="inline-flex items-center gap-2 glass px-4 py-2 rounded-full mb-6">
                 <MapPin size={16} className="text-primary" />
                 <span className="text-sm text-muted-foreground">Serving All Los Angeles Venues</span>
