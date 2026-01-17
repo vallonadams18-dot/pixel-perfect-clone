@@ -44,6 +44,46 @@ const AIVideoBoothsPage = () => {
     description: 'Transform event video into stunning stylized content with AI Video Booths. Neural networks create anime, cyberpunk, and custom artistic styles in real-time. Perfect for NYC brand activations, trade shows, and experiential marketing.',
     ogImage: '/og-ai-video-booths.jpg',
     canonicalPath: '/experiences/ai-video-booths',
+    keywords: 'AI video booth NYC, video transformation booth, neural video processing, anime video booth, event video content, TikTok video booth, Instagram Reels booth',
+    schema: [
+      {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "AI Video Booths",
+        "serviceType": "Neural Video Transformation Booth",
+        "description": "AI-powered video booths that transform ordinary footage into stylized masterpieces using neural networks. Creates anime, cyberpunk, and custom artistic styles in real-time.",
+        "provider": {
+          "@type": "LocalBusiness",
+          "@id": "https://pixelaipro.lovable.app/#business"
+        },
+        "areaServed": {
+          "@type": "City",
+          "name": "New York City"
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How long does AI video processing take?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Our neural network processes video transformations in under 30 seconds. Guests record a short clip, choose their style (anime, cyberpunk, oil painting, etc.), and receive their transformed video optimized for TikTok, Instagram Reels, or YouTube Shorts."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What video styles are available?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "We offer multiple artistic styles including anime, oil painting, cyberpunk, watercolor, and custom brand-specific aesthetics. Each style transforms ordinary footage into stunning stylized content that stops the scroll on social media."
+            }
+          }
+        ]
+      }
+    ]
   });
 
   return (

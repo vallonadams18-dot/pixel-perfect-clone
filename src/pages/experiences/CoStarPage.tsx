@@ -60,6 +60,46 @@ const CoStarPage = () => {
     description: 'Create memorable celebrity photo experiences with Co-Star AI technology. Place guests in professional portraits next to any celebrity or athlete. Perfect for NYC fan experiences, brand activations, and entertainment marketing.',
     ogImage: '/og-co-star.jpg',
     canonicalPath: '/experiences/co-star',
+    keywords: 'AI celebrity photos, celebrity photo booth NYC, fan experience photo booth, athlete photo experience, entertainment marketing booth, VIP photo activation',
+    schema: [
+      {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": "Co-Star AI Celebrity Photo Experience",
+        "serviceType": "AI Celebrity Photo Booth",
+        "description": "Create memorable celebrity photo experiences with AI technology that places guests in professional portraits alongside celebrities and athletes.",
+        "provider": {
+          "@type": "LocalBusiness",
+          "@id": "https://pixelaipro.lovable.app/#business"
+        },
+        "areaServed": {
+          "@type": "City",
+          "name": "New York City"
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does Co-Star create celebrity photos?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Co-Star uses advanced AI compositing with licensed celebrity digital doubles. Professional lighting matching ensures seamless integration that looks like an actual celebrity photo op, creating studio-quality results for every guest."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can we use our brand ambassadors with Co-Star?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes! We can integrate your brand ambassadors, athletes, or talent partners. We also help secure licensed partnerships with our network of celebrity talent for authentic, legally-compliant activations."
+            }
+          }
+        ]
+      }
+    ]
   });
 
   return (
