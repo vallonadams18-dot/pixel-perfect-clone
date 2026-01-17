@@ -56,6 +56,8 @@ const Header = () => {
             isScrolled ? 'opacity-60 blur-[1px]' : 'opacity-70 blur-[0.5px]'
           }`}
           loading="eager"
+          decoding="async"
+          fetchPriority="high"
         />
         {/* Stronger glass overlay when scrolled for readability */}
         <div className={`absolute inset-0 transition-all duration-300 ${

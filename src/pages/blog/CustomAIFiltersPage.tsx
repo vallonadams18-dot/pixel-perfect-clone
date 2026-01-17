@@ -84,6 +84,8 @@ const CustomAIFiltersPage = () => {
             <img
               src="/og-persona-pop.jpg"
               alt="Custom AI filters transforming guests at a corporate event"
+              loading="lazy"
+              decoding="async"
               className="w-full rounded-2xl"
             />
           </div>

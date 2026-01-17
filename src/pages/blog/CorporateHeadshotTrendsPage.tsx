@@ -107,6 +107,8 @@ const CorporateHeadshotTrendsPage = () => {
             <img
               src="/og-headshots.jpg"
               alt="Professional AI-generated corporate headshots"
+              loading="lazy"
+              decoding="async"
               className="w-full rounded-2xl"
             />
           </div>

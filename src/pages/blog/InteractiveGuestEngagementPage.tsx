@@ -162,6 +162,8 @@ const InteractiveGuestEngagementPage = () => {
             <img
               src="/og-ai-video-booths.jpg"
               alt="Interactive guest engagement at a corporate event"
+              loading="lazy"
+              decoding="async"
               className="w-full rounded-2xl"
             />
           </div>

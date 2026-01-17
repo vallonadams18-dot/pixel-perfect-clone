@@ -14,6 +14,8 @@ const Hero = () => {
           alt="AI Photo Booth Rental NYC - Brand Activation Event Experience" 
           className="w-full h-full object-cover opacity-90 blur-[0.5px] scale-105"
           loading="eager"
+          decoding="async"
+          fetchPriority="high"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/55 via-background/35 to-background/70" />
       </div>

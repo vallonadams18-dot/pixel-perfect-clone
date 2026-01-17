@@ -119,6 +119,7 @@ const BeforeAfterSlider = ({
         src={afterImage} 
         alt={afterAlt}
         loading="lazy"
+        decoding="async"
         className="absolute inset-0 w-full h-full object-cover"
       />
       
@@ -131,6 +132,7 @@ const BeforeAfterSlider = ({
           src={beforeImage} 
           alt={beforeAlt}
           loading="lazy"
+          decoding="async"
           className="absolute inset-0 w-full h-full object-cover"
         />
       </div>
