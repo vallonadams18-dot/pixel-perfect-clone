@@ -24,7 +24,7 @@ import renaissancePainting from '@/assets/persona-pop-renaissance-painting-portr
 import popArtComic from '@/assets/persona-pop-pop-art-comic-style.jpg';
 
 const galleryImages = [
-  { src: corporateEventCaricature, alt: 'Persona Pop AI caricature for corporate conference event with ServiceNow branding' },
+  { src: animeStyle, alt: 'AI photo booth anime style transformation with colorful hair and cherry blossoms' },
   { src: animeStyle, alt: 'AI photo booth anime style transformation with colorful hair and cherry blossoms' },
   { src: vintage1920s, alt: 'Vintage 1920s art deco style AI portrait transformation with gatsby era glamour' },
   { src: fantasyElf, alt: 'Fantasy elf warrior AI transformation with magical glowing eyes and Celtic armor' },
