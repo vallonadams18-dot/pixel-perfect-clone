@@ -17,6 +17,7 @@ import PersonaPopPage from "./pages/experiences/PersonaPopPage";
 import AIVideoBoothsPage from "./pages/experiences/AIVideoBoothsPage";
 import HeadshotsPage from "./pages/experiences/HeadshotsPage";
 import AITradingCardsPage from "./pages/experiences/AITradingCardsPage";
+import NYCPage from "./pages/locations/NYCPage";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,9 @@ const App = () => (
           <Route path="/experiences/ai-video-booths" element={<AIVideoBoothsPage />} />
           <Route path="/experiences/headshots" element={<HeadshotsPage />} />
           <Route path="/experiences/ai-trading-cards" element={<AITradingCardsPage />} />
+          {/* Location Pages */}
+          <Route path="/locations/nyc" element={<NYCPage />} />
+          <Route path="/ai-photo-booth-rental-nyc" element={<NYCPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
