@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, MapPin, Star, Check, Building2, Calendar, Users, Trophy } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
-import beforeImage from '@/assets/before-transformation.jpg';
+import beforeImage from '@/assets/before-transformation-4k.jpg';
 import afterImage from '@/assets/after-transformation.jpg';
 
 const venues = [
