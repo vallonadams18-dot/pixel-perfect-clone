@@ -107,6 +107,7 @@ const ChicagoPage = () => {
           "postalCode": "60601",
           "addressCountry": "US"
         },
+        "telephone": "+1-917-724-6051",
         "geo": {
           "@type": "GeoCoordinates",
           "latitude": "41.8781",
@@ -181,9 +182,9 @@ const ChicagoPage = () => {
                 <Link to="/contact" className="btn-primary inline-flex items-center gap-2">
                   Get Free Chicago Quote <ArrowRight size={20} />
                 </Link>
-                <Link to="/portfolio" className="btn-secondary inline-flex items-center gap-2">
-                  View Chicago Portfolio
-                </Link>
+                <a href="tel:+19177246051" className="btn-secondary inline-flex items-center gap-2">
+                  Call (917) 724-6051
+                </a>
               </div>
               
               <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
@@ -373,8 +374,8 @@ const ChicagoPage = () => {
                 <Link to="/contact" className="btn-primary inline-flex items-center gap-2">
                   Get Free Chicago Quote <ArrowRight size={20} />
                 </Link>
-                <a href="tel:+1234567890" className="btn-secondary inline-flex items-center gap-2">
-                  Call for Same-Day Booking
+                <a href="tel:+19177246051" className="btn-secondary inline-flex items-center gap-2">
+                  Call (917) 724-6051
                 </a>
               </div>
             </div>
