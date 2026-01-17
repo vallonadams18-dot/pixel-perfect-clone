@@ -36,6 +36,8 @@ import InteractiveGuestEngagementPage from "./pages/blog/InteractiveGuestEngagem
 import AIPhotoBoothVsTraditionalPage from "./pages/blog/AIPhotoBoothVsTraditionalPage";
 import TradeShowBoothIdeasPage from "./pages/blog/TradeShowBoothIdeasPage";
 import CorporateHeadshotTrendsPage from "./pages/blog/CorporateHeadshotTrendsPage";
+// Proposals Page
+import ProposalsPage from "./pages/ProposalsPage";
 
 const queryClient = new QueryClient();
 
@@ -89,6 +91,8 @@ const App = () => (
           <Route path="/blog/ai-photo-booth-vs-traditional-photo-booth" element={<AIPhotoBoothVsTraditionalPage />} />
           <Route path="/blog/trade-show-booth-ideas-that-drive-leads" element={<TradeShowBoothIdeasPage />} />
           <Route path="/blog/corporate-headshot-trends" element={<CorporateHeadshotTrendsPage />} />
+          {/* Proposals Page */}
+          <Route path="/proposals" element={<ProposalsPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
