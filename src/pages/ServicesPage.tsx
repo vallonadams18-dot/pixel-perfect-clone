@@ -1,6 +1,7 @@
 import Header from '@/components/Header';
 import Services from '@/components/Services';
 import Footer from '@/components/Footer';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import usePageMeta from '@/hooks/usePageMeta';
 
 const ServicesPage = () => {
@@ -79,6 +80,9 @@ const ServicesPage = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <div className="pt-32">
+        <div className="container-custom">
+          <Breadcrumbs items={[{ label: 'Services' }]} />
+        </div>
         <Services />
       </div>
       <Footer />
