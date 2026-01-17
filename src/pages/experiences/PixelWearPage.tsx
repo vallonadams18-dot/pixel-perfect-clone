@@ -20,10 +20,16 @@ import pixelwearSupreme from '@/assets/pixelwear-supreme.jpg';
 import pixelwearSupremeBefore from '@/assets/pixelwear-supreme-before.jpg';
 import pixelwearPuma from '@/assets/pixelwear-puma.jpg';
 import pixelwearPumaBefore from '@/assets/pixelwear-puma-before.jpg';
+import pixelwearCowboys from '@/assets/pixelwear-cowboys.jpg';
+import pixelwearCowboysBefore from '@/assets/pixelwear-cowboys-before.jpg';
+import pixelwearGiants from '@/assets/pixelwear-giants.jpg';
+import pixelwearGiantsBefore from '@/assets/pixelwear-giants-before.jpg';
 
 const brandGallery = [
   { before: pixelwearNikeBefore, after: pixelwearNike, brand: 'Nike' },
   { before: pixelwearGucciBefore, after: pixelwearGucci, brand: 'Gucci' },
+  { before: pixelwearCowboysBefore, after: pixelwearCowboys, brand: 'Dallas Cowboys' },
+  { before: pixelwearGiantsBefore, after: pixelwearGiants, brand: 'NY Giants' },
   { before: pixelwearLVBefore, after: pixelwearLV, brand: 'Louis Vuitton' },
   { before: pixelwearVersaceBefore, after: pixelwearVersace, brand: 'Versace' },
   { before: pixelwearSupremeBefore, after: pixelwearSupreme, brand: 'Supreme' },
