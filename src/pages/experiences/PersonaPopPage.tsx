@@ -22,89 +22,99 @@ import fantasyElf from '@/assets/persona-pop-fantasy-elf-warrior.jpg';
 import cyberpunkNeon from '@/assets/persona-pop-cyberpunk-neon-portrait.jpg';
 import renaissancePainting from '@/assets/persona-pop-renaissance-painting-portrait.jpg';
 import popArtComic from '@/assets/persona-pop-pop-art-comic-style.jpg';
-
-const galleryImages = [
-  { src: animeStyle, alt: 'AI photo booth anime style transformation with colorful hair and cherry blossoms' },
-  { src: animeStyle, alt: 'AI photo booth anime style transformation with colorful hair and cherry blossoms' },
-  { src: vintage1920s, alt: 'Vintage 1920s art deco style AI portrait transformation with gatsby era glamour' },
-  { src: fantasyElf, alt: 'Fantasy elf warrior AI transformation with magical glowing eyes and Celtic armor' },
-  { src: conferenceCaricature, alt: 'AI-generated caricature portrait for Knowledge conference NYC event attendee' },
-  { src: cyberpunkNeon, alt: 'Cyberpunk neon AI photo booth portrait with futuristic visor and city lights' },
-  { src: pixarStyleCharacter, alt: 'Persona Pop 3D Pixar-style AI character transformation with colorful city background' },
-  { src: renaissancePainting, alt: 'Renaissance oil painting style AI portrait with baroque dress and dramatic lighting' },
-  { src: celebrationCaricature, alt: 'AI photo booth celebration caricature art with confetti and elegant style' },
-  { src: popArtComic, alt: 'Pop art comic book style AI transformation with bold halftone dots and speech bubble' },
-  { src: partyCaricature, alt: 'Party caricature portrait from AI photo booth with music notes and stars' },
-  { src: teamEventCaricature, alt: 'Team event AI caricature transformation for corporate conference with matching shirts' },
-  { src: superheroFemale, alt: 'Persona Pop superhero transformation for female guest at NYC AI photo booth' },
-  { src: superheroMale, alt: 'AI photo booth superhero character transformation with cape and dynamic pose' },
-];
-
-const features = [
-  {
-    icon: Sparkles,
-    title: 'Unforgettable Guest Engagement',
-    description: 'Provide an interactive, personalized experience that guests will talk about long after the event ends. It\'s an instant conversation starter and a powerful way to make them feel special.'
-  },
-  {
-    icon: Target,
-    title: 'Tailored Branding Opportunities',
-    description: 'From corporate mascots to themed event characters, we custom-design personas that perfectly align with your brand, message, or event theme. Reinforce your identity in a fun, shareable way.'
-  },
-  {
-    icon: Image,
-    title: 'High-Quality Digital & Print Assets',
-    description: 'Guests receive stunning, high-resolution digital images perfect for immediate social media sharing. Premium print-outs available as unique keepsakes they\'ll treasure.'
-  },
-  {
-    icon: Clock,
-    title: 'Effortless & Instant',
-    description: 'Our intuitive PixelAI Pro booth makes the process seamless. Guests strike a pose, and within seconds, their personalized persona is ready to view, share, or print.'
-  },
-  {
-    icon: Calendar,
-    title: 'Versatile for Any Occasion',
-    description: 'Ideal for corporate galas, product launches, brand activations, holiday parties, weddings, and more. Persona Pop adapts to create magic at any event.'
-  },
-];
-
-const transformationExamples = [
-  'Action Heroes',
-  'Vintage Fashion Icons',
-  'Futuristic Cyborgs',
-  'Classic Paintings',
-  'Fantasy Characters',
-  'Pop Art Legends',
-];
-
-const benefits = [
-  'Complete identity swap while maintaining guest likeness',
-  'Instant social media-ready content generation',
-  'Custom-designed themes for brand alignment',
-  'High-resolution digital and premium print delivery',
-  'Proven engagement at venues like TAO Downtown',
-  'Seamless integration with any event format',
-];
-
-const useCases = [
-  { title: 'Corporate Galas', desc: 'Transform executives into themed characters that match your company culture.' },
-  { title: 'Product Launches', desc: 'Create buzz with personas that embody your new product\'s identity.' },
-  { title: 'Brand Activations', desc: 'Turn attendees into brand ambassadors with custom character designs.' },
-  { title: 'Holiday Parties', desc: 'Festive transformations that capture the spirit of the season.' },
-  { title: 'Weddings & Celebrations', desc: 'Unique keepsakes guests will cherish forever.' },
-  { title: 'Trade Shows & Conferences', desc: 'Stand out from the crowd with memorable booth experiences.' },
-];
-
+const galleryImages = [{
+  src: animeStyle,
+  alt: 'AI photo booth anime style transformation with colorful hair and cherry blossoms'
+}, {
+  src: animeStyle,
+  alt: 'AI photo booth anime style transformation with colorful hair and cherry blossoms'
+}, {
+  src: vintage1920s,
+  alt: 'Vintage 1920s art deco style AI portrait transformation with gatsby era glamour'
+}, {
+  src: fantasyElf,
+  alt: 'Fantasy elf warrior AI transformation with magical glowing eyes and Celtic armor'
+}, {
+  src: conferenceCaricature,
+  alt: 'AI-generated caricature portrait for Knowledge conference NYC event attendee'
+}, {
+  src: cyberpunkNeon,
+  alt: 'Cyberpunk neon AI photo booth portrait with futuristic visor and city lights'
+}, {
+  src: pixarStyleCharacter,
+  alt: 'Persona Pop 3D Pixar-style AI character transformation with colorful city background'
+}, {
+  src: renaissancePainting,
+  alt: 'Renaissance oil painting style AI portrait with baroque dress and dramatic lighting'
+}, {
+  src: celebrationCaricature,
+  alt: 'AI photo booth celebration caricature art with confetti and elegant style'
+}, {
+  src: popArtComic,
+  alt: 'Pop art comic book style AI transformation with bold halftone dots and speech bubble'
+}, {
+  src: partyCaricature,
+  alt: 'Party caricature portrait from AI photo booth with music notes and stars'
+}, {
+  src: teamEventCaricature,
+  alt: 'Team event AI caricature transformation for corporate conference with matching shirts'
+}, {
+  src: superheroFemale,
+  alt: 'Persona Pop superhero transformation for female guest at NYC AI photo booth'
+}, {
+  src: superheroMale,
+  alt: 'AI photo booth superhero character transformation with cape and dynamic pose'
+}];
+const features = [{
+  icon: Sparkles,
+  title: 'Unforgettable Guest Engagement',
+  description: 'Provide an interactive, personalized experience that guests will talk about long after the event ends. It\'s an instant conversation starter and a powerful way to make them feel special.'
+}, {
+  icon: Target,
+  title: 'Tailored Branding Opportunities',
+  description: 'From corporate mascots to themed event characters, we custom-design personas that perfectly align with your brand, message, or event theme. Reinforce your identity in a fun, shareable way.'
+}, {
+  icon: Image,
+  title: 'High-Quality Digital & Print Assets',
+  description: 'Guests receive stunning, high-resolution digital images perfect for immediate social media sharing. Premium print-outs available as unique keepsakes they\'ll treasure.'
+}, {
+  icon: Clock,
+  title: 'Effortless & Instant',
+  description: 'Our intuitive PixelAI Pro booth makes the process seamless. Guests strike a pose, and within seconds, their personalized persona is ready to view, share, or print.'
+}, {
+  icon: Calendar,
+  title: 'Versatile for Any Occasion',
+  description: 'Ideal for corporate galas, product launches, brand activations, holiday parties, weddings, and more. Persona Pop adapts to create magic at any event.'
+}];
+const transformationExamples = ['Action Heroes', 'Vintage Fashion Icons', 'Futuristic Cyborgs', 'Classic Paintings', 'Fantasy Characters', 'Pop Art Legends'];
+const benefits = ['Complete identity swap while maintaining guest likeness', 'Instant social media-ready content generation', 'Custom-designed themes for brand alignment', 'High-resolution digital and premium print delivery', 'Proven engagement at venues like TAO Downtown', 'Seamless integration with any event format'];
+const useCases = [{
+  title: 'Corporate Galas',
+  desc: 'Transform executives into themed characters that match your company culture.'
+}, {
+  title: 'Product Launches',
+  desc: 'Create buzz with personas that embody your new product\'s identity.'
+}, {
+  title: 'Brand Activations',
+  desc: 'Turn attendees into brand ambassadors with custom character designs.'
+}, {
+  title: 'Holiday Parties',
+  desc: 'Festive transformations that capture the spirit of the season.'
+}, {
+  title: 'Weddings & Celebrations',
+  desc: 'Unique keepsakes guests will cherish forever.'
+}, {
+  title: 'Trade Shows & Conferences',
+  desc: 'Stand out from the crowd with memorable booth experiences.'
+}];
 const PersonaPopPage = () => {
   usePageMeta({
     title: 'Persona Pop - AI Character Transformation Photo Booth NYC | PixelAI Pro',
     description: 'Step into a new reality with Persona Pop AI transformations. Transform guests into action heroes, vintage icons, or custom brand characters. High-resolution prints & instant digital sharing for NYC events.',
     ogImage: '/og-persona-pop.jpg',
-    canonicalPath: '/experiences/persona-pop',
+    canonicalPath: '/experiences/persona-pop'
   });
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Header />
       <div className="pt-32 pb-20">
         {/* Hero Section */}
@@ -114,10 +124,12 @@ const PersonaPopPage = () => {
           <div className="container-custom relative z-10">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div>
-                <Breadcrumbs items={[
-                  { label: 'AI Photo Booth Services', href: '/services' },
-                  { label: 'Persona Pop' }
-                ]} />
+                <Breadcrumbs items={[{
+                label: 'AI Photo Booth Services',
+                href: '/services'
+              }, {
+                label: 'Persona Pop'
+              }]} />
                 <div className="w-20 h-20 rounded-2xl bg-gradient-primary flex items-center justify-center mb-6">
                   <Sparkles size={40} className="text-white" />
                 </div>
@@ -146,12 +158,7 @@ const PersonaPopPage = () => {
               </div>
               
               <figure className="relative aspect-[3/4] rounded-3xl overflow-hidden glass glow group">
-                <img 
-                  src={personaPopDemo}
-                  alt="Persona Pop AI character transformation - guest transformed into stylized portrait"
-                  className="w-full h-full object-cover"
-                  loading="eager"
-                />
+                <img src={personaPopDemo} alt="Persona Pop AI character transformation - guest transformed into stylized portrait" className="w-full h-full object-cover" loading="eager" />
                 {/* Text overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex flex-col justify-end p-6">
                   <p className="text-white/90 text-sm font-medium uppercase tracking-wider mb-1">AI Character Transformation</p>
@@ -175,20 +182,10 @@ const PersonaPopPage = () => {
               See the magic of Persona Pop in action—from caricatures to superheroes, every transformation is unique.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {galleryImages.map((image, index) => (
-                <figure 
-                  key={index} 
-                  className="relative aspect-square rounded-xl overflow-hidden glass group cursor-pointer"
-                >
-                  <img 
-                    src={image.src}
-                    alt={image.alt}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </figure>
-              ))}
+              {galleryImages.map((image, index) => <figure key={index} className="relative aspect-square rounded-xl overflow-hidden glass group cursor-pointer">
+                  
+                  
+                </figure>)}
             </div>
           </div>
         </section>
@@ -207,11 +204,9 @@ const PersonaPopPage = () => {
                 maintains their unique likeness while immersing them in an entirely new world.
               </p>
               <div className="flex flex-wrap justify-center gap-3">
-                {transformationExamples.map((example) => (
-                  <span key={example} className="glass px-4 py-2 rounded-full text-sm font-medium text-foreground">
+                {transformationExamples.map(example => <span key={example} className="glass px-4 py-2 rounded-full text-sm font-medium text-foreground">
                     {example}
-                  </span>
-                ))}
+                  </span>)}
               </div>
             </div>
           </div>
@@ -227,17 +222,23 @@ const PersonaPopPage = () => {
               Seamless transformation in seconds—no complex setup required.
             </p>
             <div className="grid md:grid-cols-3 gap-8">
-              {[
-                { step: '01', title: 'Strike a Pose', desc: 'Guests step up to our intuitive PixelAI Pro booth and capture their portrait.' },
-                { step: '02', title: 'AI Transforms', desc: 'Advanced AI seamlessly blends their likeness into the selected character theme.' },
-                { step: '03', title: 'Share & Print', desc: 'Within seconds, receive high-resolution digital images and premium prints.' },
-              ].map((item) => (
-                <div key={item.step} className="text-center">
+              {[{
+              step: '01',
+              title: 'Strike a Pose',
+              desc: 'Guests step up to our intuitive PixelAI Pro booth and capture their portrait.'
+            }, {
+              step: '02',
+              title: 'AI Transforms',
+              desc: 'Advanced AI seamlessly blends their likeness into the selected character theme.'
+            }, {
+              step: '03',
+              title: 'Share & Print',
+              desc: 'Within seconds, receive high-resolution digital images and premium prints.'
+            }].map(item => <div key={item.step} className="text-center">
                   <div className="text-6xl font-display font-bold gradient-text mb-4">{item.step}</div>
                   <h3 className="text-xl font-bold text-foreground mb-2">{item.title}</h3>
                   <p className="text-muted-foreground">{item.desc}</p>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
         </section>
@@ -252,15 +253,13 @@ const PersonaPopPage = () => {
               Transform ordinary moments into extraordinary memories your guests will share.
             </p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {features.map((feature) => (
-                <div key={feature.title} className="glass rounded-xl p-8">
+              {features.map(feature => <div key={feature.title} className="glass rounded-xl p-8">
                   <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center mb-6">
                     <feature.icon size={28} className="text-primary" />
                   </div>
                   <h3 className="text-xl font-bold text-foreground mb-3">{feature.title}</h3>
                   <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
         </section>
@@ -278,14 +277,12 @@ const PersonaPopPage = () => {
                   results that exceed expectations every time.
                 </p>
                 <div className="space-y-4">
-                  {benefits.map((benefit) => (
-                    <div key={benefit} className="flex items-start gap-4">
+                  {benefits.map(benefit => <div key={benefit} className="flex items-start gap-4">
                       <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                         <Check size={14} className="text-primary" />
                       </div>
                       <span className="text-foreground">{benefit}</span>
-                    </div>
-                  ))}
+                    </div>)}
                 </div>
               </div>
               <div className="glass rounded-3xl p-8 lg:p-12">
@@ -323,12 +320,10 @@ const PersonaPopPage = () => {
               Persona Pop adapts to create magic at any event—from intimate gatherings to large-scale activations.
             </p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {useCases.map((useCase) => (
-                <div key={useCase.title} className="glass rounded-xl p-6">
+              {useCases.map(useCase => <div key={useCase.title} className="glass rounded-xl p-6">
                   <h3 className="font-bold text-foreground mb-2">{useCase.title}</h3>
                   <p className="text-sm text-muted-foreground">{useCase.desc}</p>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
         </section>
@@ -363,8 +358,6 @@ const PersonaPopPage = () => {
         <RelatedServices currentSlug="persona-pop" />
       </div>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default PersonaPopPage;
