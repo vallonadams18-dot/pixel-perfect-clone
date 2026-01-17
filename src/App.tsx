@@ -29,6 +29,10 @@ import PennsylvaniaPage from "./pages/locations/PennsylvaniaPage";
 import OrlandoPage from "./pages/locations/OrlandoPage";
 import ChicagoPage from "./pages/locations/ChicagoPage";
 import MiamiPage from "./pages/locations/MiamiPage";
+// Blog Pages
+import BlogPage from "./pages/BlogPage";
+import CustomAIFiltersPage from "./pages/blog/CustomAIFiltersPage";
+import InteractiveGuestEngagementPage from "./pages/blog/InteractiveGuestEngagementPage";
 
 const queryClient = new QueryClient();
 
@@ -75,6 +79,10 @@ const App = () => (
           <Route path="/ai-photo-booth-rental-chicago" element={<ChicagoPage />} />
           <Route path="/locations/miami" element={<MiamiPage />} />
           <Route path="/ai-photo-booth-rental-miami" element={<MiamiPage />} />
+          {/* Blog Pages */}
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/custom-ai-filters-for-events" element={<CustomAIFiltersPage />} />
+          <Route path="/blog/interactive-guest-engagement-ideas" element={<InteractiveGuestEngagementPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

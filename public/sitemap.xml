@@ -217,4 +217,24 @@
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
+
+  <!-- Blog Pages -->
+  <url>
+    <loc>https://pixelaipro.lovable.app/blog</loc>
+    <lastmod>2026-01-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pixelaipro.lovable.app/blog/custom-ai-filters-for-events</loc>
+    <lastmod>2026-01-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://pixelaipro.lovable.app/blog/interactive-guest-engagement-ideas</loc>
+    <lastmod>2026-01-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>
