@@ -1,8 +1,9 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import SocialShareButtons from '@/components/SocialShareButtons';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Calendar, Clock, User, Linkedin, Twitter, Lightbulb, TrendingUp, Users, Zap } from 'lucide-react';
+import { ArrowRight, Calendar, Clock, User, Lightbulb, TrendingUp, Users, Zap } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
 import RelatedServices from '@/components/RelatedServices';
 
@@ -254,18 +255,10 @@ const TradeShowBoothIdeasPage = () => {
               </div>
             </article>
 
-            {/* Share Section */}
-            <div className="border-t border-border/30 pt-8 mt-12">
-              <div className="flex items-center gap-4">
-                <span className="text-muted-foreground">Share this article:</span>
-                <a href="#" className="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-primary/20 transition-colors">
-                  <Linkedin size={18} className="text-muted-foreground" />
-                </a>
-                <a href="#" className="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-primary/20 transition-colors">
-                  <Twitter size={18} className="text-muted-foreground" />
-                </a>
-              </div>
-            </div>
+            <SocialShareButtons 
+              title="Trade Show Booth Ideas That Actually Drive Leads in 2026"
+              url="https://pixelaipro.lovable.app/blog/trade-show-booth-ideas-that-drive-leads"
+            />
           </div>
         </div>
       </section>
