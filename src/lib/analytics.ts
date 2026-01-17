@@ -11,7 +11,7 @@ declare global {
 // Track page views (called automatically by GA4, but useful for SPA navigation)
 export const trackPageView = (path: string, title?: string) => {
   if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('config', 'G-XXXXXXXXXX', {
+    window.gtag('config', 'G-FS6S61Q91H', {
       page_path: path,
       page_title: title,
     });
