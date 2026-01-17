@@ -103,16 +103,39 @@ const BeforeAfterSlider = ({
     handleMove(e.clientX);
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
+  const handleTouchMove = (e: TouchEvent) => {
+    e.preventDefault();
     handleMove(e.touches[0].clientX);
   };
+
+  const handleTouchStart = (e: TouchEvent) => {
+    e.preventDefault();
+    setIsUserInteracting(true);
+    if (isAnimating && animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+      setIsAnimating(false);
+    }
+  };
+
+  // Attach touch events with passive: false to allow preventDefault
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.addEventListener('touchstart', handleTouchStart, { passive: false });
+    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+    return () => {
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, [isAnimating]);
 
   return (
     <div 
       ref={containerRef}
-      className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden cursor-ew-resize select-none group"
+      className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden cursor-ew-resize select-none group touch-none"
       onMouseMove={handleMouseMove}
-      onTouchMove={handleTouchMove}
     >
       {/* After Image (Background) */}
       <img 
