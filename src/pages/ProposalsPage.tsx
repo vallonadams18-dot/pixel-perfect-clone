@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Download, Building2, Trophy, ShoppingBag, Presentation, CheckCircle, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { generatePitchDeck } from '@/lib/generatePitchDeck';
 
 const proposals = [
   {
@@ -196,7 +197,11 @@ const ProposalsPage = () => {
                         Request Proposal <ArrowRight className="w-4 h-4" />
                       </Link>
                     </Button>
-                    <Button variant="outline" className="gap-2">
+                    <Button 
+                      variant="outline" 
+                      className="gap-2"
+                      onClick={() => generatePitchDeck(proposal)}
+                    >
                       <Download className="w-4 h-4" /> Pitch Deck
                     </Button>
                   </div>
