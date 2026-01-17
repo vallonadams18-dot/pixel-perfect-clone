@@ -107,6 +107,7 @@ const LosAngelesPage = () => {
           "postalCode": "90001",
           "addressCountry": "US"
         },
+        "telephone": "+1-917-724-6051",
         "geo": {
           "@type": "GeoCoordinates",
           "latitude": "34.0522",
@@ -181,9 +182,9 @@ const LosAngelesPage = () => {
                 <Link to="/contact" className="btn-primary inline-flex items-center gap-2">
                   Get Free LA Quote <ArrowRight size={20} />
                 </Link>
-                <Link to="/portfolio" className="btn-secondary inline-flex items-center gap-2">
-                  View LA Portfolio
-                </Link>
+                <a href="tel:+19177246051" className="btn-secondary inline-flex items-center gap-2">
+                  Call (917) 724-6051
+                </a>
               </div>
               
               <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
@@ -373,8 +374,8 @@ const LosAngelesPage = () => {
                 <Link to="/contact" className="btn-primary inline-flex items-center gap-2">
                   Get Free LA Quote <ArrowRight size={20} />
                 </Link>
-                <a href="tel:+1234567890" className="btn-secondary inline-flex items-center gap-2">
-                  Call for Same-Day Booking
+                <a href="tel:+19177246051" className="btn-secondary inline-flex items-center gap-2">
+                  Call (917) 724-6051
                 </a>
               </div>
             </div>
