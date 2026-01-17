@@ -60,8 +60,8 @@ const features = [
   },
   {
     icon: Smartphone,
-    title: 'NFC & AR Integration',
-    description: 'Tap-to-unlock digital experiences with NFC chips and augmented reality card features.'
+    title: 'AR Integration',
+    description: 'Unlock augmented reality card features for an immersive digital experience.'
   },
 ];
 
@@ -77,17 +77,17 @@ const benefits = [
 const AITradingCardsPage = () => {
   usePageMeta({
     title: 'AI Trading Cards Photo Booth NYC | Custom Collectible Cards | PixelAI Pro',
-    description: 'Create branded AI trading cards with custom stats & rarity tiers for sports events, conventions & brand activations in NYC. NFC & AR integration. Premium on-site printing. Book your demo!',
+    description: 'Create branded AI trading cards with custom stats & rarity tiers for sports events, conventions & brand activations in NYC. AR integration. Premium on-site printing. Book your demo!',
     ogImage: '/og-ai-trading-cards.jpg',
     canonicalPath: '/experiences/ai-trading-cards',
-    keywords: 'AI trading cards, custom trading card booth, sports trading cards event, collectible card photo booth NYC, branded trading cards, convention trading cards, NFC trading cards',
+    keywords: 'AI trading cards, custom trading card booth, sports trading cards event, collectible card photo booth NYC, branded trading cards, convention trading cards, AR trading cards',
     schema: [
       {
         "@context": "https://schema.org",
         "@type": "Service",
         "name": "AI Trading Cards Photo Booth",
         "serviceType": "Custom AI Trading Card Experience",
-        "description": "Premium AI-generated trading cards with stylized portraits, custom stats, rarity tiers, and optional NFC/AR integration for sports, gaming, and brand activations.",
+        "description": "Premium AI-generated trading cards with stylized portraits, custom stats, rarity tiers, and optional AR integration for sports, gaming, and brand activations.",
         "provider": {
           "@type": "LocalBusiness",
           "@id": "https://pixelaipro.lovable.app/#business"
@@ -106,7 +106,7 @@ const AITradingCardsPage = () => {
             "name": "What makes AI trading cards different from regular photo booth prints?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "AI trading cards transform guests into illustrated collectible art with custom stats, rarity tiers (Common, Rare, Legendary, Limited), holographic effects, and optional NFC chips that unlock digital experiences."
+              "text": "AI trading cards transform guests into illustrated collectible art with custom stats, rarity tiers (Common, Rare, Legendary, Limited), holographic effects, and optional AR features that unlock digital experiences."
             }
           },
           {
@@ -149,7 +149,7 @@ const AITradingCardsPage = () => {
                 <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
                   Transform guests into high-fidelity collectible legends. AI Trading Cards combines 
                   neural portrait artistry with premium printing to create museum-grade collectibles 
-                  featuring custom stats, rarity tiers, and optional NFC/AR integration for the ultimate 
+                  featuring custom stats, rarity tiers, and optional AR integration for the ultimate 
                   collector experience.
                 </p>
                 <div className="flex flex-wrap gap-4">
@@ -211,7 +211,7 @@ const AITradingCardsPage = () => {
               {[
                 { step: '01', title: 'Capture', desc: 'Portrait photo and optional personality quiz for stats.' },
                 { step: '02', title: 'Stylize', desc: 'AI transforms photo into stunning illustrated card art.' },
-                { step: '03', title: 'Collect', desc: 'Premium printed card with optional NFC/AR features.' },
+                { step: '03', title: 'Collect', desc: 'Premium printed card with optional AR features.' },
               ].map((item) => (
                 <div key={item.step} className="text-center">
                   <div className="text-6xl font-display font-bold gradient-text mb-4">{item.step}</div>
@@ -317,7 +317,7 @@ const AITradingCardsPage = () => {
               </h2>
               <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
                 Transform your guests into collector-grade legends with AI Trading Cards. 
-                Explore rarity systems, premium finishes, and NFC/AR integrations.
+                Explore rarity systems, premium finishes, and AR integrations.
               </p>
               <Link to="/contact" className="btn-primary inline-flex items-center gap-2">
                 Schedule Your Demo <ArrowRight size={20} />

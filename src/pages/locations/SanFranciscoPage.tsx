@@ -61,7 +61,7 @@ const services = [
   },
   {
     title: 'AI Trading Cards',
-    description: 'Custom collectible cards with rarity tiers and NFC',
+    description: 'Custom collectible cards with rarity tiers and AR features',
     link: '/experiences/ai-trading-cards',
     ideal: 'Warriors games, tech events, gaming conventions'
   },
