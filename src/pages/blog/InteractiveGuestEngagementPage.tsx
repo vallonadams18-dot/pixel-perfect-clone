@@ -47,7 +47,7 @@ const InteractiveGuestEngagementPage = () => {
     },
     {
       title: "Custom Trading Card Creation",
-      description: "Create personalized collectible trading cards featuring guests with custom stats, rarity tiers, and NFC technology for digital sharing.",
+      description: "Create personalized collectible trading cards featuring guests with custom stats, rarity tiers, and AR technology for digital sharing.",
       stats: "95% lead capture rate"
     },
     {
