@@ -16,12 +16,24 @@ import partyCaricature from '@/assets/persona-pop-party-caricature-portrait.jpg'
 import teamEventCaricature from '@/assets/persona-pop-team-event-caricature.jpg';
 import superheroFemale from '@/assets/persona-pop-superhero-transformation-female.jpg';
 import superheroMale from '@/assets/persona-pop-superhero-transformation-male.jpg';
+import animeStyle from '@/assets/persona-pop-anime-style-transformation.jpg';
+import vintage1920s from '@/assets/persona-pop-vintage-1920s-portrait.jpg';
+import fantasyElf from '@/assets/persona-pop-fantasy-elf-warrior.jpg';
+import cyberpunkNeon from '@/assets/persona-pop-cyberpunk-neon-portrait.jpg';
+import renaissancePainting from '@/assets/persona-pop-renaissance-painting-portrait.jpg';
+import popArtComic from '@/assets/persona-pop-pop-art-comic-style.jpg';
 
 const galleryImages = [
   { src: corporateEventCaricature, alt: 'Persona Pop AI caricature for corporate conference event with ServiceNow branding' },
+  { src: animeStyle, alt: 'AI photo booth anime style transformation with colorful hair and cherry blossoms' },
+  { src: vintage1920s, alt: 'Vintage 1920s art deco style AI portrait transformation with gatsby era glamour' },
+  { src: fantasyElf, alt: 'Fantasy elf warrior AI transformation with magical glowing eyes and Celtic armor' },
   { src: conferenceCaricature, alt: 'AI-generated caricature portrait for Knowledge conference NYC event attendee' },
+  { src: cyberpunkNeon, alt: 'Cyberpunk neon AI photo booth portrait with futuristic visor and city lights' },
   { src: pixarStyleCharacter, alt: 'Persona Pop 3D Pixar-style AI character transformation with colorful city background' },
+  { src: renaissancePainting, alt: 'Renaissance oil painting style AI portrait with baroque dress and dramatic lighting' },
   { src: celebrationCaricature, alt: 'AI photo booth celebration caricature art with confetti and elegant style' },
+  { src: popArtComic, alt: 'Pop art comic book style AI transformation with bold halftone dots and speech bubble' },
   { src: partyCaricature, alt: 'Party caricature portrait from AI photo booth with music notes and stars' },
   { src: teamEventCaricature, alt: 'Team event AI caricature transformation for corporate conference with matching shirts' },
   { src: superheroFemale, alt: 'Persona Pop superhero transformation for female guest at NYC AI photo booth' },
