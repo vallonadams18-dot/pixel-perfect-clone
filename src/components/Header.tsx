@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronDown, MapPin } from 'lucide-react';
 import heroImage from '@/assets/hero-background.jpg';
 
 const navLinks = [
@@ -8,13 +8,28 @@ const navLinks = [
   { name: 'About', href: '/about' },
   { name: 'Services', href: '/services' },
   { name: 'Portfolio', href: '/portfolio' },
-  { name: 'Locations', href: '/locations/nyc' },
+  { name: 'Blog', href: '/blog' },
   { name: 'Contact', href: '/contact' },
+];
+
+const locationLinks = [
+  { name: 'New York City', href: '/locations/nyc' },
+  { name: 'Los Angeles', href: '/locations/los-angeles' },
+  { name: 'Las Vegas', href: '/locations/las-vegas' },
+  { name: 'Chicago', href: '/locations/chicago' },
+  { name: 'Miami', href: '/locations/miami' },
+  { name: 'San Francisco', href: '/locations/san-francisco' },
+  { name: 'Atlanta', href: '/locations/atlanta' },
+  { name: 'Orlando', href: '/locations/orlando' },
+  { name: 'New Jersey', href: '/locations/new-jersey' },
+  { name: 'Pennsylvania', href: '/locations/pennsylvania' },
+  { name: 'California', href: '/locations/california' },
 ];
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLocationsOpen, setIsLocationsOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -27,7 +42,7 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 overflow-hidden ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 overflow-visible ${
         isScrolled ? 'py-4' : 'py-6'
       }`}
     >
@@ -62,7 +77,7 @@ const Header = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-6">
           {navLinks.map((link) => (
             <Link
               key={link.name}
@@ -76,6 +91,41 @@ const Header = () => {
               {link.name}
             </Link>
           ))}
+          
+          {/* Locations Dropdown */}
+          <div 
+            className="relative"
+            onMouseEnter={() => setIsLocationsOpen(true)}
+            onMouseLeave={() => setIsLocationsOpen(false)}
+          >
+            <button
+              className={`text-sm transition-colors duration-200 flex items-center gap-1 ${
+                location.pathname.includes('/locations')
+                  ? 'text-primary font-semibold'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Locations
+              <ChevronDown size={14} className={`transition-transform ${isLocationsOpen ? 'rotate-180' : ''}`} />
+            </button>
+            
+            {isLocationsOpen && (
+              <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2">
+                <div className="bg-card border border-border rounded-xl shadow-xl p-4 min-w-[280px] grid grid-cols-2 gap-2">
+                  {locationLinks.map((loc) => (
+                    <Link
+                      key={loc.name}
+                      to={loc.href}
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 transition-colors"
+                    >
+                      <MapPin size={12} className="text-primary shrink-0" />
+                      {loc.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </nav>
 
         {/* CTA Button */}
@@ -96,7 +146,7 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden glass mt-4 mx-4 rounded-2xl p-6 relative z-10">
+        <div className="lg:hidden glass mt-4 mx-4 rounded-2xl p-6 relative z-10 max-h-[80vh] overflow-y-auto">
           <nav className="flex flex-col gap-4">
             {navLinks.map((link) => (
               <Link
@@ -112,6 +162,25 @@ const Header = () => {
                 {link.name}
               </Link>
             ))}
+            
+            {/* Mobile Locations */}
+            <div className="border-t border-border/30 pt-4 mt-2">
+              <span className="text-sm font-semibold text-muted-foreground mb-3 block">Locations</span>
+              <div className="grid grid-cols-2 gap-2">
+                {locationLinks.map((loc) => (
+                  <Link
+                    key={loc.name}
+                    to={loc.href}
+                    className="flex items-center gap-2 py-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <MapPin size={12} className="text-primary" />
+                    {loc.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+            
             <Link
               to="/contact"
               className="btn-primary text-center mt-4"
