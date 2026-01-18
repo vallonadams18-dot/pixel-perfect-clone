@@ -86,6 +86,13 @@ const neighborhoods = [
   'Morris Park', 'Hunts Point', 'Mott Haven', 'Kingsbridge', 'Belmont'
 ];
 
+const relatedBoroughs = [
+  { name: 'Manhattan', link: '/locations/manhattan' },
+  { name: 'Brooklyn', link: '/locations/brooklyn' },
+  { name: 'Queens', link: '/locations/queens' },
+  { name: 'Staten Island', link: '/locations/staten-island' },
+];
+
 const faqs = [
   {
     question: 'Do you work at Yankee Stadium for sports events?',
@@ -364,12 +371,26 @@ const BronxPage = () => {
             </p>
           </div>
           
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
             {neighborhoods.map((hood) => (
               <span key={hood} className="glass px-4 py-2 rounded-full text-sm text-foreground">
                 {hood}
               </span>
             ))}
+          </div>
+
+          <div className="border-t border-border pt-8">
+            <p className="text-center text-sm text-muted-foreground mb-4">Also serving other NYC boroughs:</p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link to="/locations/nyc" className="text-primary hover:underline text-sm font-medium">
+                NYC Overview
+              </Link>
+              {relatedBoroughs.map((borough) => (
+                <Link key={borough.name} to={borough.link} className="text-primary hover:underline text-sm font-medium">
+                  {borough.name}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>
