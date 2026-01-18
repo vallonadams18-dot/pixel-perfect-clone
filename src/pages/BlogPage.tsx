@@ -7,9 +7,39 @@ import usePageMeta from '@/hooks/usePageMeta';
 
 const blogPosts = [
   {
+    slug: 'photo-booth-rental-guide',
+    title: 'Photo Booth Rental Guide 2026: Costs, Types & How to Choose',
+    excerpt: 'Everything you need to know about photo booth rental. Compare traditional vs AI photo booths, understand pricing ($500-$3,000+), and learn how to choose the right booth for your event.',
+    image: '/og-image.jpg',
+    category: 'Rental Guide',
+    author: 'PixelAI Pro Team',
+    date: '2026-01-18',
+    readTime: '12 min read',
+  },
+  {
+    slug: 'corporate-photo-booth-rental',
+    title: 'Corporate Photo Booth Rental: Trade Shows, Conferences & Brand Activations',
+    excerpt: 'How Fortune 500 companies use AI photo booths to capture 95%+ leads, boost event ROI, and create unforgettable brand experiences at corporate events.',
+    image: '/og-ai-trading-cards.jpg',
+    category: 'Corporate',
+    author: 'PixelAI Pro Team',
+    date: '2026-01-17',
+    readTime: '10 min read',
+  },
+  {
+    slug: 'photo-booth-rental-nyc',
+    title: 'Photo Booth Rental NYC: Best Options for 2026 Events',
+    excerpt: 'The ultimate guide to finding photo booth rental in New York City. Pricing, vendors, and tips for events across all five boroughs from Manhattan to Staten Island.',
+    image: '/og-headshots.jpg',
+    category: 'NYC',
+    author: 'PixelAI Pro Team',
+    date: '2026-01-16',
+    readTime: '11 min read',
+  },
+  {
     slug: 'custom-ai-filters-for-events',
     title: 'Custom AI Filters for Events: The Complete Guide to Branded Photo Experiences',
-    excerpt: 'Learn how custom AI filters can transform your corporate events, trade shows, and brand activations. Discover the technology behind personalized photo transformations and why Fortune 500 brands are investing in AI-powered experiences.',
+    excerpt: 'Learn how custom AI filters can transform your corporate events, trade shows, and brand activations. Discover the technology behind personalized photo transformations.',
     image: '/og-persona-pop.jpg',
     category: 'AI Technology',
     author: 'PixelAI Pro Team',
@@ -19,7 +49,7 @@ const blogPosts = [
   {
     slug: 'interactive-guest-engagement-ideas',
     title: 'Interactive Guest Engagement Ideas: 15 Proven Strategies for Memorable Events',
-    excerpt: 'Discover innovative ways to engage guests at corporate events, conferences, and brand activations. From AI photo booths to gamified experiences, learn what actually drives participation and ROI.',
+    excerpt: 'Discover innovative ways to engage guests at corporate events, conferences, and brand activations. From AI photo booths to gamified experiences.',
     image: '/og-ai-video-booths.jpg',
     category: 'Event Marketing',
     author: 'PixelAI Pro Team',
@@ -29,7 +59,7 @@ const blogPosts = [
   {
     slug: 'ai-photo-booth-vs-traditional-photo-booth',
     title: 'AI Photo Booth vs Traditional Photo Booth: Which is Right for Your Event?',
-    excerpt: 'Compare AI-powered photo booths with traditional options. Understand the differences in engagement, lead capture, social sharing, and ROI to make the best choice for your next event.',
+    excerpt: 'Compare AI-powered photo booths with traditional options. Understand the differences in engagement, lead capture, social sharing, and ROI.',
     image: '/og-headshots.jpg',
     category: 'Comparison',
     author: 'PixelAI Pro Team',
@@ -39,7 +69,7 @@ const blogPosts = [
   {
     slug: 'trade-show-booth-ideas-that-drive-leads',
     title: 'Trade Show Booth Ideas That Actually Drive Leads in 2026',
-    excerpt: 'Stop blending in at trade shows. Discover the experiential marketing strategies that top exhibitors use to capture qualified leads and create memorable brand experiences.',
+    excerpt: 'Stop blending in at trade shows. Discover the experiential marketing strategies that top exhibitors use to capture qualified leads.',
     image: '/og-ai-trading-cards.jpg',
     category: 'Trade Shows',
     author: 'PixelAI Pro Team',
@@ -49,26 +79,16 @@ const blogPosts = [
   {
     slug: 'corporate-headshot-trends',
     title: 'Corporate Headshot Trends: How AI is Revolutionizing Professional Photography',
-    excerpt: 'AI-generated headshots are changing how companies approach professional photography. Learn about the latest trends, best practices, and how to implement AI headshots at your next conference.',
+    excerpt: 'AI-generated headshots are changing how companies approach professional photography. Learn about the latest trends and best practices.',
     image: '/og-headshots.jpg',
     category: 'AI Technology',
     author: 'PixelAI Pro Team',
     date: '2026-01-05',
     readTime: '5 min read',
   },
-  {
-    slug: 'event-marketing-roi-measurement',
-    title: 'How to Measure Event Marketing ROI: A Data-Driven Approach',
-    excerpt: 'Learn how to track and measure the true ROI of your event marketing investments. From lead capture rates to social media impressions, discover the metrics that matter most.',
-    image: '/og-image.jpg',
-    category: 'Event Marketing',
-    author: 'PixelAI Pro Team',
-    date: '2026-01-02',
-    readTime: '9 min read',
-  },
 ];
 
-const categories = ['All', 'AI Technology', 'Event Marketing', 'Trade Shows', 'Comparison'];
+const categories = ['All', 'Rental Guide', 'Corporate', 'NYC', 'AI Technology', 'Event Marketing', 'Trade Shows', 'Comparison'];
 
 const BlogPage = () => {
   usePageMeta({
