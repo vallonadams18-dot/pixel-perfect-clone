@@ -2,9 +2,21 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import FAQSection from '@/components/FAQSection';
 import { Link } from 'react-router-dom';
 import { Sparkles, Check, ArrowRight, Layers, Smartphone, Gem } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
+
+const tradingCardsFaqs = [
+  {
+    question: "What makes AI trading cards different from regular photo booth prints?",
+    answer: "AI trading cards transform guests into illustrated collectible art with custom stats, rarity tiers (Common, Rare, Legendary, Limited), holographic effects, and optional AR features that unlock digital experiences."
+  },
+  {
+    question: "Can we customize the trading card design for our brand?",
+    answer: "Yes! We create fully custom card templates matching your brand identity, including logos, colors, custom stat categories, and themed art styles for sports teams, gaming events, or corporate activations."
+  }
+];
 
 // AI Trading Cards Gallery Images
 import tradingCardSportsDisplay from '@/assets/ai-trading-cards-sports-collectibles-display.jpg';
@@ -307,6 +319,14 @@ const AITradingCardsPage = () => {
             </div>
           </div>
         </section>
+
+        {/* FAQ Section */}
+        <FAQSection 
+          title="Frequently Asked Questions"
+          subtitle="Learn more about AI-powered trading card experiences."
+          faqs={tradingCardsFaqs}
+          gradientWord="Questions"
+        />
 
         {/* CTA Section */}
         <section className="section-padding">

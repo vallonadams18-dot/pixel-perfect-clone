@@ -4,9 +4,25 @@ import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
+import FAQSection from '@/components/FAQSection';
 import { Link } from 'react-router-dom';
 import { Camera, Check, ArrowRight, Briefcase, Users, Sparkles, X } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
+
+const headshotsFaqs = [
+  {
+    question: "How fast are AI headshots generated?",
+    answer: "Our AI headshot booth generates professional, LinkedIn-ready portraits in under 60 seconds. Guests receive their enhanced headshot via email, SMS, or QR code instantly."
+  },
+  {
+    question: "Are AI headshots suitable for LinkedIn profiles?",
+    answer: "Yes! Our AI optimizes portraits specifically for LinkedIn with proper dimensions, professional lighting enhancement, and clean backgrounds that meet corporate standards."
+  },
+  {
+    question: "Can you process entire teams at conferences?",
+    answer: "Absolutely. Our batch processing handles high-volume events efficiently, capturing consistent professional headshots for entire teams with matching branding and quality."
+  }
+];
 
 // Headshot gallery images
 import headshot1 from '@/assets/headshot-1.jpg';
@@ -293,6 +309,14 @@ const HeadshotsPage = () => {
             </div>
           </div>
         </section>
+
+        {/* FAQ Section */}
+        <FAQSection 
+          title="Frequently Asked Questions"
+          subtitle="Everything you need to know about AI professional headshots."
+          faqs={headshotsFaqs}
+          gradientWord="Questions"
+        />
 
         {/* CTA Section */}
         <section className="section-padding">

@@ -2,9 +2,21 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import FAQSection from '@/components/FAQSection';
 import { Link } from 'react-router-dom';
 import { Video, Check, ArrowRight, Film, Palette, Share2 } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
+
+const videoBoothsFaqs = [
+  {
+    question: "How long does AI video processing take?",
+    answer: "Our neural network processes video transformations in under 30 seconds. Guests record a short clip, choose their style (anime, cyberpunk, oil painting, etc.), and receive their transformed video optimized for TikTok, Instagram Reels, or YouTube Shorts."
+  },
+  {
+    question: "What video styles are available?",
+    answer: "We offer multiple artistic styles including anime, oil painting, cyberpunk, watercolor, and custom brand-specific aesthetics. Each style transforms ordinary footage into stunning stylized content that stops the scroll on social media."
+  }
+];
 
 const features = [
   {
@@ -222,6 +234,14 @@ const AIVideoBoothsPage = () => {
             </div>
           </div>
         </section>
+
+        {/* FAQ Section */}
+        <FAQSection 
+          title="Frequently Asked Questions"
+          subtitle="Everything you need to know about AI video transformation."
+          faqs={videoBoothsFaqs}
+          gradientWord="Questions"
+        />
 
         {/* CTA Section */}
         <section className="section-padding">

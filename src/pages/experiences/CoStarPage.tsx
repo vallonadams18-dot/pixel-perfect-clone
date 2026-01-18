@@ -2,6 +2,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import FAQSection from '@/components/FAQSection';
 import { Link } from 'react-router-dom';
 import { Users, Check, ArrowRight, Star, Camera, Award } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -12,6 +13,17 @@ import coStarGuest3 from '@/assets/co-star-guest-3.jpg';
 import coStarGuest4 from '@/assets/co-star-guest-4.jpg';
 import coStarGuest5 from '@/assets/co-star-guest-5.jpg';
 import coStarGuest6 from '@/assets/co-star-guest-6.jpg';
+
+const coStarFaqs = [
+  {
+    question: "How does Co-Star create celebrity photos?",
+    answer: "Co-Star uses advanced AI compositing with licensed celebrity digital doubles. Professional lighting matching ensures seamless integration that looks like an actual celebrity photo op, creating studio-quality results for every guest."
+  },
+  {
+    question: "Can we use our brand ambassadors with Co-Star?",
+    answer: "Yes! We can integrate your brand ambassadors, athletes, or talent partners. We also help secure licensed partnerships with our network of celebrity talent for authentic, legally-compliant activations."
+  }
+];
 
 const galleryImages = [
   { src: coStarGuest1, alt: 'Guest posing with pop superstar on red carpet', label: 'Red Carpet Premiere' },
@@ -275,6 +287,14 @@ const CoStarPage = () => {
             </div>
           </div>
         </section>
+
+        {/* FAQ Section */}
+        <FAQSection 
+          title="Frequently Asked Questions"
+          subtitle="Learn more about AI celebrity photo experiences."
+          faqs={coStarFaqs}
+          gradientWord="Questions"
+        />
 
         {/* CTA Section */}
         <section className="section-padding">
