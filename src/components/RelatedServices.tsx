@@ -28,8 +28,8 @@ const allServices = [
   },
   {
     slug: 'identity',
-    title: 'Identity Face Swap',
-    description: 'Seamlessly swap faces onto brand mascots or campaign heroes.',
+    title: 'AI Sketch-a-Guest',
+    description: 'AI-generated hand-drawn sketches with sophisticated brand integration.',
     icon: User,
   },
   {
