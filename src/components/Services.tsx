@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 // Import real photos from gallery
-import pixelwearImage from '@/assets/pixelwear-demo.jpg';
+import pixelwearImage from '@/assets/pixelwear-cowboys.jpg';
 import identityImage from '@/assets/ai-photo-booth-custom-portrait-transformation.jpg';
 import costarImage from '@/assets/co-star-demo.jpg';
 import axonImage from '@/assets/axon-ai-robot.png';
