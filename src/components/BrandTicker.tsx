@@ -6,7 +6,6 @@ import goodMorningAmericaLogo from '@/assets/logos/good-morning-america.png';
 import wnbaLogo from '@/assets/logos/wnba.svg';
 import netflixLogo from '@/assets/logos/netflix.png';
 import spectrumNewsLogo from '@/assets/logos/spectrum-news.svg';
-import googleCloudLogo from '@/assets/logos/google-cloud.png';
 import theTradeDeskLogo from '@/assets/logos/the-trade-desk.png';
 
 const brands = [
@@ -19,7 +18,6 @@ const brands = [
   { name: 'Good Morning America', logo: goodMorningAmericaLogo },
   { name: 'WNBA', logo: wnbaLogo },
   { name: 'Spectrum News', logo: spectrumNewsLogo },
-  { name: 'Google Cloud', logo: googleCloudLogo },
 ];
 
 const BrandTicker = () => {
