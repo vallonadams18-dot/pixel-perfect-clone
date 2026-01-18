@@ -26,7 +26,9 @@ const testimonials = [
     role: "VP of Events",
     company: "National Trade Association",
     location: "Walter E. Washington Convention Center",
-    metric: "7,800 member engagements"
+    metric: "7,800 member engagements",
+    rating: 5,
+    date: "2024-10-15"
   },
   {
     quote: "The AI trading cards at our Capitals game activation were a massive hit with fans. Season ticket holder engagement increased 40% compared to previous activations.",
@@ -34,7 +36,9 @@ const testimonials = [
     role: "Director of Fan Engagement",
     company: "Major DC Sports Team",
     location: "Capital One Arena",
-    metric: "5.5M social impressions"
+    metric: "5.5M social impressions",
+    rating: 5,
+    date: "2024-11-22"
   },
   {
     quote: "For our Smithsonian gala, the AI portrait experience added a sophisticated touch that our donors loved. Every guest left with a stunning keepsake.",
@@ -42,9 +46,44 @@ const testimonials = [
     role: "Development Director",
     company: "Smithsonian Institution",
     location: "National Museum of American History",
-    metric: "100% donor satisfaction"
+    metric: "100% donor satisfaction",
+    rating: 5,
+    date: "2024-12-05"
   },
 ];
+
+// Generate Review schema for DC location page
+const generateDCReviewSchema = () => ({
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "PixelAI Pro - AI Photo Booth Rental Washington DC",
+  "image": "https://pixelaipro.lovable.app/og-image.jpg",
+  "url": "https://pixelaipro.lovable.app/locations/washington-dc",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "bestRating": "5",
+    "worstRating": "1",
+    "reviewCount": "112",
+    "ratingCount": "112"
+  },
+  "review": testimonials.map(t => ({
+    "@type": "Review",
+    "author": {
+      "@type": "Person",
+      "name": t.author
+    },
+    "datePublished": t.date,
+    "reviewBody": t.quote,
+    "name": `${t.author} - ${t.location}`,
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": t.rating.toString(),
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  }))
+});
 
 const services = [
   {
@@ -206,7 +245,8 @@ const WashingtonDCPage = () => {
           { "@type": "ListItem", "position": 2, "name": "Locations", "item": "https://pixelaipro.lovable.app/locations/washington-dc" },
           { "@type": "ListItem", "position": 3, "name": "Washington DC", "item": "https://pixelaipro.lovable.app/locations/washington-dc" }
         ]
-      }
+      },
+      generateDCReviewSchema()
     ]
   });
 

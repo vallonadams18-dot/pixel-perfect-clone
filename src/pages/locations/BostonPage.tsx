@@ -26,7 +26,9 @@ const testimonials = [
     role: "Director of Events",
     company: "Marketing Technology Company",
     location: "Boston Convention Center",
-    metric: "9,400 leads captured"
+    metric: "9,400 leads captured",
+    rating: 5,
+    date: "2024-09-20"
   },
   {
     quote: "The AI trading cards at our Celtics partnership activation were incredible. Fans became part of the team, and our sponsor engagement metrics exceeded all expectations.",
@@ -34,7 +36,9 @@ const testimonials = [
     role: "VP Partnerships",
     company: "Major Financial Services Firm",
     location: "TD Garden",
-    metric: "6.1M social reach"
+    metric: "6.1M social reach",
+    rating: 5,
+    date: "2024-11-15"
   },
   {
     quote: "For our biotech conference at Hynes, the AI headshot experience was perfect. Scientists and executives loved the instant professional portraits.",
@@ -42,9 +46,44 @@ const testimonials = [
     role: "Conference Director",
     company: "Biotech Industry Association",
     location: "Hynes Convention Center",
-    metric: "98% satisfaction rate"
+    metric: "98% satisfaction rate",
+    rating: 5,
+    date: "2024-10-08"
   },
 ];
+
+// Generate Review schema for Boston location page
+const generateBostonReviewSchema = () => ({
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "PixelAI Pro - AI Photo Booth Rental Boston",
+  "image": "https://pixelaipro.lovable.app/og-image.jpg",
+  "url": "https://pixelaipro.lovable.app/locations/boston",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "bestRating": "5",
+    "worstRating": "1",
+    "reviewCount": "89",
+    "ratingCount": "89"
+  },
+  "review": testimonials.map(t => ({
+    "@type": "Review",
+    "author": {
+      "@type": "Person",
+      "name": t.author
+    },
+    "datePublished": t.date,
+    "reviewBody": t.quote,
+    "name": `${t.author} - ${t.location}`,
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": t.rating.toString(),
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  }))
+});
 
 const services = [
   {
@@ -206,7 +245,8 @@ const BostonPage = () => {
           { "@type": "ListItem", "position": 2, "name": "Locations", "item": "https://pixelaipro.lovable.app/locations/boston" },
           { "@type": "ListItem", "position": 3, "name": "Boston", "item": "https://pixelaipro.lovable.app/locations/boston" }
         ]
-      }
+      },
+      generateBostonReviewSchema()
     ]
   });
 

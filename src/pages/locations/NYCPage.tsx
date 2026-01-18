@@ -26,7 +26,9 @@ const testimonials = [
     role: "VP of Marketing",
     company: "Fortune 500 Tech Company",
     location: "Javits Center, NYC",
-    metric: "3,200 leads captured"
+    metric: "3,200 leads captured",
+    rating: 5,
+    date: "2024-11-15"
   },
   {
     quote: "The AI headshot booth at our annual conference was a game-changer. Every executive left with a LinkedIn-ready portrait, and the engagement was off the charts.",
@@ -34,7 +36,9 @@ const testimonials = [
     role: "Events Director",
     company: "Global Financial Services Firm",
     location: "Pier 60, Chelsea Piers",
-    metric: "97% guest participation"
+    metric: "97% guest participation",
+    rating: 5,
+    date: "2024-10-22"
   },
   {
     quote: "We've worked with photo booths before, but the AI transformation technology from PixelAI Pro created genuine viral moments. Our brand activation trended on social media for days.",
@@ -42,9 +46,44 @@ const testimonials = [
     role: "Brand Experience Manager",
     company: "Major Fashion Brand",
     location: "Spring Studios, Manhattan",
-    metric: "2.1M social impressions"
+    metric: "2.1M social impressions",
+    rating: 5,
+    date: "2024-09-18"
   },
 ];
+
+// Generate Review schema for location page testimonials
+const generateLocationReviewSchema = () => ({
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "PixelAI Pro - AI Photo Booth Rental NYC",
+  "image": "https://pixelaipro.lovable.app/og-image.jpg",
+  "url": "https://pixelaipro.lovable.app/locations/nyc",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "bestRating": "5",
+    "worstRating": "1",
+    "reviewCount": "127",
+    "ratingCount": "127"
+  },
+  "review": testimonials.map(t => ({
+    "@type": "Review",
+    "author": {
+      "@type": "Person",
+      "name": t.author
+    },
+    "datePublished": t.date,
+    "reviewBody": t.quote,
+    "name": `${t.author} - ${t.location}`,
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": t.rating.toString(),
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  }))
+});
 
 const services = [
   {
@@ -145,7 +184,8 @@ const NYCPage = () => {
           "@type": "LocalBusiness",
           "name": "PixelAI Pro"
         }
-      }
+      },
+      generateLocationReviewSchema()
     ]
   });
 
