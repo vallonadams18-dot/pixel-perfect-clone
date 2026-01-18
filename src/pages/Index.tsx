@@ -17,7 +17,7 @@ const Index = () => {
     description: 'NYC\'s leading AI photo booth company. Custom brand activations for corporate events, trade shows & experiential marketing. 500+ events, 95% lead capture rate. Trusted by Fortune 500 brands. Book your demo!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/',
-    keywords: 'AI photo booth rental NYC, photo booth rental NYC, photo booth rental New York, corporate photo booth NYC, wedding photo booth NYC, 360 photo booth NYC, trade show photo booth, experiential marketing NYC, brand activation photo booth, Javits Center photo booth, lead capture photo booth, corporate event photo booth, glam photo booth NYC, photo booth rental Brooklyn, photo booth rental Manhattan, AI photo booth wedding, corporate brand activation, event activation NYC',
+    keywords: 'AI photo booth rental NYC, photo booth rental NYC, photo booth rental New York, corporate photo booth NYC, 360 photo booth NYC, trade show photo booth, experiential marketing NYC, brand activation photo booth, Javits Center photo booth, lead capture photo booth, corporate event photo booth, glam photo booth NYC, photo booth rental Brooklyn, photo booth rental Manhattan, corporate brand activation, event activation NYC',
     schema: [
       {
         "@context": "https://schema.org",
