@@ -59,7 +59,7 @@ const Header = () => {
             <img 
               src={logoImage} 
               alt="PixelAI Pro" 
-              className="h-10 w-auto"
+              className="h-12 w-auto"
               loading="eager"
               decoding="async"
             />
