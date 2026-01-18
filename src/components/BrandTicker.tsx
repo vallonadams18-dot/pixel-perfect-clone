@@ -7,12 +7,14 @@ import wnbaLogo from '@/assets/logos/wnba.svg';
 import netflixLogo from '@/assets/logos/netflix.png';
 import spectrumNewsLogo from '@/assets/logos/spectrum-news.svg';
 import googleCloudLogo from '@/assets/logos/google-cloud.png';
+import theTradeDeskLogo from '@/assets/logos/the-trade-desk.png';
 
 const brands = [
   { name: 'Google', logo: googleLogo },
   { name: 'Netflix', logo: netflixLogo },
   { name: 'Nestlé', logo: nestleLogo },
   { name: 'ServiceNow', logo: servicenowLogo },
+  { name: 'The Trade Desk', logo: theTradeDeskLogo },
   { name: 'Betsey Johnson', logo: betseyJohnsonLogo },
   { name: 'Good Morning America', logo: goodMorningAmericaLogo },
   { name: 'WNBA', logo: wnbaLogo },
