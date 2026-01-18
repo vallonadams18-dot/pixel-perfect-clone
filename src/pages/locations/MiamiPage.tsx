@@ -91,7 +91,7 @@ const MiamiPage = () => {
     description: 'Miami\'s #1 AI photo booth rental for Art Basel, corporate events & luxury activations. Serving Miami Beach Convention Center, Hard Rock Stadium & 45+ venues. Real-time AI transformations. Get a free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/miami',
-    keywords: 'AI photo booth rental Miami, Miami photo booth, Art Basel photo booth, Miami Beach Convention Center photo booth, corporate event photo booth Miami, trade show booth Miami, brand activation Miami, experiential marketing Miami, 360 photo booth Miami',
+    keywords: 'AI photo booth rental Miami, photo booth rental Miami, Miami photo booth, Art Basel photo booth, Miami Beach Convention Center photo booth, corporate event photo booth Miami, trade show booth Miami, brand activation Miami, experiential marketing Miami, 360 photo booth Miami, glam photo booth Miami, photo booth rental South Beach, corporate brand activation Miami, event activation Miami',
     schema: [
       {
         "@context": "https://schema.org",

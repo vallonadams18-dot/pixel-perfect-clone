@@ -91,7 +91,7 @@ const OrlandoPage = () => {
     description: 'Orlando\'s #1 AI photo booth rental for conventions & theme park events. Serving Orange County Convention Center, Disney, Universal & 50+ venues. Real-time AI transformations. Get a free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/orlando',
-    keywords: 'AI photo booth rental Orlando, Orlando photo booth, Orange County Convention Center photo booth, Disney event photo booth, Universal Orlando photo booth, trade show booth Orlando, brand activation Orlando, experiential marketing Orlando',
+    keywords: 'AI photo booth rental Orlando, photo booth rental Orlando, Orlando photo booth, Orange County Convention Center photo booth, Disney event photo booth, Universal Orlando photo booth, trade show booth Orlando, brand activation Orlando, experiential marketing Orlando, 360 photo booth Orlando, glam photo booth Orlando, corporate brand activation Orlando, event activation Orlando',
     schema: [
       {
         "@context": "https://schema.org",

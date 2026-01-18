@@ -91,7 +91,7 @@ const SanFranciscoPage = () => {
     description: 'San Francisco\'s #1 AI photo booth rental for Dreamforce, tech conferences & corporate events. Serving Moscone Center, Chase Center & 55+ venues. Real-time AI transformations. Get a free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/san-francisco',
-    keywords: 'AI photo booth rental San Francisco, SF photo booth, Moscone Center photo booth, Dreamforce photo booth, corporate event photo booth SF, tech conference booth San Francisco, brand activation SF, experiential marketing San Francisco',
+    keywords: 'AI photo booth rental San Francisco, photo booth rental San Francisco, SF photo booth, Moscone Center photo booth, Dreamforce photo booth, corporate event photo booth SF, tech conference booth San Francisco, brand activation SF, experiential marketing San Francisco, 360 photo booth San Francisco, glam photo booth SF, corporate brand activation San Francisco, event activation SF',
     schema: [
       {
         "@context": "https://schema.org",

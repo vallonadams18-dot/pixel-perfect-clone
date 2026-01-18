@@ -142,7 +142,7 @@ const BrooklynPage = () => {
     description: 'Brooklyn\'s top AI photo booth rental for corporate events, weddings & brand activations. Serving Williamsburg, DUMBO, Industry City & 25+ Brooklyn venues. Get your free quote today!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/brooklyn',
-    keywords: 'AI photo booth Brooklyn, photo booth rental Williamsburg, DUMBO photo booth, Brooklyn event photographer, Industry City photo booth, brand activation Brooklyn, corporate event Brooklyn, photo booth Park Slope',
+    keywords: 'AI photo booth Brooklyn, photo booth rental Brooklyn, photo booth rental Williamsburg, DUMBO photo booth, Brooklyn event photographer, Industry City photo booth, brand activation Brooklyn, corporate event Brooklyn, photo booth Park Slope, glam photo booth Brooklyn, 360 photo booth Brooklyn, corporate brand activation Brooklyn, event activation Brooklyn',
     schema: [
       {
         "@context": "https://schema.org",

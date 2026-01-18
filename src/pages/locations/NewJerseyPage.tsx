@@ -91,7 +91,7 @@ const NewJerseyPage = () => {
     description: 'New Jersey\'s #1 AI photo booth rental for corporate events & sports activations. Serving MetLife Stadium, Prudential Center & 40+ venues. Real-time AI transformations. Get a free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/new-jersey',
-    keywords: 'AI photo booth rental New Jersey, NJ photo booth, MetLife Stadium photo booth, corporate event photo booth NJ, trade show booth New Jersey, brand activation NJ, experiential marketing New Jersey, 360 photo booth NJ',
+    keywords: 'AI photo booth rental New Jersey, photo booth rental New Jersey, NJ photo booth, MetLife Stadium photo booth, corporate event photo booth NJ, trade show booth New Jersey, brand activation NJ, experiential marketing New Jersey, 360 photo booth NJ, glam photo booth NJ, photo booth rental Jersey City, corporate brand activation New Jersey, event activation NJ',
     schema: [
       {
         "@context": "https://schema.org",

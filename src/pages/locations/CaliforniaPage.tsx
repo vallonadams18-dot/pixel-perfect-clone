@@ -91,7 +91,7 @@ const CaliforniaPage = () => {
     description: 'California\'s #1 AI photo booth rental for corporate events & conventions. Serving Moscone Center, Anaheim Convention Center & 150+ venues statewide. Real-time AI transformations. Get a free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/california',
-    keywords: 'AI photo booth rental California, CA photo booth, Moscone Center photo booth, corporate event photo booth California, trade show booth CA, brand activation California, experiential marketing California, 360 photo booth California',
+    keywords: 'AI photo booth rental California, photo booth rental California, CA photo booth, Moscone Center photo booth, corporate event photo booth California, trade show booth CA, brand activation California, experiential marketing California, 360 photo booth California, glam photo booth California, photo booth rental San Diego, corporate brand activation California, event activation California',
     schema: [
       {
         "@context": "https://schema.org",

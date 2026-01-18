@@ -173,7 +173,7 @@ const BostonPage = () => {
     description: 'Boston\'s #1 AI photo booth rental for HubSpot INBOUND, biotech conferences & corporate events. Serving BCEC, TD Garden, Fenway Park & 50+ venues. Real-time AI transformations. Get a free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/boston',
-    keywords: 'AI photo booth rental Boston, Boston photo booth, INBOUND photo booth, biotech conference photo booth Boston, brand activation Boston, experiential marketing Boston, corporate event photo booth Boston, Fenway photo booth',
+    keywords: 'AI photo booth rental Boston, photo booth rental Boston, Boston photo booth, INBOUND photo booth, biotech conference photo booth Boston, brand activation Boston, experiential marketing Boston, corporate event photo booth Boston, Fenway photo booth, 360 photo booth Boston, glam photo booth Boston, corporate brand activation Boston, event activation Boston',
     schema: [
       {
         "@context": "https://schema.org",
