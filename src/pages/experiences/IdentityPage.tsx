@@ -31,14 +31,11 @@ import sketchWatercolor6 from '@/assets/sketch-guest-watercolor-6.jpg';
 
 const galleryItems = [
   { before: sketchBefore1, after: sketchAfter1, alt: 'AI pencil sketch portrait transformation at corporate event NYC', style: 'Pencil' },
-  { before: sketchBefore1, after: sketchCharcoal1, alt: 'AI charcoal portrait sketch for luxury brand activation', style: 'Charcoal' },
   { before: sketchBefore2, after: sketchInkwash2, alt: 'AI ink wash portrait art for wedding entertainment', style: 'Ink Wash' },
   { before: sketchBefore3, after: sketchWatercolor3, alt: 'AI watercolor portrait sketch for gala events', style: 'Watercolor' },
   { before: sketchBefore4, after: sketchCharcoal4, alt: 'AI charcoal art portrait for professional headshots', style: 'Charcoal' },
   { before: sketchBefore5, after: sketchInkwash5, alt: 'AI ink wash style portrait for art gallery opening', style: 'Ink Wash' },
   { before: sketchBefore6, after: sketchWatercolor6, alt: 'AI watercolor art portrait for social events', style: 'Watercolor' },
-  { before: sketchBefore2, after: sketchAfter2, alt: 'AI pencil sketch transformation for corporate entertainment', style: 'Pencil' },
-  { before: sketchBefore3, after: sketchAfter3, alt: 'Professional AI pencil sketch portrait for events', style: 'Pencil' },
 ];
 const features = [
   {
