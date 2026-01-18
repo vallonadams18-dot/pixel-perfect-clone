@@ -97,9 +97,9 @@ const Hero = () => {
       />
 
       <div className="container-custom relative z-10 pt-20 pb-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Column - Text Content */}
-          <div className="text-center lg:text-left">
+        <div className="max-w-4xl mx-auto">
+          {/* Text Content - Centered */}
+          <div className="text-center">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 glass px-4 py-2 rounded-full mb-6 fade-in-up">
               <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
@@ -114,13 +114,13 @@ const Hero = () => {
             </h1>
 
             {/* Subtitle - ROI Focused */}
-            <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-8 fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto mb-8 fade-in-up" style={{ animationDelay: '0.2s' }}>
               Transform corporate events & trade shows with AI-powered photo experiences. 
               Trusted by Fortune 500 brands at Javits Center & top NYC venues.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 fade-in-up" style={{ animationDelay: '0.3s' }}>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 fade-in-up" style={{ animationDelay: '0.3s' }}>
               <a href="#contact" className="btn-primary flex items-center gap-2 group">
                 Get Started
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -134,7 +134,7 @@ const Hero = () => {
             {/* Trust Logos - Now Above the Fold */}
             <div className="mt-10 fade-in-up" style={{ animationDelay: '0.4s' }}>
               <p className="text-xs text-muted-foreground/70 uppercase tracking-wider mb-4">Trusted by industry leaders</p>
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6">
+              <div className="flex flex-wrap items-center justify-center gap-6">
                 {brands.slice(0, 5).map((brand) => (
                   <div key={brand.name} className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
                     <img
