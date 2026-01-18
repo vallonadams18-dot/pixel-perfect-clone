@@ -152,7 +152,7 @@ const BeforeAfterSlider = ({
         alt={afterAlt}
         loading="lazy"
         decoding="async"
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover object-top"
       />
       
       {/* Before Image (Clipped) */}
@@ -165,7 +165,7 @@ const BeforeAfterSlider = ({
           alt={beforeAlt}
           loading="lazy"
           decoding="async"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-top"
         />
       </div>
       
