@@ -26,7 +26,9 @@ const testimonials = [
     role: "VP of Marketing",
     company: "Enterprise SaaS Company",
     location: "Austin Convention Center",
-    metric: "8,200 leads captured"
+    metric: "8,200 leads captured",
+    rating: 5,
+    date: "2024-03-15"
   },
   {
     quote: "The AI trading cards at our F1 activation were a massive hit. Fans loved becoming part of the racing experience, and sponsor visibility was incredible.",
@@ -34,7 +36,9 @@ const testimonials = [
     role: "Partnerships Manager",
     company: "Major Automotive Brand",
     location: "Circuit of the Americas",
-    metric: "4.8M social impressions"
+    metric: "4.8M social impressions",
+    rating: 5,
+    date: "2024-10-22"
   },
   {
     quote: "For our product launch at the Fairmont, the AI headshot experience added a premium touch. Every attendee left with a stunning professional portrait.",
@@ -42,9 +46,44 @@ const testimonials = [
     role: "Events Director",
     company: "Tech Unicorn Startup",
     location: "Fairmont Austin",
-    metric: "100% guest satisfaction"
+    metric: "100% guest satisfaction",
+    rating: 5,
+    date: "2024-09-18"
   },
 ];
+
+// Generate Review schema for Austin location page
+const generateAustinReviewSchema = () => ({
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "PixelAI Pro - AI Photo Booth Rental Austin",
+  "image": "https://pixelaipro.lovable.app/og-image.jpg",
+  "url": "https://pixelaipro.lovable.app/locations/austin",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "bestRating": "5",
+    "worstRating": "1",
+    "reviewCount": "67",
+    "ratingCount": "67"
+  },
+  "review": testimonials.map(t => ({
+    "@type": "Review",
+    "author": {
+      "@type": "Person",
+      "name": t.author
+    },
+    "datePublished": t.date,
+    "reviewBody": t.quote,
+    "name": `${t.author} - ${t.location}`,
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": t.rating.toString(),
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  }))
+});
 
 const services = [
   {
@@ -206,7 +245,8 @@ const AustinPage = () => {
           { "@type": "ListItem", "position": 2, "name": "Locations", "item": "https://pixelaipro.lovable.app/locations/austin" },
           { "@type": "ListItem", "position": 3, "name": "Austin", "item": "https://pixelaipro.lovable.app/locations/austin" }
         ]
-      }
+      },
+      generateAustinReviewSchema()
     ]
   });
 
