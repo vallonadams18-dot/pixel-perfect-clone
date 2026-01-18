@@ -21,7 +21,7 @@ const BeforeAfterSlider = ({
   autoplay = true,
   autoplayDuration = 3000
 }: BeforeAfterSliderProps) => {
-  const [sliderPosition, setSliderPosition] = useState(85);
+  const [sliderPosition, setSliderPosition] = useState(15);
   const [isAnimating, setIsAnimating] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
   const [isUserInteracting, setIsUserInteracting] = useState(false);
@@ -39,10 +39,10 @@ const BeforeAfterSlider = ({
             setIsAnimating(true);
             setHasAnimated(true);
             
-            // Animate from 85% (showing mostly before) to 15% (showing mostly after)
+            // Animate from 15% (showing mostly after/sketch) to 85% (showing mostly before/original)
             const startTime = performance.now();
-            const startPosition = 85;
-            const endPosition = 15;
+            const startPosition = 15;
+            const endPosition = 85;
             
             const animate = (currentTime: number) => {
               const elapsed = currentTime - startTime;
