@@ -45,6 +45,9 @@ import InteractiveGuestEngagementPage from "./pages/blog/InteractiveGuestEngagem
 import AIPhotoBoothVsTraditionalPage from "./pages/blog/AIPhotoBoothVsTraditionalPage";
 import TradeShowBoothIdeasPage from "./pages/blog/TradeShowBoothIdeasPage";
 import CorporateHeadshotTrendsPage from "./pages/blog/CorporateHeadshotTrendsPage";
+import PhotoBoothRentalGuidePage from "./pages/blog/PhotoBoothRentalGuidePage";
+import CorporatePhotoBoothRentalPage from "./pages/blog/CorporatePhotoBoothRentalPage";
+import PhotoBoothRentalNYCPage from "./pages/blog/PhotoBoothRentalNYCPage";
 // Proposals Page
 import ProposalsPage from "./pages/ProposalsPage";
 import CaseStudiesPage from "./pages/CaseStudiesPage";
@@ -118,6 +121,9 @@ const App = () => (
           <Route path="/blog/ai-photo-booth-vs-traditional-photo-booth" element={<AIPhotoBoothVsTraditionalPage />} />
           <Route path="/blog/trade-show-booth-ideas-that-drive-leads" element={<TradeShowBoothIdeasPage />} />
           <Route path="/blog/corporate-headshot-trends" element={<CorporateHeadshotTrendsPage />} />
+          <Route path="/blog/photo-booth-rental-guide" element={<PhotoBoothRentalGuidePage />} />
+          <Route path="/blog/corporate-photo-booth-rental" element={<CorporatePhotoBoothRentalPage />} />
+          <Route path="/blog/photo-booth-rental-nyc" element={<PhotoBoothRentalNYCPage />} />
           {/* Proposals Page */}
           <Route path="/proposals" element={<ProposalsPage />} />
           <Route path="/case-studies" element={<CaseStudiesPage />} />
