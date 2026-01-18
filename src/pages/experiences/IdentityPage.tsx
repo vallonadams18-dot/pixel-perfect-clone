@@ -30,15 +30,15 @@ import sketchInkwash5 from '@/assets/sketch-guest-inkwash-5.jpg';
 import sketchWatercolor6 from '@/assets/sketch-guest-watercolor-6.jpg';
 
 const galleryItems = [
-  { before: sketchBefore1, after: sketchAfter1, alt: 'Pencil sketch transformation', style: 'Pencil' },
-  { before: sketchBefore1, after: sketchCharcoal1, alt: 'Charcoal portrait transformation', style: 'Charcoal' },
-  { before: sketchBefore2, after: sketchInkwash2, alt: 'Ink wash portrait', style: 'Ink Wash' },
-  { before: sketchBefore3, after: sketchWatercolor3, alt: 'Watercolor portrait', style: 'Watercolor' },
-  { before: sketchBefore4, after: sketchCharcoal4, alt: 'Charcoal art portrait', style: 'Charcoal' },
-  { before: sketchBefore5, after: sketchInkwash5, alt: 'Ink wash style portrait', style: 'Ink Wash' },
-  { before: sketchBefore6, after: sketchWatercolor6, alt: 'Watercolor art portrait', style: 'Watercolor' },
-  { before: sketchBefore2, after: sketchAfter2, alt: 'Pencil sketch portrait', style: 'Pencil' },
-  { before: sketchBefore3, after: sketchAfter3, alt: 'Professional pencil sketch', style: 'Pencil' },
+  { before: sketchBefore1, after: sketchAfter1, alt: 'AI pencil sketch portrait transformation at corporate event NYC', style: 'Pencil' },
+  { before: sketchBefore1, after: sketchCharcoal1, alt: 'AI charcoal portrait sketch for luxury brand activation', style: 'Charcoal' },
+  { before: sketchBefore2, after: sketchInkwash2, alt: 'AI ink wash portrait art for wedding entertainment', style: 'Ink Wash' },
+  { before: sketchBefore3, after: sketchWatercolor3, alt: 'AI watercolor portrait sketch for gala events', style: 'Watercolor' },
+  { before: sketchBefore4, after: sketchCharcoal4, alt: 'AI charcoal art portrait for professional headshots', style: 'Charcoal' },
+  { before: sketchBefore5, after: sketchInkwash5, alt: 'AI ink wash style portrait for art gallery opening', style: 'Ink Wash' },
+  { before: sketchBefore6, after: sketchWatercolor6, alt: 'AI watercolor art portrait for social events', style: 'Watercolor' },
+  { before: sketchBefore2, after: sketchAfter2, alt: 'AI pencil sketch transformation for corporate entertainment', style: 'Pencil' },
+  { before: sketchBefore3, after: sketchAfter3, alt: 'Professional AI pencil sketch portrait for events', style: 'Pencil' },
 ];
 const features = [
   {
@@ -74,25 +74,45 @@ const benefits = [
 
 const IdentityPage = () => {
   usePageMeta({
-    title: 'AI Sketch-a-Guest - AI Portrait Sketch Booth NYC | PixelAI Pro',
-    description: 'Create sophisticated AI-generated hand-drawn sketches of guests in real-time. A unique, artistic keepsake that elegantly incorporates brand elements. Perfect for upscale NYC corporate events and galas.',
+    title: 'AI Sketch-a-Guest | AI Portrait Sketch Booth NYC',
+    description: 'Real-time AI portrait sketches for corporate galas & events. Choose pencil, charcoal, ink wash or watercolor styles. Instant digital delivery + prints. Book NYC demo today.',
     ogImage: '/og-identity.jpg',
     canonicalPath: '/experiences/identity',
-    keywords: 'AI sketch portrait booth, digital caricature artist NYC, AI hand-drawn portrait, corporate event entertainment, artistic photo booth experience',
+    keywords: 'AI sketch portrait booth NYC, digital caricature artist, AI hand-drawn portrait, corporate event entertainment New York, artistic photo booth, pencil sketch booth, charcoal portrait booth, watercolor portrait event, luxury brand activation entertainment',
     schema: [
       {
         "@context": "https://schema.org",
         "@type": "Service",
         "name": "AI Sketch-a-Guest",
         "serviceType": "AI Portrait Sketch Booth",
-        "description": "AI-powered portrait sketching that creates authentic hand-drawn style artwork of guests in real-time, with seamless brand integration.",
+        "description": "AI-powered portrait sketching that creates authentic hand-drawn style artwork of guests in real-time, with seamless brand integration. Available in pencil, charcoal, ink wash, and watercolor styles.",
         "provider": {
           "@type": "LocalBusiness",
-          "@id": "https://pixelaipro.lovable.app/#business"
+          "@id": "https://pixelaipro.lovable.app/#business",
+          "name": "PixelAI Pro",
+          "telephone": "+1-212-555-0123",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "New York",
+            "addressRegion": "NY",
+            "addressCountry": "US"
+          }
         },
-        "areaServed": {
-          "@type": "City",
-          "name": "New York City"
+        "areaServed": [
+          { "@type": "City", "name": "New York City" },
+          { "@type": "City", "name": "Los Angeles" },
+          { "@type": "City", "name": "Miami" },
+          { "@type": "City", "name": "Chicago" }
+        ],
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "AI Sketch Styles",
+          "itemListElement": [
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Pencil Sketch Portrait" }},
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Charcoal Portrait" }},
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Ink Wash Portrait" }},
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Watercolor Portrait" }}
+          ]
         }
       },
       {
@@ -109,13 +129,36 @@ const IdentityPage = () => {
           },
           {
             "@type": "Question",
+            "name": "What art styles are available for AI portrait sketches?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "We offer multiple artistic styles including classic pencil sketches, dramatic charcoal portraits, elegant ink wash, and vibrant watercolor effects. Custom styles can also be created to match your event aesthetic or brand identity."
+            }
+          },
+          {
+            "@type": "Question",
             "name": "Can we customize the sketch style for our brand?",
             "acceptedAnswer": {
               "@type": "Answer",
               "text": "Absolutely! We offer multiple artistic styles including pencil, charcoal, ink, and watercolor effects. Brand elements like logos, colors, and thematic designs can be elegantly incorporated into each sketch's artistic style."
             }
+          },
+          {
+            "@type": "Question",
+            "name": "How long does each AI portrait sketch take?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Each AI portrait sketch is generated in just seconds. Guests watch the artistic transformation unfold in real-time, creating an engaging and memorable experience."
+            }
           }
         ]
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "ImageGallery",
+        "name": "AI Sketch-a-Guest Transformation Gallery",
+        "description": "Before and after examples of AI portrait sketch transformations in various artistic styles",
+        "numberOfItems": 9
       }
     ]
   });
@@ -123,53 +166,55 @@ const IdentityPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <div className="pt-32 pb-20">
+      <main className="pt-32 pb-20">
         {/* Hero Section */}
-        <section className="section-padding relative">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/10 rounded-full blur-[150px]" />
-          
-          <div className="container-custom relative z-10">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div>
-                <Breadcrumbs items={[
-                  { label: 'AI Photo Booth Services', href: '/services' },
-                  { label: 'AI Sketch-a-Guest' }
-                ]} />
-                <div className="w-20 h-20 rounded-2xl bg-gradient-primary flex items-center justify-center mb-6">
-                  <Pencil size={40} className="text-white" />
+        <article>
+          <header className="section-padding relative">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/10 rounded-full blur-[150px]" aria-hidden="true" />
+            
+            <div className="container-custom relative z-10">
+              <div className="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                  <Breadcrumbs items={[
+                    { label: 'AI Photo Booth Services', href: '/services' },
+                    { label: 'AI Sketch-a-Guest' }
+                  ]} />
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-primary flex items-center justify-center mb-6" aria-hidden="true">
+                    <Pencil size={40} className="text-white" />
+                  </div>
+                  <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
+                    <span className="gradient-text">AI Sketch-a-Guest</span>
+                  </h1>
+                  <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-4">
+                    Real-Time AI Portrait Sketches for Corporate Events NYC
+                  </p>
+                  <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+                    Combining cutting-edge AI with timeless artistic style, Sketch-a-Guest creates beautiful 
+                    hand-drawn portraits of your guests in real-time. Choose from pencil, charcoal, ink wash, 
+                    or watercolor styles—a sophisticated keepsake that elegantly incorporates your brand.
+                  </p>
+                  <div className="flex flex-wrap gap-4">
+                    <Link to="/contact" className="btn-primary inline-flex items-center gap-2" aria-label="Book AI Sketch-a-Guest experience for your event">
+                      Book This Experience <ArrowRight size={20} aria-hidden="true" />
+                    </Link>
+                    <Link to="/portfolio" className="btn-secondary inline-flex items-center gap-2" aria-label="View AI sketch portrait examples">
+                      View Examples
+                    </Link>
+                  </div>
                 </div>
-                <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
-                  <span className="gradient-text">AI Sketch-a-Guest</span>
-                </h1>
-                <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-4">
-                  Technology Meets Classic Artistry
-                </p>
-                <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                  Combining cutting-edge AI with timeless artistic style, Sketch-a-Guest creates beautiful 
-                  hand-drawn portraits of your guests in real-time. A sophisticated, unique keepsake 
-                  that elegantly incorporates your brand elements into every piece of art.
-                </p>
-                <div className="flex flex-wrap gap-4">
-                  <Link to="/contact" className="btn-primary inline-flex items-center gap-2">
-                    Book This Experience <ArrowRight size={20} />
-                  </Link>
-                  <Link to="/portfolio" className="btn-secondary inline-flex items-center gap-2">
-                    View Examples
-                  </Link>
-                </div>
-              </div>
-              
-              <div className="relative aspect-[3/4] rounded-3xl overflow-hidden glass glow">
-                <BeforeAfterSlider 
-                  beforeImage={sketchBefore1} 
-                  afterImage={sketchAfter1} 
-                  beforeAlt="Original photo"
-                  afterAlt="AI sketch transformation"
-                />
+                
+                <figure className="relative aspect-[3/4] rounded-3xl overflow-hidden glass glow">
+                  <BeforeAfterSlider 
+                    beforeImage={sketchBefore1} 
+                    afterImage={sketchAfter1} 
+                    beforeAlt="Original guest photo before AI sketch transformation"
+                    afterAlt="AI-generated pencil sketch portrait after transformation"
+                  />
+                  <figcaption className="sr-only">Before and after comparison of AI portrait sketch transformation</figcaption>
+                </figure>
               </div>
             </div>
-          </div>
-        </section>
+          </header>
 
         {/* How It Works */}
         <section className="section-padding bg-card/50">
@@ -301,9 +346,11 @@ const IdentityPage = () => {
           </div>
         </section>
 
+        </article>
+
         {/* Related Services */}
         <RelatedServices currentSlug="identity" />
-      </div>
+      </main>
       <Footer />
     </div>
   );
