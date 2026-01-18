@@ -91,18 +91,18 @@ const Services = () => {
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               {/* Service Image */}
-              <div className="relative h-48 overflow-hidden">
+              <div className="relative aspect-[4/3] overflow-hidden">
                 <img 
                   src={service.image} 
                   alt={`${service.title} - AI Photo Booth Service NYC`}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
               </div>
 
               {/* Content */}
-              <div className="p-6 pt-2">
+              <div className="p-5">
                 <h3 className="font-display text-xl font-bold text-foreground mb-3 group-hover:gradient-text transition-all">
                   {service.title}
                 </h3>
