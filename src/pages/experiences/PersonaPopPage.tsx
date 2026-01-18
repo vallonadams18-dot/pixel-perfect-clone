@@ -22,12 +22,15 @@ import fantasyElf from '@/assets/persona-pop-fantasy-elf-warrior.jpg';
 import cyberpunkNeon from '@/assets/persona-pop-cyberpunk-neon-portrait.jpg';
 import renaissancePainting from '@/assets/persona-pop-renaissance-painting-portrait.jpg';
 import popArtComic from '@/assets/persona-pop-pop-art-comic-style.jpg';
+import golferTransformation from '@/assets/persona-pop-golfer-transformation.jpg';
+import piratesTransformation from '@/assets/persona-pop-pirates-transformation.jpg';
+
 const galleryImages = [{
-  src: animeStyle,
-  alt: 'AI photo booth anime style transformation with colorful hair and cherry blossoms'
+  src: golferTransformation,
+  alt: 'AI photo booth golfer transformation with professional sports attire on golf course'
 }, {
-  src: animeStyle,
-  alt: 'AI photo booth anime style transformation with colorful hair and cherry blossoms'
+  src: piratesTransformation,
+  alt: 'AI photo booth pirate adventure transformation with two guests on ship deck'
 }, {
   src: vintage1920s,
   alt: 'Vintage 1920s art deco style AI portrait transformation with gatsby era glamour'
