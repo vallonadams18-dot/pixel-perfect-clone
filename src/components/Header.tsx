@@ -43,8 +43,8 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 overflow-visible ${
-        isScrolled ? 'py-4' : 'py-6'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled ? 'py-3' : 'py-4'
       }`}
     >
       {/* Header background */}
@@ -54,89 +54,90 @@ const Header = () => {
           : 'bg-background/80 backdrop-blur-sm'
       }`} />
 
-      <div className="container-custom relative z-10 flex items-center justify-center">
-        {/* Logo - Centered */}
-        <Link to="/" className="flex items-center">
-          <img 
-            src={logoImage} 
-            alt="PixelAI Pro" 
-            className="h-10 w-auto"
-            loading="eager"
-            decoding="async"
-          />
-        </Link>
-      </div>
-
-      {/* Desktop Navigation - Below logo */}
-      <div className="container-custom relative z-10 flex items-center justify-center mt-2">
-
-        <nav className="hidden lg:flex items-center gap-6">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              to={link.href}
-              className={`text-sm transition-colors duration-200 ${
-                location.pathname === link.href
-                  ? 'text-primary font-semibold'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {link.name}
-            </Link>
-          ))}
-          
-          {/* Locations Dropdown */}
-          <div 
-            className="relative"
-            onMouseEnter={() => setIsLocationsOpen(true)}
-            onMouseLeave={() => setIsLocationsOpen(false)}
-          >
-            <button
-              className={`text-sm transition-colors duration-200 flex items-center gap-1 ${
-                location.pathname.includes('/locations')
-                  ? 'text-primary font-semibold'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              Locations
-              <ChevronDown size={14} className={`transition-transform ${isLocationsOpen ? 'rotate-180' : ''}`} />
-            </button>
-            
-            {isLocationsOpen && (
-              <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2">
-                <div className="bg-card border border-border rounded-xl shadow-xl p-4 min-w-[280px] grid grid-cols-2 gap-2">
-                  {locationLinks.map((loc) => (
-                    <Link
-                      key={loc.name}
-                      to={loc.href}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 transition-colors"
-                    >
-                      <MapPin size={12} className="text-primary shrink-0" />
-                      {loc.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </nav>
-
-        {/* CTA Button */}
-        <div className="hidden lg:block ml-6">
-          <Link to="/contact" className="btn-primary text-sm">
-            Book a Demo
+      <div className="container-custom relative z-10">
+        <div className="flex items-center justify-between">
+          {/* Logo */}
+          <Link to="/" className="flex items-center shrink-0">
+            <img 
+              src={logoImage} 
+              alt="PixelAI Pro" 
+              className="h-10 w-auto"
+              loading="eager"
+              decoding="async"
+            />
           </Link>
+
+          {/* Desktop Navigation - Centered */}
+          <nav className="hidden lg:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                to={link.href}
+                className={`text-sm transition-colors duration-200 whitespace-nowrap ${
+                  location.pathname === link.href
+                    ? 'text-primary font-semibold'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {link.name}
+              </Link>
+            ))}
+            
+            {/* Locations Dropdown */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setIsLocationsOpen(true)}
+              onMouseLeave={() => setIsLocationsOpen(false)}
+            >
+              <button
+                className={`text-sm transition-colors duration-200 flex items-center gap-1 whitespace-nowrap ${
+                  location.pathname.includes('/locations')
+                    ? 'text-primary font-semibold'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Locations
+                <ChevronDown size={14} className={`transition-transform ${isLocationsOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {isLocationsOpen && (
+                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2">
+                  <div className="bg-card border border-border rounded-xl shadow-xl p-4 min-w-[280px] grid grid-cols-2 gap-2">
+                    {locationLinks.map((loc) => (
+                      <Link
+                        key={loc.name}
+                        to={loc.href}
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 transition-colors"
+                      >
+                        <MapPin size={12} className="text-primary shrink-0" />
+                        {loc.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </nav>
+
+          {/* Right Side - CTA Button & Mobile Menu */}
+          <div className="flex items-center gap-4">
+            {/* CTA Button */}
+            <div className="hidden lg:block">
+              <Link to="/contact" className="btn-primary text-sm">
+                Book a Demo
+              </Link>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="lg:hidden text-foreground p-2"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
-
       </div>
-
-      {/* Mobile Menu Button - Absolute positioned */}
-      <button
-        className="lg:hidden text-foreground absolute right-4 top-1/2 -translate-y-1/2 z-20"
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-      >
-        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
