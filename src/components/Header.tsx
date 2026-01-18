@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown, MapPin } from 'lucide-react';
-import heroImage from '@/assets/hero-background.jpg';
 import logoImage from '@/assets/pixelai-pro-logo.png';
 
 const navLinks = [
@@ -48,26 +47,12 @@ const Header = () => {
         isScrolled ? 'py-4' : 'py-6'
       }`}
     >
-      {/* Header background image - always visible */}
-      <div className="absolute inset-0 pointer-events-none">
-        <img
-          src={heroImage}
-          alt=""
-          aria-hidden="true"
-          className={`w-full h-full object-cover scale-110 transition-all duration-300 ${
-            isScrolled ? 'opacity-60 blur-[1px]' : 'opacity-70 blur-[0.5px]'
-          }`}
-          loading="eager"
-          decoding="async"
-          fetchPriority="high"
-        />
-        {/* Stronger glass overlay when scrolled for readability */}
-        <div className={`absolute inset-0 transition-all duration-300 ${
-          isScrolled 
-            ? 'bg-background/80 backdrop-blur-md' 
-            : 'bg-gradient-to-b from-background/40 via-background/70 to-background/95'
-        }`} />
-      </div>
+      {/* Header background */}
+      <div className={`absolute inset-0 transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-background/90 backdrop-blur-md border-b border-border/20' 
+          : 'bg-transparent'
+      }`} />
 
       <div className="container-custom relative z-10 flex items-center justify-between">
         {/* Logo */}
