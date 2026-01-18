@@ -5,6 +5,7 @@ import About from '@/components/About';
 import Services from '@/components/Services';
 import HowItWorks from '@/components/HowItWorks';
 import Portfolio from '@/components/Portfolio';
+import Testimonials, { generateReviewSchema } from '@/components/Testimonials';
 import FAQ from '@/components/FAQ';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
@@ -40,6 +41,7 @@ const Index = () => {
           "reviewCount": "247"
         }
       },
+      generateReviewSchema(),
       {
         "@context": "https://schema.org",
         "@type": "FAQPage",
@@ -98,6 +100,7 @@ const Index = () => {
       <Services />
       <HowItWorks />
       <Portfolio />
+      <Testimonials />
       <FAQ />
       <Contact />
       <Footer />
