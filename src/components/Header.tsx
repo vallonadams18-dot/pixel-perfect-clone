@@ -71,17 +71,14 @@ const Header = () => {
 
       <div className="container-custom relative z-10 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-3">
+        <Link to="/" className="flex items-center">
           <img 
             src={logoImage} 
-            alt="PixelAI Pro Logo" 
+            alt="PixelAI Pro" 
             className="h-10 w-auto"
             loading="eager"
             decoding="async"
           />
-          <span className="font-display font-bold text-xl text-foreground hidden sm:inline">
-            Pixel<span className="gradient-text">AI</span> Pro
-          </span>
         </Link>
 
         {/* Desktop Navigation */}
