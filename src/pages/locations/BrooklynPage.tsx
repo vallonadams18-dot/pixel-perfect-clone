@@ -114,6 +114,26 @@ const faqs = [
     question: 'Do you offer same-day booking for Brooklyn events?',
     answer: 'When available, yes! We maintain Brooklyn-based inventory for last-minute requests. For same-day availability, call us directly at (917) 724-6051. Weekend events should be booked at least 1-2 weeks in advance.'
   },
+  {
+    question: 'What types of events do you serve in Brooklyn?',
+    answer: 'We serve all types of Brooklyn events including corporate parties, product launches, weddings, bar/bat mitzvahs, brand activations, tech meetups, art gallery openings, fashion shows, and private celebrations. Our AI experiences adapt to any event theme or brand.'
+  },
+  {
+    question: 'How many photos can guests take at a Brooklyn event?',
+    answer: 'There\'s no limit! Guests can take as many AI-transformed photos as they want during your event. Our systems process photos in under 60 seconds, so even high-volume events flow smoothly. We\'ve handled 500+ guests at single Brooklyn events.'
+  },
+  {
+    question: 'Do you provide on-site staff for Brooklyn events?',
+    answer: 'Yes, every Brooklyn booking includes a trained brand ambassador who manages the experience, assists guests, and ensures smooth operation throughout your event. Additional staff can be added for larger events.'
+  },
+  {
+    question: 'Can you customize the AI experience for Brooklyn brand activations?',
+    answer: 'Absolutely! We offer full customization including branded overlays, custom AI transformation styles, branded sharing pages, and integration with your marketing systems. Many Brooklyn brands use our custom experiences for product launches and pop-ups.'
+  },
+  {
+    question: 'What\'s included in a Brooklyn AI photo booth rental?',
+    answer: 'Every Brooklyn rental includes: the AI photo booth hardware, trained on-site staff, unlimited photos, instant digital delivery, social sharing capabilities, setup and teardown, and a post-event analytics report. Premium packages add printing, custom branding, and lead capture integration.'
+  },
 ];
 
 const BrooklynPage = () => {

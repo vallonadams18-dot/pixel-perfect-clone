@@ -114,6 +114,26 @@ const faqs = [
     question: 'Do you serve the entire Staten Island area?',
     answer: 'Yes, we serve all Staten Island neighborhoods from St. George to Tottenville. We\'re familiar with venues throughout the borough and can provide seamless setup at any location.'
   },
+  {
+    question: 'What types of Staten Island events do you specialize in?',
+    answer: 'We serve all Staten Island events including weddings at Snug Harbor and The Vanderbilt, corporate events, community festivals, school events, bar/bat mitzvahs, sweet sixteens, and private parties. Our AI experiences work for any celebration.'
+  },
+  {
+    question: 'Do you offer wedding packages for Staten Island venues?',
+    answer: 'Yes! Staten Island weddings are one of our specialties. We offer romantic AI transformations, custom wedding overlays, guest book alternatives, and instant sharing for wedding guests. Popular venues include Snug Harbor, The Vanderbilt, and The Stone House.'
+  },
+  {
+    question: 'How do you handle ferry logistics for Staten Island?',
+    answer: 'We plan our Staten Island arrivals to account for ferry schedules and always build in buffer time. For larger events, we may transport via the Verrazzano Bridge. Either way, we guarantee on-time setup—Staten Island clients never have to worry about logistics.'
+  },
+  {
+    question: 'Can you work at Historic Richmond Town events?',
+    answer: 'Yes! We love Historic Richmond Town\'s unique atmosphere. Our AI Trading Cards featuring historical figures are particularly popular there. We work with venue staff to ensure our modern technology complements the historic setting.'
+  },
+  {
+    question: 'Do you offer Staten Island community event rates?',
+    answer: 'Yes, we offer special pricing for Staten Island community organizations, schools, and nonprofits. We believe in supporting the local Staten Island community. Contact us to discuss community event rates.'
+  },
 ];
 
 const StatenIslandPage = () => {

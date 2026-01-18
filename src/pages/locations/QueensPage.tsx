@@ -114,6 +114,26 @@ const faqs = [
     question: 'How far in advance should I book for Queens events?',
     answer: 'We recommend booking 2-4 weeks in advance for most Queens events. Sports events and peak season (summer, holidays) should be booked 4-6 weeks ahead. For last-minute availability, call us directly at (917) 724-6051.'
   },
+  {
+    question: 'What types of sports activations do you offer at Queens venues?',
+    answer: 'For Queens sports venues, we offer AI Trading Cards (fans become their favorite players), PixelWear virtual jersey try-on, AI Headshots in team gear, and Persona Pop transformations. These are perfect for Citi Field, USTA, and other sports venues.'
+  },
+  {
+    question: 'Can you handle US Open corporate hospitality events?',
+    answer: 'Yes! We\'ve worked US Open corporate hospitality suites and sponsor activations. Our AI headshot booth is particularly popular with VIP guests who want professional portraits. We understand the premium experience expected at USTA events.'
+  },
+  {
+    question: 'Do you offer printing at Queens events?',
+    answer: 'Yes, we offer instant photo printing at Queens events. Guests receive high-quality 4x6 or 5x7 prints of their AI-transformed photos within seconds. Printing packages can be added to any Queens rental.'
+  },
+  {
+    question: 'What Queens neighborhoods do you cover?',
+    answer: 'We serve all Queens neighborhoods including Long Island City, Astoria, Flushing, Jamaica, Forest Hills, Jackson Heights, Sunnyside, Woodside, Bayside, Ridgewood, and more. No Queens venue is too far for our team.'
+  },
+  {
+    question: 'Can you customize AI experiences for Queens cultural events?',
+    answer: 'Absolutely! Queens is the most diverse borough, and we love creating culturally relevant AI experiences. We\'ve done custom transformations for Lunar New Year celebrations in Flushing, Caribbean festivals, and multicultural corporate events.'
+  },
 ];
 
 const QueensPage = () => {

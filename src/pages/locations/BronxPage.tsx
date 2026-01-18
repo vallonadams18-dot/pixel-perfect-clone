@@ -114,6 +114,26 @@ const faqs = [
     question: 'How do you handle setup at cultural venues like the Bronx Zoo?',
     answer: 'We have experience with the unique requirements of cultural venues. We coordinate with venue staff for access, use self-contained equipment, and can adapt to indoor/outdoor settings. We always prioritize guest experience and venue guidelines.'
   },
+  {
+    question: 'What AI experiences work best for Yankee Stadium fan activations?',
+    answer: 'For Yankee Stadium, AI Trading Cards are our most popular—fans love becoming their own baseball card. PixelWear virtual jersey try-on and AI transformations into Yankees legends are also huge hits. We can customize any experience with Yankees branding.'
+  },
+  {
+    question: 'Do you offer packages for Bronx nonprofit fundraisers?',
+    answer: 'Yes! We offer special rates for Bronx nonprofit organizations and cultural institutions. We\'ve worked with the Bronx Zoo, NY Botanical Garden, and various community organizations. Contact us about nonprofit pricing.'
+  },
+  {
+    question: 'Can you handle Fordham University events?',
+    answer: 'Absolutely! We work with Fordham University for student events, alumni gatherings, and academic conferences. Our AI headshot booth is particularly popular for career fairs and networking events.'
+  },
+  {
+    question: 'What\'s the turnaround time for photos at Bronx events?',
+    answer: 'Our AI transformations are ready in under 60 seconds. Guests receive their photos instantly via text, email, or AirDrop. For printed photos, we deliver 4x6 or 5x7 prints within 30 seconds of the transformation completing.'
+  },
+  {
+    question: 'Do you provide bilingual staff for Bronx events?',
+    answer: 'Yes! Given the Bronx\'s diverse community, we can provide Spanish-speaking brand ambassadors and bilingual signage. Let us know your language needs when booking.'
+  },
 ];
 
 const BronxPage = () => {

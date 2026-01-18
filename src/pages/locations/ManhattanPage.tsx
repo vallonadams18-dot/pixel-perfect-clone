@@ -114,6 +114,26 @@ const faqs = [
     question: 'Do you work with Manhattan event planners and agencies?',
     answer: 'Absolutely! We partner with many of Manhattan\'s top event planners and experiential agencies. We offer agency rates, white-label options, and can integrate seamlessly with your broader event production.'
   },
+  {
+    question: 'What AI photo experiences are most popular for Manhattan corporate events?',
+    answer: 'For Manhattan corporate events, AI Headshots are our most requested experience—executives love leaving with LinkedIn-ready portraits. PixelWear virtual try-on is popular for retail and fashion brands, while Persona Pop transformations are hits at galas and holiday parties.'
+  },
+  {
+    question: 'How does lead capture work at Manhattan trade shows?',
+    answer: 'Our AI photo booths integrate with major CRM systems (Salesforce, HubSpot, Marketo) for real-time lead capture. Guests provide contact info to receive their photos, giving you qualified leads with 95%+ capture rates at Javits Center and other Manhattan trade show venues.'
+  },
+  {
+    question: 'Can you handle high-volume Manhattan events with 1,000+ guests?',
+    answer: 'Yes! We\'ve successfully managed events with 5,000+ guests at venues like Javits Center. For high-volume events, we deploy multiple stations and additional staff to maintain fast throughput while keeping wait times under 2 minutes.'
+  },
+  {
+    question: 'Do you offer branded experiences for Manhattan product launches?',
+    answer: 'Absolutely. We create fully branded AI experiences including custom transformation styles, branded UI/overlays, custom sharing pages with your domain, and integration with your marketing stack. Perfect for Manhattan product launches and brand activations.'
+  },
+  {
+    question: 'What areas of Manhattan do you serve?',
+    answer: 'We serve all Manhattan neighborhoods including Midtown, Times Square, Hudson Yards, Financial District, SoHo, Tribeca, Chelsea, Upper East Side, Upper West Side, Flatiron, and more. No venue is too far—we cover the entire island.'
+  },
 ];
 
 const ManhattanPage = () => {
