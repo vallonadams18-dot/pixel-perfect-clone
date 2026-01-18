@@ -3,10 +3,11 @@ import nestleLogo from '@/assets/logos/nestle.png';
 import servicenowLogo from '@/assets/logos/servicenow.png';
 import betseyJohnsonLogo from '@/assets/logos/betsey-johnson.png';
 import goodMorningAmericaLogo from '@/assets/logos/good-morning-america.png';
-import figmaLogo from '@/assets/logos/figma.png';
 import wnbaLogo from '@/assets/logos/wnba.svg';
 import netflixLogo from '@/assets/logos/netflix.png';
 import spectrumNewsLogo from '@/assets/logos/spectrum-news.svg';
+import googleCloudLogo from '@/assets/logos/google-cloud.png';
+import starburstLogo from '@/assets/logos/starburst.png';
 
 const brands = [
   { name: 'Google', logo: googleLogo },
@@ -15,9 +16,10 @@ const brands = [
   { name: 'ServiceNow', logo: servicenowLogo },
   { name: 'Betsey Johnson', logo: betseyJohnsonLogo },
   { name: 'Good Morning America', logo: goodMorningAmericaLogo },
-  { name: 'Figma', logo: figmaLogo },
   { name: 'WNBA', logo: wnbaLogo },
   { name: 'Spectrum News', logo: spectrumNewsLogo },
+  { name: 'Google Cloud', logo: googleCloudLogo },
+  { name: 'Starburst', logo: starburstLogo },
 ];
 
 const BrandTicker = () => {
