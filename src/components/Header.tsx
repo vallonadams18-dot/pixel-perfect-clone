@@ -50,12 +50,12 @@ const Header = () => {
       {/* Header background */}
       <div className={`absolute inset-0 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-background/90 backdrop-blur-md border-b border-border/20' 
-          : 'bg-transparent'
+          ? 'bg-background/95 backdrop-blur-md shadow-lg shadow-black/10' 
+          : 'bg-background/80 backdrop-blur-sm'
       }`} />
 
-      <div className="container-custom relative z-10 flex items-center justify-between">
-        {/* Logo */}
+      <div className="container-custom relative z-10 flex items-center justify-center">
+        {/* Logo - Centered */}
         <Link to="/" className="flex items-center">
           <img 
             src={logoImage} 
@@ -65,8 +65,11 @@ const Header = () => {
             decoding="async"
           />
         </Link>
+      </div>
 
-        {/* Desktop Navigation */}
+      {/* Desktop Navigation - Below logo */}
+      <div className="container-custom relative z-10 flex items-center justify-center mt-2">
+
         <nav className="hidden lg:flex items-center gap-6">
           {navLinks.map((link) => (
             <Link
@@ -119,20 +122,21 @@ const Header = () => {
         </nav>
 
         {/* CTA Button */}
-        <div className="hidden lg:block">
+        <div className="hidden lg:block ml-6">
           <Link to="/contact" className="btn-primary text-sm">
             Book a Demo
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          className="lg:hidden text-foreground"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
       </div>
+
+      {/* Mobile Menu Button - Absolute positioned */}
+      <button
+        className="lg:hidden text-foreground absolute right-4 top-1/2 -translate-y-1/2 z-20"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+      >
+        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
