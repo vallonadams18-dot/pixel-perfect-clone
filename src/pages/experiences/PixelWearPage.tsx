@@ -6,24 +6,25 @@ import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import { Link } from 'react-router-dom';
 import { Shirt, Check, ArrowRight, Zap, Share2, Palette } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
-import pixelwearSportsJersey from '@/assets/pixelwear-sports-jersey.jpg';
-import pixelwearBefore from '@/assets/pixelwear-before.jpg';
-import pixelwearGucci from '@/assets/pixelwear-gucci.jpg';
-import pixelwearGucciBefore from '@/assets/pixelwear-gucci-before.jpg';
-import pixelwearNike from '@/assets/pixelwear-nike.jpg';
-import pixelwearNikeBefore from '@/assets/pixelwear-nike-before.jpg';
-import pixelwearLV from '@/assets/pixelwear-lv.jpg';
-import pixelwearLVBefore from '@/assets/pixelwear-lv-before.jpg';
-import pixelwearVersace from '@/assets/pixelwear-versace.jpg';
-import pixelwearVersaceBefore from '@/assets/pixelwear-versace-before.jpg';
-import pixelwearSupreme from '@/assets/pixelwear-supreme.jpg';
-import pixelwearSupremeBefore from '@/assets/pixelwear-supreme-before.jpg';
-import pixelwearPuma from '@/assets/pixelwear-puma.jpg';
-import pixelwearPumaBefore from '@/assets/pixelwear-puma-before.jpg';
-import pixelwearCowboys from '@/assets/pixelwear-cowboys.jpg';
-import pixelwearCowboysBefore from '@/assets/pixelwear-cowboys-before.jpg';
-import pixelwearGiants from '@/assets/pixelwear-giants.jpg';
-import pixelwearGiantsBefore from '@/assets/pixelwear-giants-before.jpg';
+// PixelWear images - now in public folder for direct download URLs
+const pixelwearSportsJersey = '/images/pixelwear/pixelwear-sports-jersey.jpg';
+const pixelwearBefore = '/images/pixelwear/pixelwear-before.jpg';
+const pixelwearGucci = '/images/pixelwear/pixelwear-gucci.jpg';
+const pixelwearGucciBefore = '/images/pixelwear/pixelwear-gucci-before.jpg';
+const pixelwearNike = '/images/pixelwear/pixelwear-nike.jpg';
+const pixelwearNikeBefore = '/images/pixelwear/pixelwear-nike-before.jpg';
+const pixelwearLV = '/images/pixelwear/pixelwear-lv.jpg';
+const pixelwearLVBefore = '/images/pixelwear/pixelwear-lv-before.jpg';
+const pixelwearVersace = '/images/pixelwear/pixelwear-versace.jpg';
+const pixelwearVersaceBefore = '/images/pixelwear/pixelwear-versace-before.jpg';
+const pixelwearSupreme = '/images/pixelwear/pixelwear-supreme.jpg';
+const pixelwearSupremeBefore = '/images/pixelwear/pixelwear-supreme-before.jpg';
+const pixelwearPuma = '/images/pixelwear/pixelwear-puma.jpg';
+const pixelwearPumaBefore = '/images/pixelwear/pixelwear-puma-before.jpg';
+const pixelwearCowboys = '/images/pixelwear/pixelwear-cowboys.jpg';
+const pixelwearCowboysBefore = '/images/pixelwear/pixelwear-cowboys-before.jpg';
+const pixelwearGiants = '/images/pixelwear/pixelwear-giants.jpg';
+const pixelwearGiantsBefore = '/images/pixelwear/pixelwear-giants-before.jpg';
 
 const brandGallery = [
   { before: pixelwearNikeBefore, after: pixelwearNike, brand: 'Nike' },
