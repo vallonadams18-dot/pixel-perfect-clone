@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { Pencil, Check, ArrowRight, Palette, Clock, Sparkles } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
 
-// Before/After sketch images
+// Before/After sketch images - Pencil Style
 import sketchBefore1 from '@/assets/sketch-guest-before-1.jpg';
 import sketchAfter1 from '@/assets/sketch-guest-after-1.jpg';
 import sketchBefore2 from '@/assets/sketch-guest-before-2.jpg';
@@ -21,13 +21,24 @@ import sketchAfter5 from '@/assets/sketch-guest-after-5.jpg';
 import sketchBefore6 from '@/assets/sketch-guest-before-6.jpg';
 import sketchAfter6 from '@/assets/sketch-guest-after-6.jpg';
 
+// Art Style Variations
+import sketchCharcoal1 from '@/assets/sketch-guest-charcoal-1.jpg';
+import sketchInkwash2 from '@/assets/sketch-guest-inkwash-2.jpg';
+import sketchWatercolor3 from '@/assets/sketch-guest-watercolor-3.jpg';
+import sketchCharcoal4 from '@/assets/sketch-guest-charcoal-4.jpg';
+import sketchInkwash5 from '@/assets/sketch-guest-inkwash-5.jpg';
+import sketchWatercolor6 from '@/assets/sketch-guest-watercolor-6.jpg';
+
 const galleryItems = [
-  { before: sketchBefore1, after: sketchAfter1, alt: 'Guest portrait sketch transformation' },
-  { before: sketchBefore2, after: sketchAfter2, alt: 'Corporate event sketch portrait' },
-  { before: sketchBefore3, after: sketchAfter3, alt: 'Professional sketch transformation' },
-  { before: sketchBefore4, after: sketchAfter4, alt: 'AI hand-drawn portrait' },
-  { before: sketchBefore5, after: sketchAfter5, alt: 'Artistic sketch portrait' },
-  { before: sketchBefore6, after: sketchAfter6, alt: 'Executive sketch transformation' },
+  { before: sketchBefore1, after: sketchAfter1, alt: 'Pencil sketch transformation', style: 'Pencil' },
+  { before: sketchBefore1, after: sketchCharcoal1, alt: 'Charcoal portrait transformation', style: 'Charcoal' },
+  { before: sketchBefore2, after: sketchInkwash2, alt: 'Ink wash portrait', style: 'Ink Wash' },
+  { before: sketchBefore3, after: sketchWatercolor3, alt: 'Watercolor portrait', style: 'Watercolor' },
+  { before: sketchBefore4, after: sketchCharcoal4, alt: 'Charcoal art portrait', style: 'Charcoal' },
+  { before: sketchBefore5, after: sketchInkwash5, alt: 'Ink wash style portrait', style: 'Ink Wash' },
+  { before: sketchBefore6, after: sketchWatercolor6, alt: 'Watercolor art portrait', style: 'Watercolor' },
+  { before: sketchBefore2, after: sketchAfter2, alt: 'Pencil sketch portrait', style: 'Pencil' },
+  { before: sketchBefore3, after: sketchAfter3, alt: 'Professional pencil sketch', style: 'Pencil' },
 ];
 const features = [
   {
@@ -192,17 +203,20 @@ const IdentityPage = () => {
               Transformation <span className="gradient-text">Gallery</span>
             </h2>
             <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
-              Slide to see the magic of AI sketch transformations in action.
+              Explore our variety of art styles—from classic pencil sketches to vibrant watercolors.
             </p>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {galleryItems.map((item, index) => (
-                <div key={index} className="rounded-2xl overflow-hidden glass">
+                <div key={index} className="rounded-2xl overflow-hidden glass relative group">
                   <BeforeAfterSlider 
                     beforeImage={item.before} 
                     afterImage={item.after} 
                     beforeAlt={`Before - ${item.alt}`}
                     afterAlt={`After - ${item.alt}`}
                   />
+                  <div className="absolute top-3 right-3 bg-primary/90 text-primary-foreground px-3 py-1 rounded-full text-sm font-medium">
+                    {item.style}
+                  </div>
                 </div>
               ))}
             </div>
