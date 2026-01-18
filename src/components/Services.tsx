@@ -1,51 +1,60 @@
-import { Shirt, User, Users, Bot, CreditCard, Video, Camera, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+// Import real photos from gallery
+import pixelwearImage from '@/assets/pixelwear-demo.jpg';
+import identityImage from '@/assets/ai-photo-booth-custom-portrait-transformation.jpg';
+import costarImage from '@/assets/co-star-demo.jpg';
+import axonImage from '@/assets/axon-ai-robot.png';
+import personaPopImage from '@/assets/persona-pop-demo.jpg';
+import videoBoothImage from '@/assets/ai-photo-booth-neo-cyberpunk-style.jpg';
+import headshotsImage from '@/assets/headshot-1.jpg';
+import tradingCardsImage from '@/assets/ai-trading-cards-hero-collection.jpg';
 
 const services = [
   {
-    icon: Shirt,
+    image: pixelwearImage,
     title: 'PixelWear',
     slug: 'pixelwear',
     description: 'The Digital Wardrobe. Guests "try on" your branded apparel instantly. No sizes, no logistics, pure engagement.',
   },
   {
-    icon: User,
+    image: identityImage,
     title: 'Identity',
     slug: 'identity',
     description: 'Roleplay AI. Seamlessly swap guest faces onto brand mascots or campaign heroes with 99% accuracy.',
   },
   {
-    icon: Users,
+    image: costarImage,
     title: 'Co-Star',
     slug: 'co-star',
     description: 'Digital Meet-and-Greet. Place your guests in a professional portrait next to any celebrity or athlete.',
   },
   {
-    icon: Bot,
+    image: axonImage,
     title: 'AXON AI',
     slug: 'axon-ai',
     description: 'AXON AI navigates your event using LIDAR, identifying guests to capture high-fidelity, studio-quality portraits.',
   },
   {
-    icon: CreditCard,
+    image: personaPopImage,
     title: 'Persona Pop',
     slug: 'persona-pop',
     description: 'Guests capture a portrait; our engine renders a bespoke, data-driven trading card featuring your brand\'s custom stats.',
   },
   {
-    icon: Video,
+    image: videoBoothImage,
     title: 'AI Video Booths',
     slug: 'ai-video-booths',
     description: 'Neural networks transform footage into stylized masterpieces, turning guests into protagonists of branded motion stories.',
   },
   {
-    icon: Camera,
+    image: headshotsImage,
     title: 'Headshots',
     slug: 'headshots',
     description: 'Neural engine captures your likeness, instantly rendering professional headshots optimized for executive branding.',
   },
   {
-    icon: Sparkles,
+    image: tradingCardsImage,
     title: 'AI Trading Cards',
     slug: 'ai-trading-cards',
     description: 'Transform guests into high-fidelity, branded collectibles featuring custom stats and stylized aesthetics.',
@@ -78,21 +87,29 @@ const Services = () => {
             <Link
               to={`/experiences/${service.slug}`}
               key={service.title}
-              className="group relative glass rounded-2xl p-6 card-hover gradient-border block"
+              className="group relative glass rounded-2xl overflow-hidden card-hover gradient-border block"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              {/* Icon */}
-              <div className="w-14 h-14 rounded-xl bg-gradient-primary flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                <service.icon size={28} className="text-white" />
+              {/* Service Image */}
+              <div className="relative h-48 overflow-hidden">
+                <img 
+                  src={service.image} 
+                  alt={`${service.title} - AI Photo Booth Service NYC`}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
               </div>
 
               {/* Content */}
-              <h3 className="font-display text-xl font-bold text-foreground mb-3 group-hover:gradient-text transition-all">
-                {service.title}
-              </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                {service.description}
-              </p>
+              <div className="p-6 pt-2">
+                <h3 className="font-display text-xl font-bold text-foreground mb-3 group-hover:gradient-text transition-all">
+                  {service.title}
+                </h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  {service.description}
+                </p>
+              </div>
 
               {/* Hover Arrow */}
               <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
