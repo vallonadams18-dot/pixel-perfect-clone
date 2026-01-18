@@ -20,6 +20,11 @@ import HeadshotsPage from "./pages/experiences/HeadshotsPage";
 import AITradingCardsPage from "./pages/experiences/AITradingCardsPage";
 // Location Pages
 import NYCPage from "./pages/locations/NYCPage";
+import BrooklynPage from "./pages/locations/BrooklynPage";
+import ManhattanPage from "./pages/locations/ManhattanPage";
+import QueensPage from "./pages/locations/QueensPage";
+import BronxPage from "./pages/locations/BronxPage";
+import StatenIslandPage from "./pages/locations/StatenIslandPage";
 import LosAngelesPage from "./pages/locations/LosAngelesPage";
 import NewJerseyPage from "./pages/locations/NewJerseyPage";
 import AtlantaPage from "./pages/locations/AtlantaPage";
@@ -67,6 +72,16 @@ const App = () => (
           {/* Location Pages */}
           <Route path="/locations/nyc" element={<NYCPage />} />
           <Route path="/ai-photo-booth-rental-nyc" element={<NYCPage />} />
+          <Route path="/locations/brooklyn" element={<BrooklynPage />} />
+          <Route path="/ai-photo-booth-brooklyn" element={<BrooklynPage />} />
+          <Route path="/locations/manhattan" element={<ManhattanPage />} />
+          <Route path="/ai-photo-booth-manhattan" element={<ManhattanPage />} />
+          <Route path="/locations/queens" element={<QueensPage />} />
+          <Route path="/ai-photo-booth-queens" element={<QueensPage />} />
+          <Route path="/locations/bronx" element={<BronxPage />} />
+          <Route path="/ai-photo-booth-bronx" element={<BronxPage />} />
+          <Route path="/locations/staten-island" element={<StatenIslandPage />} />
+          <Route path="/ai-photo-booth-staten-island" element={<StatenIslandPage />} />
           <Route path="/locations/los-angeles" element={<LosAngelesPage />} />
           <Route path="/ai-photo-booth-rental-los-angeles" element={<LosAngelesPage />} />
           <Route path="/locations/new-jersey" element={<NewJerseyPage />} />
