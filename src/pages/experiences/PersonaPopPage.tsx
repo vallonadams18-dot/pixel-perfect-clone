@@ -222,10 +222,18 @@ const PersonaPopPage = () => {
               See the magic of Persona Pop in action—from caricatures to superheroes, every transformation is unique.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {galleryImages.map((image, index) => <figure key={index} className="relative aspect-square rounded-xl overflow-hidden glass group cursor-pointer">
-                  
-                  
-                </figure>)}
+              {galleryImages.map((image, index) => (
+                <figure key={index} className="relative aspect-square rounded-xl overflow-hidden glass group cursor-pointer">
+                  <img 
+                    src={image.src} 
+                    alt={image.alt} 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    loading={index < 4 ? "eager" : "lazy"}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <figcaption className="sr-only">{image.alt}</figcaption>
+                </figure>
+              ))}
             </div>
           </div>
         </section>
