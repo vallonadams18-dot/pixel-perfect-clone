@@ -3,55 +3,55 @@ import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { Link } from 'react-router-dom';
-import { User, Check, ArrowRight, Wand2, Shield, Sparkles } from 'lucide-react';
+import { Pencil, Check, ArrowRight, Palette, Clock, Sparkles } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
 
 const features = [
   {
-    icon: Wand2,
-    title: '99% Face-Swap Accuracy',
-    description: 'Industry-leading neural networks ensure seamless, realistic face integration with brand characters and mascots.'
+    icon: Pencil,
+    title: 'AI-Powered Hand-Drawn Style',
+    description: 'Advanced algorithms create authentic hand-drawn sketches that capture the artistry of traditional portraiture with modern speed.'
   },
   {
-    icon: User,
-    title: 'Brand Mascot Integration',
-    description: 'Transform guests into your iconic brand characters—from sports mascots to campaign heroes.'
+    icon: Palette,
+    title: 'Custom Brand Integration',
+    description: 'Seamlessly incorporate logos, brand colors, and thematic elements directly into the artistic style of each sketch.'
   },
   {
-    icon: Shield,
-    title: 'Enterprise-Grade Processing',
-    description: 'Secure, on-device processing with instant rendering—no cloud uploads required for privacy-conscious brands.'
+    icon: Clock,
+    title: 'Real-Time Generation',
+    description: 'Watch as your portrait transforms into a beautiful sketch in seconds—guests see the artistic process unfold before their eyes.'
   },
   {
     icon: Sparkles,
-    title: 'Custom Character Libraries',
-    description: 'Build unlimited character templates for seasonal campaigns, product launches, and themed activations.'
+    title: 'Multiple Art Styles',
+    description: 'Choose from pencil, charcoal, ink, watercolor effects, or create a custom style that matches your event aesthetic.'
   },
 ];
 
 const benefits = [
-  'Transform guests into superheroes, athletes, or brand ambassadors',
-  'Perfect for movie premieres and entertainment marketing',
-  'Sports team activations with player transformations',
-  'High-resolution output for print and digital',
-  'Instant processing under 5 seconds',
-  'Supports group photos and multiple faces',
+  'Sophisticated keepsake guests treasure and display',
+  'Classic artistic appeal with cutting-edge technology',
+  'Fully customizable brand elements in every sketch',
+  'Multiple artistic styles to match any event theme',
+  'Instant digital delivery plus optional print station',
+  'Perfect for upscale corporate and social events',
 ];
 
 const IdentityPage = () => {
   usePageMeta({
-    title: 'Identity - AI Face Swap Photo Booth NYC | PixelAI Pro',
-    description: 'Create unforgettable brand experiences with Identity AI face-swap technology. Transform guests into brand mascots, superheroes, or campaign characters with 99% accuracy. Perfect for NYC entertainment marketing and brand activations.',
+    title: 'AI Sketch-a-Guest - AI Portrait Sketch Booth NYC | PixelAI Pro',
+    description: 'Create sophisticated AI-generated hand-drawn sketches of guests in real-time. A unique, artistic keepsake that elegantly incorporates brand elements. Perfect for upscale NYC corporate events and galas.',
     ogImage: '/og-identity.jpg',
     canonicalPath: '/experiences/identity',
-    keywords: 'AI face swap photo booth, brand mascot transformation, character face swap NYC, superhero transformation booth, entertainment marketing activation',
+    keywords: 'AI sketch portrait booth, digital caricature artist NYC, AI hand-drawn portrait, corporate event entertainment, artistic photo booth experience',
     schema: [
       {
         "@context": "https://schema.org",
         "@type": "Service",
-        "name": "Identity AI Face Swap",
-        "serviceType": "AI Face-Swap Photo Booth",
-        "description": "Enterprise-grade face-swap technology that transforms guests into brand mascots, superheroes, or campaign characters with 99% accuracy.",
+        "name": "AI Sketch-a-Guest",
+        "serviceType": "AI Portrait Sketch Booth",
+        "description": "AI-powered portrait sketching that creates authentic hand-drawn style artwork of guests in real-time, with seamless brand integration.",
         "provider": {
           "@type": "LocalBusiness",
           "@id": "https://pixelaipro.lovable.app/#business"
@@ -67,18 +67,18 @@ const IdentityPage = () => {
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "How accurate is the Identity AI face-swap?",
+            "name": "How does AI Sketch-a-Guest work?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Identity achieves 99% face-swap accuracy using industry-leading neural networks. The technology ensures seamless, realistic face integration with brand characters and mascots while processing on-device for privacy."
+              "text": "AI Sketch-a-Guest uses advanced AI algorithms to analyze a guest's photo and generate an authentic hand-drawn style sketch in real-time. The technology captures artistic nuances like shading, line weight, and texture while allowing seamless brand integration."
             }
           },
           {
             "@type": "Question",
-            "name": "Can we create custom characters for Identity?",
+            "name": "Can we customize the sketch style for our brand?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Yes! We build unlimited custom character templates for seasonal campaigns, product launches, and themed activations. Transform guests into your brand mascots, movie characters, sports legends, or any custom campaign hero."
+              "text": "Absolutely! We offer multiple artistic styles including pencil, charcoal, ink, and watercolor effects. Brand elements like logos, colors, and thematic designs can be elegantly incorporated into each sketch's artistic style."
             }
           }
         ]
@@ -99,21 +99,21 @@ const IdentityPage = () => {
               <div>
                 <Breadcrumbs items={[
                   { label: 'AI Photo Booth Services', href: '/services' },
-                  { label: 'Identity Face Swap' }
+                  { label: 'AI Sketch-a-Guest' }
                 ]} />
                 <div className="w-20 h-20 rounded-2xl bg-gradient-primary flex items-center justify-center mb-6">
-                  <User size={40} className="text-white" />
+                  <Pencil size={40} className="text-white" />
                 </div>
                 <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
-                  <span className="gradient-text">Identity</span>
+                  <span className="gradient-text">AI Sketch-a-Guest</span>
                 </h1>
                 <p className="text-sm font-semibold text-primary uppercase tracking-wider mb-4">
-                  AI Face-Swap & Character Transformation
+                  Technology Meets Classic Artistry
                 </p>
                 <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                  Let your audience become the hero of your brand story. Identity uses cutting-edge face-swap 
-                  AI to seamlessly transform guests into brand mascots, movie characters, sports legends, 
-                  or custom campaign heroes—creating viral-worthy content that drives engagement.
+                  Combining cutting-edge AI with timeless artistic style, Sketch-a-Guest creates beautiful 
+                  hand-drawn portraits of your guests in real-time. A sophisticated, unique keepsake 
+                  that elegantly incorporates your brand elements into every piece of art.
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <Link to="/contact" className="btn-primary inline-flex items-center gap-2">
@@ -128,9 +128,9 @@ const IdentityPage = () => {
               <div className="relative aspect-square rounded-3xl overflow-hidden glass glow">
                 <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-card to-primary/20 flex items-center justify-center">
                   <div className="text-center p-8">
-                    <User size={80} className="mx-auto text-primary mb-6 animate-float" />
-                    <h3 className="font-display text-2xl font-bold text-foreground">Face-Swap AI</h3>
-                    <p className="text-muted-foreground mt-2">99% Accuracy Technology</p>
+                    <Pencil size={80} className="mx-auto text-primary mb-6 animate-float" />
+                    <h3 className="font-display text-2xl font-bold text-foreground">AI Portrait Sketching</h3>
+                    <p className="text-muted-foreground mt-2">Real-Time Artistic Transformation</p>
                   </div>
                 </div>
               </div>
@@ -142,16 +142,16 @@ const IdentityPage = () => {
         <section className="section-padding bg-card/50">
           <div className="container-custom">
             <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
-              How <span className="gradient-text">Identity</span> Works
+              How <span className="gradient-text">Sketch-a-Guest</span> Works
             </h2>
             <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
-              Seamless face transformation powered by advanced neural networks and real-time processing.
+              Watch technology and artistry merge as AI creates beautiful hand-drawn portraits in seconds.
             </p>
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { step: '01', title: 'Capture', desc: 'High-resolution camera captures guest facial features and expressions.' },
-                { step: '02', title: 'Transform', desc: 'AI maps facial landmarks onto your chosen character with pixel-perfect precision.' },
-                { step: '03', title: 'Deliver', desc: 'Instant delivery via email, text, or social share with branded templates.' },
+                { step: '01', title: 'Capture', desc: 'Guest poses for a quick photo at your branded station.' },
+                { step: '02', title: 'Transform', desc: 'AI analyzes features and generates an authentic hand-drawn sketch with artistic flourishes.' },
+                { step: '03', title: 'Deliver', desc: 'Digital delivery plus optional high-quality print as a sophisticated keepsake.' },
               ].map((item) => (
                 <div key={item.step} className="text-center">
                   <div className="text-6xl font-display font-bold gradient-text mb-4">{item.step}</div>
@@ -170,7 +170,7 @@ const IdentityPage = () => {
               Key <span className="gradient-text">Features</span>
             </h2>
             <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
-              Enterprise-grade face transformation technology trusted by global entertainment and sports brands.
+              A perfect blend of classic portraiture and modern AI technology for unforgettable guest experiences.
             </p>
             <div className="grid md:grid-cols-2 gap-8">
               {features.map((feature) => (
@@ -192,7 +192,7 @@ const IdentityPage = () => {
         <section className="section-padding bg-card/50">
           <div className="container-custom">
             <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">
-              Why Brands Choose <span className="gradient-text">Identity</span>
+              Why Clients Choose <span className="gradient-text">Sketch-a-Guest</span>
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {benefits.map((benefit) => (
@@ -214,7 +214,7 @@ const IdentityPage = () => {
               Popular <span className="gradient-text">Use Cases</span>
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {['Movie Premieres & Promos', 'Sports Fan Experiences', 'Comic-Con & Gaming Events', 'Brand Mascot Activations'].map((useCase) => (
+              {['Corporate Galas & Awards', 'Luxury Brand Activations', 'Wedding & Social Events', 'Art Gallery Openings'].map((useCase) => (
                 <div key={useCase} className="glass rounded-xl p-6 text-center">
                   <h3 className="font-bold text-foreground">{useCase}</h3>
                 </div>
@@ -228,11 +228,11 @@ const IdentityPage = () => {
           <div className="container-custom">
             <div className="glass rounded-3xl p-12 text-center">
               <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-6">
-                Transform Your Guests Into Brand Heroes
+                Give Your Guests a Timeless Keepsake
               </h2>
               <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Create unforgettable character transformation experiences that drive social sharing and brand engagement. 
-                Let's discuss your custom character library.
+                Elevate your event with sophisticated AI-powered portrait sketches that combine 
+                classic artistry with modern technology. Let's create something beautiful together.
               </p>
               <Link to="/contact" className="btn-primary inline-flex items-center gap-2">
                 Schedule Your Demo <ArrowRight size={20} />
