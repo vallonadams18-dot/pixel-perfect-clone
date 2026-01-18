@@ -1,8 +1,6 @@
 import { ArrowRight, Play } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import heroImage from '@/assets/hero-background.jpg';
-import beforeImage from '@/assets/before-transformation.jpg';
-import afterImage from '@/assets/after-transformation.jpg';
 
 // Animated counter hook
 const useCountUp = (end: number, duration: number = 2000, start: boolean = false) => {
@@ -39,11 +37,8 @@ const brands = [
 ];
 
 const Hero = () => {
-  const [sliderPosition, setSliderPosition] = useState(50);
-  const [isDragging, setIsDragging] = useState(false);
   const [statsVisible, setStatsVisible] = useState(false);
   const statsRef = useRef<HTMLDivElement>(null);
-  const sliderRef = useRef<HTMLDivElement>(null);
 
   // Animated counters
   const eventsCount = useCountUp(500, 2000, statsVisible);
@@ -69,28 +64,6 @@ const Hero = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Slider drag handlers
-  const handleMove = (clientX: number) => {
-    if (!sliderRef.current || !isDragging) return;
-    const rect = sliderRef.current.getBoundingClientRect();
-    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-    setSliderPosition((x / rect.width) * 100);
-  };
-
-  const handleMouseDown = () => setIsDragging(true);
-  const handleMouseUp = () => setIsDragging(false);
-  const handleMouseMove = (e: React.MouseEvent) => handleMove(e.clientX);
-  const handleTouchMove = (e: React.TouchEvent) => handleMove(e.touches[0].clientX);
-
-  useEffect(() => {
-    const handleGlobalMouseUp = () => setIsDragging(false);
-    window.addEventListener('mouseup', handleGlobalMouseUp);
-    window.addEventListener('touchend', handleGlobalMouseUp);
-    return () => {
-      window.removeEventListener('mouseup', handleGlobalMouseUp);
-      window.removeEventListener('touchend', handleGlobalMouseUp);
-    };
-  }, []);
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -180,61 +153,6 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Right Column - Before/After Showcase */}
-          <div className="fade-in-up lg:fade-in-right" style={{ animationDelay: '0.3s' }}>
-            <div 
-              ref={sliderRef}
-              className="relative aspect-[4/5] max-w-md mx-auto rounded-2xl overflow-hidden shadow-2xl cursor-ew-resize group"
-              onMouseMove={handleMouseMove}
-              onMouseDown={handleMouseDown}
-              onMouseUp={handleMouseUp}
-              onTouchMove={handleTouchMove}
-              onTouchStart={handleMouseDown}
-              onTouchEnd={handleMouseUp}
-            >
-              {/* After Image (Background) */}
-              <img 
-                src={afterImage} 
-                alt="AI Photo Transformation Result" 
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-              
-              {/* Before Image (Clipped) */}
-              <div 
-                className="absolute inset-0 overflow-hidden"
-                style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
-              >
-                <img 
-                  src={beforeImage} 
-                  alt="Original Photo Before AI Transformation" 
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-              </div>
-              
-              {/* Slider Line */}
-              <div 
-                className="absolute top-0 bottom-0 w-1 bg-white/90 shadow-lg transition-all"
-                style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
-              >
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <div className="flex gap-0.5">
-                    <div className="w-0 h-0 border-t-[6px] border-t-transparent border-r-[8px] border-r-primary border-b-[6px] border-b-transparent" />
-                    <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[8px] border-l-primary border-b-[6px] border-b-transparent" />
-                  </div>
-                </div>
-              </div>
-              
-              {/* Labels */}
-              <div className="absolute top-4 left-4 glass px-3 py-1 rounded-full text-xs font-medium">Before</div>
-              <div className="absolute top-4 right-4 glass px-3 py-1 rounded-full text-xs font-medium text-primary">After</div>
-              
-              {/* Processing Time Badge */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 glass px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
-                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                Processed in &lt;3 seconds
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Stats - ROI Metrics with Animation */}
