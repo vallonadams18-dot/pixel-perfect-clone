@@ -2,10 +2,33 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import { Link } from 'react-router-dom';
 import { Pencil, Check, ArrowRight, Palette, Clock, Sparkles } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
 
+// Before/After sketch images
+import sketchBefore1 from '@/assets/sketch-guest-before-1.jpg';
+import sketchAfter1 from '@/assets/sketch-guest-after-1.jpg';
+import sketchBefore2 from '@/assets/sketch-guest-before-2.jpg';
+import sketchAfter2 from '@/assets/sketch-guest-after-2.jpg';
+import sketchBefore3 from '@/assets/sketch-guest-before-3.jpg';
+import sketchAfter3 from '@/assets/sketch-guest-after-3.jpg';
+import sketchBefore4 from '@/assets/sketch-guest-before-4.jpg';
+import sketchAfter4 from '@/assets/sketch-guest-after-4.jpg';
+import sketchBefore5 from '@/assets/sketch-guest-before-5.jpg';
+import sketchAfter5 from '@/assets/sketch-guest-after-5.jpg';
+import sketchBefore6 from '@/assets/sketch-guest-before-6.jpg';
+import sketchAfter6 from '@/assets/sketch-guest-after-6.jpg';
+
+const galleryItems = [
+  { before: sketchBefore1, after: sketchAfter1, alt: 'Guest portrait sketch transformation' },
+  { before: sketchBefore2, after: sketchAfter2, alt: 'Corporate event sketch portrait' },
+  { before: sketchBefore3, after: sketchAfter3, alt: 'Professional sketch transformation' },
+  { before: sketchBefore4, after: sketchAfter4, alt: 'AI hand-drawn portrait' },
+  { before: sketchBefore5, after: sketchAfter5, alt: 'Artistic sketch portrait' },
+  { before: sketchBefore6, after: sketchAfter6, alt: 'Executive sketch transformation' },
+];
 const features = [
   {
     icon: Pencil,
@@ -125,14 +148,13 @@ const IdentityPage = () => {
                 </div>
               </div>
               
-              <div className="relative aspect-square rounded-3xl overflow-hidden glass glow">
-                <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-card to-primary/20 flex items-center justify-center">
-                  <div className="text-center p-8">
-                    <Pencil size={80} className="mx-auto text-primary mb-6 animate-float" />
-                    <h3 className="font-display text-2xl font-bold text-foreground">AI Portrait Sketching</h3>
-                    <p className="text-muted-foreground mt-2">Real-Time Artistic Transformation</p>
-                  </div>
-                </div>
+              <div className="relative aspect-[3/4] rounded-3xl overflow-hidden glass glow">
+                <BeforeAfterSlider 
+                  beforeImage={sketchBefore1} 
+                  afterImage={sketchAfter1} 
+                  beforeAlt="Original photo"
+                  afterAlt="AI sketch transformation"
+                />
               </div>
             </div>
           </div>
@@ -157,6 +179,30 @@ const IdentityPage = () => {
                   <div className="text-6xl font-display font-bold gradient-text mb-4">{item.step}</div>
                   <h3 className="text-xl font-bold text-foreground mb-2">{item.title}</h3>
                   <p className="text-muted-foreground">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Gallery Section */}
+        <section className="section-padding">
+          <div className="container-custom">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
+              Transformation <span className="gradient-text">Gallery</span>
+            </h2>
+            <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
+              Slide to see the magic of AI sketch transformations in action.
+            </p>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {galleryItems.map((item, index) => (
+                <div key={index} className="rounded-2xl overflow-hidden glass">
+                  <BeforeAfterSlider 
+                    beforeImage={item.before} 
+                    afterImage={item.after} 
+                    beforeAlt={`Before - ${item.alt}`}
+                    afterAlt={`After - ${item.alt}`}
+                  />
                 </div>
               ))}
             </div>
