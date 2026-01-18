@@ -3,9 +3,29 @@ import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
+import FAQSection from '@/components/FAQSection';
 import { Link } from 'react-router-dom';
 import { Pencil, Check, ArrowRight, Palette, Clock, Sparkles } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
+
+const identityFaqs = [
+  {
+    question: "How does AI Sketch-a-Guest work?",
+    answer: "AI Sketch-a-Guest uses advanced AI algorithms to analyze a guest's photo and generate an authentic hand-drawn style sketch in real-time. The technology captures artistic nuances like shading, line weight, and texture while allowing seamless brand integration."
+  },
+  {
+    question: "What art styles are available for AI portrait sketches?",
+    answer: "We offer multiple artistic styles including classic pencil sketches, dramatic charcoal portraits, elegant ink wash, and vibrant watercolor effects. Custom styles can also be created to match your event aesthetic or brand identity."
+  },
+  {
+    question: "Can we customize the sketch style for our brand?",
+    answer: "Absolutely! We offer multiple artistic styles including pencil, charcoal, ink, and watercolor effects. Brand elements like logos, colors, and thematic designs can be elegantly incorporated into each sketch's artistic style."
+  },
+  {
+    question: "How long does each AI portrait sketch take?",
+    answer: "Each AI portrait sketch is generated in just seconds. Guests watch the artistic transformation unfold in real-time, creating an engaging and memorable experience."
+  }
+];
 
 // Before/After sketch images - Pencil Style
 import sketchBefore1 from '@/assets/sketch-guest-before-1.jpg';
@@ -324,6 +344,14 @@ const IdentityPage = () => {
             </div>
           </div>
         </section>
+
+        {/* FAQ Section */}
+        <FAQSection 
+          title="Frequently Asked Questions"
+          subtitle="Everything you need to know about AI Sketch-a-Guest portrait experiences."
+          faqs={identityFaqs}
+          gradientWord="Questions"
+        />
 
         {/* CTA Section */}
         <section className="section-padding">

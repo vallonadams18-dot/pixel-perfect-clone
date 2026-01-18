@@ -2,9 +2,21 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import FAQSection from '@/components/FAQSection';
 import { Link } from 'react-router-dom';
 import { Sparkles, Check, ArrowRight, Zap, Target, Image, Clock, Calendar } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
+
+const personaPopFaqs = [
+  {
+    question: "What character styles are available with Persona Pop?",
+    answer: "Persona Pop offers unlimited styles including superheroes, anime, vintage fashion icons, futuristic cyborgs, classic paintings, fantasy characters, and fully custom brand personas designed specifically for your event theme."
+  },
+  {
+    question: "How long does each AI transformation take?",
+    answer: "Each transformation takes just seconds. Guests strike a pose, our AI seamlessly blends their likeness into the selected character, and they receive high-resolution digital images and optional premium prints within moments."
+  }
+];
 import personaPopDemo from '@/assets/persona-pop-demo.jpg';
 
 // Gallery images with SEO-optimized filenames
@@ -378,6 +390,14 @@ const PersonaPopPage = () => {
             </div>
           </div>
         </section>
+
+        {/* FAQ Section */}
+        <FAQSection 
+          title="Frequently Asked Questions"
+          subtitle="Learn more about Persona Pop character transformations."
+          faqs={personaPopFaqs}
+          gradientWord="Questions"
+        />
 
         {/* CTA Section */}
         <section className="section-padding">

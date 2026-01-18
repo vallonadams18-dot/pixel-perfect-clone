@@ -2,10 +2,26 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import FAQSection from '@/components/FAQSection';
 import { Link } from 'react-router-dom';
 import { Bot, Check, ArrowRight, Navigation, Eye, Cpu } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
 import axonRobotImage from '@/assets/axon-ai-robot.png';
+
+const axonFaqs = [
+  {
+    question: "How does AXON AI navigate event venues?",
+    answer: "AXON AI uses advanced LIDAR technology to create a real-time 3D map of your venue. This allows the robot to autonomously navigate around obstacles, guests, and furniture while identifying optimal photography opportunities."
+  },
+  {
+    question: "How many guests can AXON capture at an event?",
+    answer: "AXON AI captures up to 10x more guests than stationary photo booths because it actively roams the venue. For a typical 4-hour event, AXON can capture 500+ unique guest portraits."
+  },
+  {
+    question: "Does AXON require staff to operate?",
+    answer: "AXON operates fully autonomously with zero staff intervention required. Simply deploy the robot at your event and it will navigate, engage guests, and capture portraits independently for up to 8 hours on a single charge."
+  }
+];
 
 const features = [
   {
@@ -271,6 +287,14 @@ const AxonAIPage = () => {
               </ul>
             </div>
           </section>
+
+          {/* FAQ Section */}
+          <FAQSection 
+            title="Frequently Asked Questions"
+            subtitle="Learn more about AXON AI autonomous robot photography."
+            faqs={axonFaqs}
+            gradientWord="Questions"
+          />
 
           {/* CTA Section */}
           <section className="section-padding" aria-labelledby="cta">

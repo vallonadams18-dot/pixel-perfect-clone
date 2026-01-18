@@ -3,9 +3,21 @@ import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
+import FAQSection from '@/components/FAQSection';
 import { Link } from 'react-router-dom';
 import { Shirt, Check, ArrowRight, Zap, Share2, Palette } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
+
+const pixelwearFaqs = [
+  {
+    question: "How does AI virtual try-on work?",
+    answer: "PixelWear uses advanced AI to render realistic apparel on guests in under 3 seconds. Simply capture a photo, select from your merchandise catalog, and our AI creates a photorealistic try-on image ready for social sharing."
+  },
+  {
+    question: "Do we need to provide physical inventory?",
+    answer: "No! That's the beauty of PixelWear. Showcase your entire merchandise catalog virtually—jerseys, t-shirts, hoodies—without any physical inventory, sizes, or shipping logistics."
+  }
+];
 // PixelWear images - now in public folder for direct download URLs
 const pixelwearSportsJersey = '/images/pixelwear/pixelwear-sports-jersey.jpg';
 const pixelwearBefore = '/images/pixelwear/pixelwear-before.jpg';
@@ -286,6 +298,14 @@ const PixelWearPage = () => {
             </div>
           </div>
         </section>
+
+        {/* FAQ Section */}
+        <FAQSection 
+          title="Frequently Asked Questions"
+          subtitle="Learn more about AI-powered virtual try-on technology."
+          faqs={pixelwearFaqs}
+          gradientWord="Questions"
+        />
 
         {/* CTA Section */}
         <section className="section-padding">
