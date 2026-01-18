@@ -53,7 +53,7 @@ const ServicesPage = () => {
             "name": "What AI photo booth services do you offer?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "We offer 8 distinct AI-powered experiences: AI Headshots, PixelWear Virtual Try-On, Persona Pop Character Transformations, AI Trading Cards, Co-Star Celebrity Photos, Identity Face-Swap, AI Video Booths, and AXON AI Autonomous Robot. Each can be customized for your brand."
+              "text": "We offer 8 distinct AI-powered experiences: AI Headshots, PixelWear Virtual Try-On, Persona Pop Character Transformations, AI Trading Cards, Co-Star Celebrity Photos, AI Sketch-a-Guest, AI Video Booths, and AXON AI Autonomous Robot. Each can be customized for your brand."
             }
           },
           {

@@ -20,9 +20,9 @@ const services = [
   },
   {
     image: identityImage,
-    title: 'Identity',
+    title: 'AI Sketch-a-Guest',
     slug: 'identity',
-    description: 'Roleplay AI. Seamlessly swap guest faces onto brand mascots or campaign heroes with 99% accuracy.',
+    description: 'AI-powered hand-drawn sketches of guests in real-time with elegant brand integration.',
     objectPosition: 'top',
   },
   {
