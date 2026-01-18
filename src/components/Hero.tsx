@@ -1,92 +1,277 @@
 import { ArrowRight, Play } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import heroImage from '@/assets/hero-background.jpg';
+import beforeImage from '@/assets/before-transformation.jpg';
+import afterImage from '@/assets/after-transformation.jpg';
+
+// Animated counter hook
+const useCountUp = (end: number, duration: number = 2000, start: boolean = false) => {
+  const [count, setCount] = useState(0);
+  
+  useEffect(() => {
+    if (!start) return;
+    
+    let startTime: number;
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime;
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+      setCount(Math.floor(progress * end));
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    requestAnimationFrame(animate);
+  }, [end, duration, start]);
+  
+  return count;
+};
+
+// Brand ticker data
+const brands = [
+  { name: 'Netflix', domain: 'netflix.com' },
+  { name: 'Microsoft', domain: 'microsoft.com' },
+  { name: 'Google', domain: 'google.com' },
+  { name: 'Nike', domain: 'nike.com' },
+  { name: 'Meta', domain: 'meta.com' },
+  { name: 'Amazon', domain: 'amazon.com' },
+  { name: 'Apple', domain: 'apple.com' },
+  { name: 'Spotify', domain: 'spotify.com' },
+];
 
 const Hero = () => {
+  const [sliderPosition, setSliderPosition] = useState(50);
+  const [isDragging, setIsDragging] = useState(false);
+  const [statsVisible, setStatsVisible] = useState(false);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  // Animated counters
+  const eventsCount = useCountUp(500, 2000, statsVisible);
+  const captureRate = useCountUp(95, 2000, statsVisible);
+  const brandRecall = useCountUp(77, 2000, statsVisible);
+  const processingTime = useCountUp(3, 1500, statsVisible);
+
+  // Intersection observer for stats animation
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStatsVisible(true);
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (statsRef.current) {
+      observer.observe(statsRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Slider drag handlers
+  const handleMove = (clientX: number) => {
+    if (!sliderRef.current || !isDragging) return;
+    const rect = sliderRef.current.getBoundingClientRect();
+    const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+    setSliderPosition((x / rect.width) * 100);
+  };
+
+  const handleMouseDown = () => setIsDragging(true);
+  const handleMouseUp = () => setIsDragging(false);
+  const handleMouseMove = (e: React.MouseEvent) => handleMove(e.clientX);
+  const handleTouchMove = (e: React.TouchEvent) => handleMove(e.touches[0].clientX);
+
+  useEffect(() => {
+    const handleGlobalMouseUp = () => setIsDragging(false);
+    window.addEventListener('mouseup', handleGlobalMouseUp);
+    window.addEventListener('touchend', handleGlobalMouseUp);
+    return () => {
+      window.removeEventListener('mouseup', handleGlobalMouseUp);
+      window.removeEventListener('touchend', handleGlobalMouseUp);
+    };
+  }, []);
+
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Animated Background */}
-      <div className="absolute inset-0 animated-gradient opacity-30" />
+      <div className="absolute inset-0 animated-gradient opacity-40" />
       
-      {/* Hero Background Image */}
+      {/* Hero Background Image - Improved contrast */}
       <div className="absolute inset-0">
         <img 
           src={heroImage} 
           alt="AI Photo Booth Rental NYC - Brand Activation Event Experience" 
-          className="w-full h-full object-cover opacity-90 blur-[0.5px] scale-105"
+          className="w-full h-full object-cover opacity-60 blur-[1px] scale-105 brightness-125"
           loading="eager"
           decoding="async"
           fetchPriority="high"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/55 via-background/35 to-background/70" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background/80" />
       </div>
       
       {/* Gradient Orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/30 rounded-full blur-[120px] animate-float" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/30 rounded-full blur-[120px] animate-float" style={{ animationDelay: '-3s' }} />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/40 rounded-full blur-[120px] animate-float" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/40 rounded-full blur-[120px] animate-float" style={{ animationDelay: '-3s' }} />
       
       {/* Grid Pattern Overlay */}
       <div 
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0 opacity-15"
         style={{
           backgroundImage: `linear-gradient(hsl(var(--border)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--border)) 1px, transparent 1px)`,
           backgroundSize: '50px 50px'
         }}
       />
 
-      <div className="container-custom relative z-10 text-center pt-24">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 glass px-4 py-2 rounded-full mb-8 fade-in-up">
-          <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-          <span className="text-sm text-muted-foreground">The Future of Event Activations</span>
-        </div>
-
-        {/* Main Headline - SEO Optimized */}
-        <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold text-foreground leading-tight mb-6 fade-in-up" style={{ animationDelay: '0.1s' }}>
-          #1 AI Photo Booth
-          <br />
-          <span className="gradient-text">Rental in NYC</span>
-          <br />
-          for Brand Activations
-        </h1>
-
-        {/* Subtitle - ROI Focused */}
-        <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-10 fade-in-up" style={{ animationDelay: '0.2s' }}>
-          Transform corporate events & trade shows with AI-powered photo experiences. 
-          Real-time lead capture, CRM integration, and instant social sharing—trusted by Fortune 500 brands at Javits Center, Pier 60 & top NYC venues.
-        </p>
-
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 fade-in-up" style={{ animationDelay: '0.3s' }}>
-          <a href="#contact" className="btn-primary flex items-center gap-2 group">
-            Get Started
-            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-          </a>
-          <a href="#portfolio" className="btn-outline flex items-center gap-2">
-            <Play size={18} />
-            View Our Work
-          </a>
-        </div>
-
-        {/* Stats - ROI Metrics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 pt-10 border-t border-border/30 fade-in-up" style={{ animationDelay: '0.4s' }}>
-          {[
-            { value: '500+', label: 'NYC Events' },
-            { value: '95%', label: 'Email Capture Rate' },
-            { value: '77%', label: 'Brand Recall Lift' },
-            { value: '<3s', label: 'AI Processing' },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div className="font-display text-3xl md:text-4xl font-bold gradient-text mb-2">
-                {stat.value}
-              </div>
-              <div className="text-sm text-muted-foreground">{stat.label}</div>
+      <div className="container-custom relative z-10 pt-20 pb-8">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Column - Text Content */}
+          <div className="text-center lg:text-left">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 glass px-4 py-2 rounded-full mb-6 fade-in-up">
+              <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+              <span className="text-sm text-muted-foreground">The Future of Event Activations</span>
             </div>
-          ))}
+
+            {/* Main Headline - SEO Optimized */}
+            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground leading-tight mb-6 fade-in-up" style={{ animationDelay: '0.1s' }}>
+              #1 AI Photo Booth
+              <br />
+              <span className="gradient-text">Rental in NYC</span>
+            </h1>
+
+            {/* Subtitle - ROI Focused */}
+            <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 mb-8 fade-in-up" style={{ animationDelay: '0.2s' }}>
+              Transform corporate events & trade shows with AI-powered photo experiences. 
+              Trusted by Fortune 500 brands at Javits Center & top NYC venues.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 fade-in-up" style={{ animationDelay: '0.3s' }}>
+              <a href="#contact" className="btn-primary flex items-center gap-2 group">
+                Get Started
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </a>
+              <a href="#portfolio" className="btn-outline flex items-center gap-2">
+                <Play size={18} />
+                View Our Work
+              </a>
+            </div>
+
+            {/* Trust Logos - Now Above the Fold */}
+            <div className="mt-10 fade-in-up" style={{ animationDelay: '0.4s' }}>
+              <p className="text-xs text-muted-foreground/70 uppercase tracking-wider mb-4">Trusted by industry leaders</p>
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6">
+                {brands.slice(0, 5).map((brand) => (
+                  <div key={brand.name} className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
+                    <img
+                      src={`https://logo.clearbit.com/${brand.domain}`}
+                      alt={`${brand.name} logo`}
+                      loading="lazy"
+                      className="w-6 h-6 object-contain grayscale"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                    <span className="text-xs font-medium text-muted-foreground hidden sm:inline">{brand.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Before/After Showcase */}
+          <div className="fade-in-up lg:fade-in-right" style={{ animationDelay: '0.3s' }}>
+            <div 
+              ref={sliderRef}
+              className="relative aspect-[4/5] max-w-md mx-auto rounded-2xl overflow-hidden shadow-2xl cursor-ew-resize group"
+              onMouseMove={handleMouseMove}
+              onMouseDown={handleMouseDown}
+              onMouseUp={handleMouseUp}
+              onTouchMove={handleTouchMove}
+              onTouchStart={handleMouseDown}
+              onTouchEnd={handleMouseUp}
+            >
+              {/* After Image (Background) */}
+              <img 
+                src={afterImage} 
+                alt="AI Photo Transformation Result" 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              
+              {/* Before Image (Clipped) */}
+              <div 
+                className="absolute inset-0 overflow-hidden"
+                style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
+              >
+                <img 
+                  src={beforeImage} 
+                  alt="Original Photo Before AI Transformation" 
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              </div>
+              
+              {/* Slider Line */}
+              <div 
+                className="absolute top-0 bottom-0 w-1 bg-white/90 shadow-lg transition-all"
+                style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
+              >
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <div className="flex gap-0.5">
+                    <div className="w-0 h-0 border-t-[6px] border-t-transparent border-r-[8px] border-r-primary border-b-[6px] border-b-transparent" />
+                    <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[8px] border-l-primary border-b-[6px] border-b-transparent" />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Labels */}
+              <div className="absolute top-4 left-4 glass px-3 py-1 rounded-full text-xs font-medium">Before</div>
+              <div className="absolute top-4 right-4 glass px-3 py-1 rounded-full text-xs font-medium text-primary">After</div>
+              
+              {/* Processing Time Badge */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 glass px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                Processed in &lt;3 seconds
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats - ROI Metrics with Animation */}
+        <div 
+          ref={statsRef}
+          className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mt-16 pt-8 border-t border-border/30 fade-in-up" 
+          style={{ animationDelay: '0.5s' }}
+        >
+          <div className="text-center group">
+            <div className="font-display text-3xl md:text-4xl lg:text-5xl font-bold gradient-text mb-2 transition-transform group-hover:scale-110">
+              {eventsCount}+
+            </div>
+            <div className="text-sm text-muted-foreground">NYC Events</div>
+          </div>
+          <div className="text-center group">
+            <div className="font-display text-3xl md:text-4xl lg:text-5xl font-bold gradient-text mb-2 transition-transform group-hover:scale-110">
+              {captureRate}%
+            </div>
+            <div className="text-sm text-muted-foreground">Email Capture Rate</div>
+          </div>
+          <div className="text-center group">
+            <div className="font-display text-3xl md:text-4xl lg:text-5xl font-bold gradient-text mb-2 transition-transform group-hover:scale-110">
+              {brandRecall}%
+            </div>
+            <div className="text-sm text-muted-foreground">Brand Recall Lift</div>
+          </div>
+          <div className="text-center group">
+            <div className="font-display text-3xl md:text-4xl lg:text-5xl font-bold gradient-text mb-2 transition-transform group-hover:scale-110">
+              &lt;{processingTime}s
+            </div>
+            <div className="text-sm text-muted-foreground">AI Processing</div>
+          </div>
         </div>
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 fade-in" style={{ animationDelay: '0.5s' }}>
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 fade-in" style={{ animationDelay: '0.6s' }}>
         <span className="text-xs text-muted-foreground">Scroll to explore</span>
         <div className="w-6 h-10 rounded-full border-2 border-muted-foreground/30 flex justify-center pt-2">
           <div className="w-1 h-2 bg-muted-foreground rounded-full animate-bounce" />
