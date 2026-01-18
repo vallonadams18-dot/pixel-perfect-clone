@@ -133,7 +133,7 @@ const NYCPage = () => {
     description: 'NYC\'s #1 AI photo booth rental for corporate events & trade shows. Serving Javits Center, Pier 60, Cipriani & 50+ venues. 500+ events, 95% lead capture rate. Real-time AI transformations. Get a free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/nyc',
-    keywords: 'AI photo booth rental NYC, New York photo booth, Javits Center photo booth, corporate event photo booth NYC, trade show booth Manhattan, brand activation NYC, experiential marketing New York, 360 photo booth NYC',
+    keywords: 'AI photo booth rental NYC, photo booth rental NYC, photo booth rental New York, New York photo booth, Javits Center photo booth, corporate event photo booth NYC, trade show booth Manhattan, brand activation NYC, experiential marketing New York, 360 photo booth NYC, glam photo booth NYC, photo booth rental Brooklyn, photo booth rental Manhattan, corporate brand activation, event activation NYC',
     schema: [
       {
         "@context": "https://schema.org",

@@ -173,7 +173,7 @@ const WashingtonDCPage = () => {
     description: 'Washington DC\'s #1 AI photo booth rental for association conferences, government events & galas. Serving Walter E. Washington Convention Center, Smithsonian, National Harbor & 55+ venues. Get a free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/washington-dc',
-    keywords: 'AI photo booth rental Washington DC, DC photo booth, association conference photo booth, government event photo booth DC, brand activation DC, experiential marketing DC, corporate event photo booth DC, gala photo booth DC',
+    keywords: 'AI photo booth rental Washington DC, photo booth rental Washington DC, DC photo booth, association conference photo booth, government event photo booth DC, brand activation DC, experiential marketing DC, corporate event photo booth DC, gala photo booth DC, 360 photo booth DC, glam photo booth DC, corporate brand activation DC, event activation Washington DC',
     schema: [
       {
         "@context": "https://schema.org",

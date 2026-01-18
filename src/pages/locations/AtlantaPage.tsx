@@ -91,7 +91,7 @@ const AtlantaPage = () => {
     description: 'Atlanta\'s #1 AI photo booth rental for corporate events & sports activations. Serving Mercedes-Benz Stadium, GWCC & 45+ venues. Real-time AI transformations. Get a free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/atlanta',
-    keywords: 'AI photo booth rental Atlanta, Atlanta photo booth, Georgia World Congress Center photo booth, corporate event photo booth Atlanta, trade show booth Georgia, brand activation Atlanta, experiential marketing Atlanta, 360 photo booth Atlanta',
+    keywords: 'AI photo booth rental Atlanta, photo booth rental Atlanta, Atlanta photo booth, Georgia World Congress Center photo booth, corporate event photo booth Atlanta, trade show booth Georgia, brand activation Atlanta, experiential marketing Atlanta, 360 photo booth Atlanta, glam photo booth Atlanta, photo booth rental Buckhead, corporate brand activation Atlanta, event activation Atlanta',
     schema: [
       {
         "@context": "https://schema.org",

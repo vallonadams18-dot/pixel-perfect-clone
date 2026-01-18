@@ -142,7 +142,7 @@ const StatenIslandPage = () => {
     description: 'Staten Island\'s top AI photo booth rental for weddings, galas & corporate events. Serving Snug Harbor, The Vanderbilt, Historic Richmond Town & 12+ Staten Island venues. Get your free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/staten-island',
-    keywords: 'AI photo booth Staten Island, photo booth rental St. George, Snug Harbor photo booth, Staten Island wedding photo booth, corporate event Staten Island, brand activation Staten Island, photo booth Tottenville, event photographer Staten Island',
+    keywords: 'AI photo booth Staten Island, photo booth rental Staten Island, photo booth rental St. George, Snug Harbor photo booth, corporate event Staten Island, brand activation Staten Island, photo booth Tottenville, event photographer Staten Island, glam photo booth Staten Island, 360 photo booth Staten Island, event activation Staten Island',
     schema: [
       {
         "@context": "https://schema.org",

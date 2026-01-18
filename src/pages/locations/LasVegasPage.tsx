@@ -91,7 +91,7 @@ const LasVegasPage = () => {
     description: 'Las Vegas\'s #1 AI photo booth rental for CES, trade shows & corporate events. Serving Las Vegas Convention Center, Venetian Expo & 80+ venues. Real-time AI transformations. Get a free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/las-vegas',
-    keywords: 'AI photo booth rental Las Vegas, Vegas photo booth, CES photo booth, Las Vegas Convention Center photo booth, trade show booth Vegas, brand activation Las Vegas, experiential marketing Las Vegas, 360 photo booth Las Vegas',
+    keywords: 'AI photo booth rental Las Vegas, photo booth rental Las Vegas, Vegas photo booth, CES photo booth, Las Vegas Convention Center photo booth, trade show booth Vegas, brand activation Las Vegas, experiential marketing Las Vegas, 360 photo booth Las Vegas, glam photo booth Vegas, photo booth rental The Strip, corporate brand activation Las Vegas, event activation Vegas',
     schema: [
       {
         "@context": "https://schema.org",

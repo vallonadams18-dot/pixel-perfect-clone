@@ -142,7 +142,7 @@ const BronxPage = () => {
     description: 'Bronx\'s top AI photo booth rental for sports events, galas & brand activations. Serving Yankee Stadium, NY Botanical Garden, Bronx Zoo & 15+ Bronx venues. Get your free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/bronx',
-    keywords: 'AI photo booth Bronx, photo booth rental Yankee Stadium, Bronx Zoo photo booth, NY Botanical Garden event, sports event photo booth Bronx, brand activation Bronx, corporate event Bronx, Fordham photo booth',
+    keywords: 'AI photo booth Bronx, photo booth rental Bronx, photo booth rental Yankee Stadium, Bronx Zoo photo booth, NY Botanical Garden event, sports event photo booth Bronx, brand activation Bronx, corporate event Bronx, Fordham photo booth, glam photo booth Bronx, 360 photo booth Bronx, event activation Bronx',
     schema: [
       {
         "@context": "https://schema.org",

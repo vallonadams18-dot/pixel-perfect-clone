@@ -142,7 +142,7 @@ const QueensPage = () => {
     description: 'Queens\' top AI photo booth rental for sports events, corporate parties & brand activations. Serving Citi Field, USTA, Long Island City & 20+ Queens venues. Get your free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/queens',
-    keywords: 'AI photo booth Queens, photo booth rental Citi Field, LIC photo booth, Flushing event photographer, sports event photo booth Queens, brand activation Astoria, corporate event Queens, US Open photo booth',
+    keywords: 'AI photo booth Queens, photo booth rental Queens, photo booth rental Citi Field, LIC photo booth, Flushing event photographer, sports event photo booth Queens, brand activation Astoria, corporate event Queens, US Open photo booth, glam photo booth Queens, 360 photo booth Queens, corporate brand activation Queens, event activation Queens',
     schema: [
       {
         "@context": "https://schema.org",

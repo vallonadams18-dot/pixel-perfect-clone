@@ -142,7 +142,7 @@ const ManhattanPage = () => {
     description: 'Manhattan\'s premier AI photo booth rental for corporate events & galas. Serving Javits Center, Cipriani, The Plaza & 40+ Manhattan venues. Fortune 500 trusted. Get your free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/manhattan',
-    keywords: 'AI photo booth Manhattan, photo booth rental Midtown, Times Square photo booth, Wall Street event photographer, corporate event Manhattan, brand activation SoHo, trade show Javits Center, photo booth Financial District',
+    keywords: 'AI photo booth Manhattan, photo booth rental Manhattan, photo booth rental Midtown, Times Square photo booth, Wall Street event photographer, corporate event Manhattan, brand activation SoHo, trade show Javits Center, photo booth Financial District, glam photo booth Manhattan, 360 photo booth Manhattan, corporate brand activation Manhattan, event activation Manhattan',
     schema: [
       {
         "@context": "https://schema.org",

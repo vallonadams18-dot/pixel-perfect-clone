@@ -91,7 +91,7 @@ const ChicagoPage = () => {
     description: 'Chicago\'s #1 AI photo booth rental for trade shows & corporate events. Serving McCormick Place, United Center, Navy Pier & 60+ venues. Real-time AI transformations. Get a free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/chicago',
-    keywords: 'AI photo booth rental Chicago, Chicago photo booth, McCormick Place photo booth, corporate event photo booth Chicago, trade show booth Chicago, brand activation Chicago, experiential marketing Chicago, 360 photo booth Chicago',
+    keywords: 'AI photo booth rental Chicago, photo booth rental Chicago, Chicago photo booth, McCormick Place photo booth, corporate event photo booth Chicago, trade show booth Chicago, brand activation Chicago, experiential marketing Chicago, 360 photo booth Chicago, glam photo booth Chicago, corporate brand activation Chicago, event activation Chicago, photo booth rental Illinois',
     schema: [
       {
         "@context": "https://schema.org",

@@ -91,7 +91,7 @@ const LosAngelesPage = () => {
     description: 'LA\'s #1 AI photo booth rental for corporate events, film premieres & trade shows. Serving LA Convention Center, SoFi Stadium & 60+ venues. Real-time AI transformations. Get a free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/los-angeles',
-    keywords: 'AI photo booth rental Los Angeles, LA photo booth, Los Angeles Convention Center photo booth, corporate event photo booth LA, trade show booth Los Angeles, brand activation LA, experiential marketing Los Angeles, 360 photo booth LA',
+    keywords: 'AI photo booth rental Los Angeles, photo booth rental Los Angeles, LA photo booth, Los Angeles Convention Center photo booth, corporate event photo booth LA, trade show booth Los Angeles, brand activation LA, experiential marketing Los Angeles, 360 photo booth LA, glam photo booth LA, photo booth rental Hollywood, corporate brand activation Los Angeles, event activation LA',
     schema: [
       {
         "@context": "https://schema.org",

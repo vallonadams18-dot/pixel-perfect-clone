@@ -91,7 +91,7 @@ const PennsylvaniaPage = () => {
     description: 'Pennsylvania\'s #1 AI photo booth rental for corporate events & sports activations. Serving PA Convention Center, Lincoln Financial Field & 35+ venues. Real-time AI transformations. Get a free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/pennsylvania',
-    keywords: 'AI photo booth rental Pennsylvania, PA photo booth, Philadelphia photo booth, Pittsburgh photo booth, corporate event photo booth PA, trade show booth Pennsylvania, brand activation PA, experiential marketing Pennsylvania',
+    keywords: 'AI photo booth rental Pennsylvania, photo booth rental Pennsylvania, PA photo booth, Philadelphia photo booth, Pittsburgh photo booth, corporate event photo booth PA, trade show booth Pennsylvania, brand activation PA, experiential marketing Pennsylvania, 360 photo booth PA, glam photo booth Pennsylvania, corporate brand activation PA, event activation Pennsylvania',
     schema: [
       {
         "@context": "https://schema.org",

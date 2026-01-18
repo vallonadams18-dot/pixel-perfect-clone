@@ -173,7 +173,7 @@ const AustinPage = () => {
     description: 'Austin\'s #1 AI photo booth rental for SXSW, tech conferences & corporate events. Serving Austin Convention Center, COTA, The Domain & 40+ venues. Real-time AI transformations. Get a free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/austin',
-    keywords: 'AI photo booth rental Austin, Austin photo booth, SXSW photo booth, tech conference photo booth Austin, brand activation Austin, experiential marketing Austin, corporate event photo booth Austin, F1 Austin photo booth',
+    keywords: 'AI photo booth rental Austin, photo booth rental Austin, Austin photo booth, SXSW photo booth, tech conference photo booth Austin, brand activation Austin, experiential marketing Austin, corporate event photo booth Austin, F1 Austin photo booth, 360 photo booth Austin, glam photo booth Austin, corporate brand activation Austin, event activation Austin',
     schema: [
       {
         "@context": "https://schema.org",

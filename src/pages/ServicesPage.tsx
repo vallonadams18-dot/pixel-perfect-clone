@@ -10,7 +10,7 @@ const ServicesPage = () => {
     description: 'Explore PixelAI Pro\'s AI photo booth services: AI Headshots, Trading Cards, Virtual Try-On, Character Transformations & more. Custom brand activations for NYC corporate events & trade shows.',
     ogImage: '/og-image.jpg',
     canonicalPath: '/services',
-    keywords: 'AI photo booth services, corporate event activation NYC, trade show lead capture, brand activation services, experiential marketing solutions, AI headshots, virtual try-on booth, trading cards photo booth',
+    keywords: 'AI photo booth services, photo booth rental NYC, corporate event activation NYC, trade show lead capture, brand activation services, experiential marketing solutions, AI headshots, virtual try-on booth, trading cards photo booth, glam photo booth NYC, 360 photo booth rental, corporate photo booth, event photo booth near me',
     schema: [
       {
         "@context": "https://schema.org",
