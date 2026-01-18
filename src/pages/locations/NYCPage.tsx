@@ -80,9 +80,12 @@ const stats = [
   { value: '50+', label: 'NYC Venues', icon: Building2 },
 ];
 
-const neighborhoods = [
-  'Manhattan', 'Brooklyn', 'Times Square', 'Hudson Yards', 'Financial District',
-  'Midtown', 'SoHo', 'Tribeca', 'Chelsea', 'Upper East Side'
+const boroughs = [
+  { name: 'Manhattan', link: '/locations/manhattan', description: 'Midtown, Wall Street, SoHo' },
+  { name: 'Brooklyn', link: '/locations/brooklyn', description: 'Williamsburg, DUMBO, Park Slope' },
+  { name: 'Queens', link: '/locations/queens', description: 'LIC, Flushing, Astoria' },
+  { name: 'Bronx', link: '/locations/bronx', description: 'Yankee Stadium, Fordham' },
+  { name: 'Staten Island', link: '/locations/staten-island', description: 'St. George, Snug Harbor' },
 ];
 
 const NYCPage = () => {
@@ -336,23 +339,30 @@ const NYCPage = () => {
         </div>
       </section>
 
-      {/* NYC Neighborhoods */}
+      {/* NYC Boroughs */}
       <section className="section-padding bg-card/50">
         <div className="container-custom">
           <div className="text-center mb-12">
             <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Serving All <span className="gradient-text">NYC Neighborhoods</span>
+              Serving All <span className="gradient-text">Five NYC Boroughs</span>
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              From Manhattan to Brooklyn, we deliver premium AI photo booth experiences across all five boroughs.
+              From Manhattan to Staten Island, we deliver premium AI photo booth experiences across all of New York City.
             </p>
           </div>
           
-          <div className="flex flex-wrap justify-center gap-3">
-            {neighborhoods.map((hood) => (
-              <span key={hood} className="glass px-4 py-2 rounded-full text-sm text-foreground">
-                {hood}
-              </span>
+          <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {boroughs.map((borough) => (
+              <Link
+                key={borough.name}
+                to={borough.link}
+                className="glass rounded-xl p-6 text-center hover:border-primary/50 transition-all group"
+              >
+                <h3 className="font-bold text-foreground group-hover:text-primary transition-colors mb-2">
+                  {borough.name}
+                </h3>
+                <p className="text-xs text-muted-foreground">{borough.description}</p>
+              </Link>
             ))}
           </div>
         </div>
