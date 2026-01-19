@@ -53,6 +53,8 @@ import ProposalsPage from "./pages/ProposalsPage";
 import CaseStudiesPage from "./pages/CaseStudiesPage";
 // Link in Bio Page
 import LinkInBioPage from "./pages/LinkInBioPage";
+// Private Content Hub
+import ContentHubPage from "./pages/ContentHubPage";
 
 const queryClient = new QueryClient();
 
@@ -131,6 +133,8 @@ const App = () => (
           <Route path="/case-studies" element={<CaseStudiesPage />} />
           {/* Link in Bio */}
           <Route path="/links" element={<LinkInBioPage />} />
+          {/* Private Content Hub */}
+          <Route path="/content-hub-x7k9" element={<ContentHubPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
