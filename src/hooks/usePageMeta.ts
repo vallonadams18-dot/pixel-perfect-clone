@@ -48,6 +48,17 @@ export const usePageMeta = ({
     // Set document title
     document.title = title;
 
+    // Google Search Console verification meta tag
+    // Replace YOUR_VERIFICATION_CODE with your actual code from Google Search Console
+    let googleVerification = document.querySelector('meta[name="google-site-verification"]') as HTMLMetaElement;
+    if (!googleVerification) {
+      googleVerification = document.createElement('meta');
+      googleVerification.name = 'google-site-verification';
+      document.head.appendChild(googleVerification);
+    }
+    // TODO: Replace with your actual Google Search Console verification code
+    googleVerification.content = 'YOUR_VERIFICATION_CODE';
+
     // Helper to set or create meta tag
     const setMeta = (selector: string, attribute: string, content: string) => {
       let meta = document.querySelector(selector) as HTMLMetaElement | null;
