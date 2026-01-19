@@ -6,6 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useAdminRole } from '@/hooks/useAdminRole';
+import { Progress } from '@/components/ui/progress';
+import JSZip from 'jszip';
 import { 
   Upload, 
   Trash2, 
@@ -20,7 +22,9 @@ import {
   Download,
   Users,
   FileImage,
-  Calendar
+  Calendar,
+  Archive,
+  Loader2
 } from 'lucide-react';
 import {
   Select,
@@ -58,6 +62,8 @@ const PixelAISocialPage = () => {
   const [authLoading, setAuthLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
+  const [bulkDownloading, setBulkDownloading] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
   const { toast } = useToast();
   const { isAdmin, loading: adminLoading } = useAdminRole();
 
@@ -274,6 +280,86 @@ const PixelAISocialPage = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleBulkDownload = async () => {
+    if (filteredMedia.length === 0) {
+      toast({ title: 'No files to download', variant: 'destructive' });
+      return;
+    }
+
+    setBulkDownloading(true);
+    setDownloadProgress(0);
+
+    try {
+      const zip = new JSZip();
+      const folder = zip.folder('pixelai-social-media');
+      
+      if (!folder) {
+        throw new Error('Failed to create folder in ZIP');
+      }
+
+      let completed = 0;
+      const total = filteredMedia.length;
+
+      // Download files in batches of 5 to avoid overwhelming the browser
+      const batchSize = 5;
+      for (let i = 0; i < filteredMedia.length; i += batchSize) {
+        const batch = filteredMedia.slice(i, i + batchSize);
+        
+        await Promise.all(
+          batch.map(async (item) => {
+            if (!item.url) return;
+            
+            try {
+              const response = await fetch(item.url);
+              if (!response.ok) throw new Error(`Failed to fetch ${item.file_name}`);
+              
+              const blob = await response.blob();
+              folder.file(item.file_name, blob);
+              
+              completed++;
+              setDownloadProgress(Math.round((completed / total) * 100));
+            } catch (err) {
+              console.error(`Error downloading ${item.file_name}:`, err);
+            }
+          })
+        );
+      }
+
+      // Generate and download the ZIP file
+      const zipBlob = await zip.generateAsync({ 
+        type: 'blob',
+        compression: 'DEFLATE',
+        compressionOptions: { level: 6 }
+      });
+
+      const timestamp = new Date().toISOString().split('T')[0];
+      const zipFileName = `pixelai-social-media-${timestamp}.zip`;
+      
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(zipBlob);
+      link.download = zipFileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+
+      toast({ 
+        title: 'Download complete!', 
+        description: `${completed} files bundled into ${zipFileName}` 
+      });
+    } catch (error) {
+      console.error('Bulk download error:', error);
+      toast({ 
+        title: 'Download failed', 
+        description: 'An error occurred while creating the ZIP file', 
+        variant: 'destructive' 
+      });
+    } finally {
+      setBulkDownloading(false);
+      setDownloadProgress(0);
+    }
   };
 
   // Filter media based on search and type
@@ -506,7 +592,7 @@ const PixelAISocialPage = () => {
           </Button>
         </div>
 
-        {/* Search and Filter */}
+        {/* Search, Filter, and Bulk Download */}
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -528,7 +614,36 @@ const PixelAISocialPage = () => {
               <SelectItem value="video">Videos</SelectItem>
             </SelectContent>
           </Select>
+          <Button 
+            onClick={handleBulkDownload} 
+            disabled={bulkDownloading || filteredMedia.length === 0}
+            variant="outline"
+            className="whitespace-nowrap"
+          >
+            {bulkDownloading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Downloading...
+              </>
+            ) : (
+              <>
+                <Archive className="w-4 h-4 mr-2" />
+                Download All ({filteredMedia.length})
+              </>
+            )}
+          </Button>
         </div>
+
+        {/* Download Progress */}
+        {bulkDownloading && (
+          <div className="mb-6 p-4 bg-card rounded-xl border">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium">Preparing ZIP file...</span>
+              <span className="text-sm text-muted-foreground">{downloadProgress}%</span>
+            </div>
+            <Progress value={downloadProgress} className="h-2" />
+          </div>
+        )}
 
         {/* Media Gallery */}
         <div className="bg-card rounded-2xl p-6 shadow-lg border">
