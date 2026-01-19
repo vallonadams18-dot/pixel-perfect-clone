@@ -33,6 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface MediaItem {
   id: string;
@@ -64,6 +65,7 @@ const PixelAISocialPage = () => {
   const [filterType, setFilterType] = useState<string>('all');
   const [bulkDownloading, setBulkDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
   const { toast } = useToast();
   const { isAdmin, loading: adminLoading } = useAdminRole();
 
@@ -283,7 +285,12 @@ const PixelAISocialPage = () => {
   };
 
   const handleBulkDownload = async () => {
-    if (filteredMedia.length === 0) {
+    // Use selected items if any are selected, otherwise use all filtered
+    const itemsToDownload = selectedItems.size > 0 
+      ? filteredMedia.filter(item => selectedItems.has(item.id))
+      : filteredMedia;
+
+    if (itemsToDownload.length === 0) {
       toast({ title: 'No files to download', variant: 'destructive' });
       return;
     }
@@ -300,12 +307,12 @@ const PixelAISocialPage = () => {
       }
 
       let completed = 0;
-      const total = filteredMedia.length;
+      const total = itemsToDownload.length;
 
       // Download files in batches of 5 to avoid overwhelming the browser
       const batchSize = 5;
-      for (let i = 0; i < filteredMedia.length; i += batchSize) {
-        const batch = filteredMedia.slice(i, i + batchSize);
+      for (let i = 0; i < itemsToDownload.length; i += batchSize) {
+        const batch = itemsToDownload.slice(i, i + batchSize);
         
         await Promise.all(
           batch.map(async (item) => {
@@ -349,6 +356,9 @@ const PixelAISocialPage = () => {
         title: 'Download complete!', 
         description: `${completed} files bundled into ${zipFileName}` 
       });
+
+      // Clear selection after download
+      setSelectedItems(new Set());
     } catch (error) {
       console.error('Bulk download error:', error);
       toast({ 
@@ -360,6 +370,30 @@ const PixelAISocialPage = () => {
       setBulkDownloading(false);
       setDownloadProgress(0);
     }
+  };
+
+  const toggleSelectItem = (id: string) => {
+    setSelectedItems(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedItems.size === filteredMedia.length) {
+      setSelectedItems(new Set());
+    } else {
+      setSelectedItems(new Set(filteredMedia.map(item => item.id)));
+    }
+  };
+
+  const clearSelection = () => {
+    setSelectedItems(new Set());
   };
 
   // Filter media based on search and type
@@ -625,6 +659,11 @@ const PixelAISocialPage = () => {
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Downloading...
               </>
+            ) : selectedItems.size > 0 ? (
+              <>
+                <Archive className="w-4 h-4 mr-2" />
+                Download Selected ({selectedItems.size})
+              </>
             ) : (
               <>
                 <Archive className="w-4 h-4 mr-2" />
@@ -633,6 +672,32 @@ const PixelAISocialPage = () => {
             )}
           </Button>
         </div>
+
+        {/* Selection Controls */}
+        {filteredMedia.length > 0 && (
+          <div className="flex items-center gap-4 mb-4 p-3 bg-muted/50 rounded-lg">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="select-all"
+                checked={selectedItems.size === filteredMedia.length && filteredMedia.length > 0}
+                onCheckedChange={toggleSelectAll}
+              />
+              <label htmlFor="select-all" className="text-sm font-medium cursor-pointer">
+                Select All
+              </label>
+            </div>
+            {selectedItems.size > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  {selectedItems.size} selected
+                </span>
+                <Button variant="ghost" size="sm" onClick={clearSelection}>
+                  Clear
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Download Progress */}
         {bulkDownloading && (
@@ -663,7 +728,22 @@ const PixelAISocialPage = () => {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {filteredMedia.map((item) => (
-                <div key={item.id} className="relative group rounded-lg overflow-hidden border bg-muted">
+                <div 
+                  key={item.id} 
+                  className={`relative group rounded-lg overflow-hidden border bg-muted cursor-pointer ${
+                    selectedItems.has(item.id) ? 'ring-2 ring-primary ring-offset-2' : ''
+                  }`}
+                  onClick={() => toggleSelectItem(item.id)}
+                >
+                  {/* Selection Checkbox */}
+                  <div className="absolute top-2 left-2 z-10" onClick={(e) => e.stopPropagation()}>
+                    <Checkbox
+                      checked={selectedItems.has(item.id)}
+                      onCheckedChange={() => toggleSelectItem(item.id)}
+                      className="h-5 w-5 bg-background/80 border-2"
+                    />
+                  </div>
+
                   {item.url && item.file_type?.startsWith('image') ? (
                     <img
                       src={item.url}
@@ -676,6 +756,7 @@ const PixelAISocialPage = () => {
                       src={item.url}
                       className="w-full aspect-square object-cover"
                       controls
+                      onClick={(e) => e.stopPropagation()}
                     />
                   ) : (
                     <div className="w-full aspect-square flex items-center justify-center">
@@ -683,8 +764,8 @@ const PixelAISocialPage = () => {
                     </div>
                   )}
                   
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3">
-                    <div className="flex justify-end gap-2">
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3 pointer-events-none group-hover:pointer-events-auto">
+                    <div className="flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
                       <Button
                         size="icon"
                         variant="secondary"
