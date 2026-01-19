@@ -40,7 +40,7 @@ const BrandTicker = () => {
                 alt={`${brand.name} logo`}
                 loading="lazy"
                 decoding="async"
-                className="h-10 md:h-12 w-auto max-w-[160px] object-contain opacity-90 hover:opacity-100 transition-all duration-300"
+                className="h-10 md:h-12 w-auto max-w-[160px] object-contain opacity-90 hover:opacity-100 transition-all duration-300 brightness-0 invert"
               />
             </div>
           ))}
