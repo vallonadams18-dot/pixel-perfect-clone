@@ -51,6 +51,8 @@ import PhotoBoothRentalNYCPage from "./pages/blog/PhotoBoothRentalNYCPage";
 // Proposals Page
 import ProposalsPage from "./pages/ProposalsPage";
 import CaseStudiesPage from "./pages/CaseStudiesPage";
+// Link in Bio Page
+import LinkInBioPage from "./pages/LinkInBioPage";
 
 const queryClient = new QueryClient();
 
@@ -127,6 +129,8 @@ const App = () => (
           {/* Proposals Page */}
           <Route path="/proposals" element={<ProposalsPage />} />
           <Route path="/case-studies" element={<CaseStudiesPage />} />
+          {/* Link in Bio */}
+          <Route path="/links" element={<LinkInBioPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
