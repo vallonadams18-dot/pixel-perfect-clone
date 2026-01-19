@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, MapPin, Star, Check, Building2, Calendar, Users, Trophy } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import beforeImage from '@/assets/before-transformation-4k.jpg';
 import afterImage from '@/assets/after-transformation.jpg';
 
@@ -127,9 +128,45 @@ const boroughs = [
   { name: 'Staten Island', link: '/locations/staten-island', description: 'St. George, Snug Harbor' },
 ];
 
+const nycFaqs = [
+  {
+    question: "How much does an AI photo booth cost in NYC?",
+    answer: "AI photo booth rentals in NYC typically range from $1,500-$5,000+ depending on event duration, experience type, and customization. Our packages include setup, on-site support, unlimited photos, and real-time AI transformations. Contact us for a custom quote for your NYC event."
+  },
+  {
+    question: "Which NYC venues do you serve?",
+    answer: "We serve all major NYC venues including Javits Center, Pier 60 at Chelsea Piers, The Metropolitan Pavilion, Cipriani Wall Street, Spring Studios, The Glasshouse, TAO Downtown, The Plaza Hotel, and 50+ other premium event spaces across all five boroughs."
+  },
+  {
+    question: "How far in advance should I book an AI photo booth in New York?",
+    answer: "We recommend booking 4-6 weeks in advance for standard events and 8-12 weeks for peak season (September-December) and major holidays. However, we do offer same-day availability for last-minute NYC events when possible."
+  },
+  {
+    question: "What makes AI photo booths different from traditional photo booths?",
+    answer: "AI photo booths use real-time artificial intelligence to transform guests into superheroes, professionals, anime characters, or custom brand personas in under 60 seconds. Unlike traditional booths, we capture leads, integrate with CRMs, and create shareable content that drives social engagement."
+  },
+  {
+    question: "Do you provide on-site staff for NYC events?",
+    answer: "Yes, all NYC rentals include professional on-site attendants who manage the experience, assist guests, troubleshoot any issues, and ensure maximum engagement throughout your event."
+  }
+];
+
+const generateFAQSchema = () => ({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": nycFaqs.map(faq => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": faq.answer
+    }
+  }))
+});
+
 const NYCPage = () => {
   usePageMeta({
-    title: 'AI Photo Booth Rental NYC | New York Event Activation | PixelAI Pro',
+    title: 'AI Photo Booth New York | NYC Photo Booth Rental | PixelAI Pro',
     description: 'NYC\'s #1 AI photo booth rental for corporate events & trade shows. Serving Javits Center, Pier 60, Cipriani & 50+ venues. 500+ events, 95% lead capture rate. Real-time AI transformations. Get a free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/nyc',
@@ -185,7 +222,8 @@ const NYCPage = () => {
           "name": "PixelAI Pro"
         }
       },
-      generateLocationReviewSchema()
+      generateLocationReviewSchema(),
+      generateFAQSchema()
     ]
   });
 
@@ -404,6 +442,35 @@ const NYCPage = () => {
                 <p className="text-xs text-muted-foreground">{borough.description}</p>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="section-padding">
+        <div className="container-custom">
+          <div className="text-center mb-12">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Frequently Asked <span className="gradient-text">Questions</span>
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Everything you need to know about AI photo booth rentals in New York City.
+            </p>
+          </div>
+          
+          <div className="max-w-3xl mx-auto">
+            <Accordion type="single" collapsible className="w-full">
+              {nycFaqs.map((faq, index) => (
+                <AccordionItem key={index} value={`item-${index}`} className="glass mb-4 rounded-xl px-6 border-border/50">
+                  <AccordionTrigger className="text-left font-semibold text-foreground hover:text-primary">
+                    {faq.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
         </div>
       </section>
