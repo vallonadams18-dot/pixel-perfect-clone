@@ -7,6 +7,12 @@ import Footer from '@/components/Footer';
 import igPostTransformation from '@/assets/instagram/ig-post-transformation.jpg';
 import igPostBrandActivation from '@/assets/instagram/ig-post-brand-activation.jpg';
 import igPostTradingCards from '@/assets/instagram/ig-post-trading-cards.jpg';
+// New Corporate Posts
+import igPostCorporateAiBooth from '@/assets/instagram/ig-post-corporate-ai-booth.jpg';
+import igPostTradingCardsCorporate from '@/assets/instagram/ig-post-trading-cards-corporate.jpg';
+import igPostPixelwearLuxury from '@/assets/instagram/ig-post-pixelwear-luxury.jpg';
+import igPostHeadshotsConference from '@/assets/instagram/ig-post-headshots-conference.jpg';
+import igPostPersonaPopTeam from '@/assets/instagram/ig-post-persona-pop-team.jpg';
 
 // Instagram Story
 import igStoryBooking from '@/assets/instagram/ig-story-booking.jpg';
@@ -113,6 +119,47 @@ const contentItems: ContentItem[] = [
     image: reelCoverHeadshots,
     caption: '✨ Before vs After: AI Headshot Magic!\n\nWatch guests go from selfie to professional portrait in seconds.\n\nThe perfect addition to any corporate event! 💼',
     hashtags: '#HeadshotsReel #AIPortrait #CorporateEvents #BeforeAfter #EventTech #LinkedInReady',
+  },
+  // New Corporate Brand Posts
+  {
+    id: '11',
+    title: 'Corporate AI Booth Experience',
+    type: 'post',
+    image: igPostCorporateAiBooth,
+    caption: '🏢 Transform your next corporate event into an unforgettable experience!\n\nOur AI Photo Booth delivered 500+ headshots at this Fortune 500 tech conference — all in one day.\n\nWhat sets us apart:\n✅ Instant professional results\n✅ Custom branded experiences\n✅ Enterprise-grade quality\n✅ White-glove service\n\nReady to elevate your corporate event? Link in bio 🔗',
+    hashtags: '#CorporateEvents #AIPhotoBooth #TechConference #Fortune500 #BrandActivation #CorporateHeadshots #EventTech #NYCEvents #ProfessionalHeadshots #EnterpriseEvents',
+  },
+  {
+    id: '12',
+    title: 'AI Trading Cards for Teams',
+    type: 'post',
+    image: igPostTradingCardsCorporate,
+    caption: '🎯 Team building just got a legendary upgrade!\n\nWatch as employees become collectible trading cards at this corporate celebration.\n\nPerfect for:\n🏆 Sales kickoffs\n🎉 Company anniversaries\n👥 Team building events\n🎁 Employee recognition\n\nEvery card tells a story. Every team member becomes a legend.\n\nBook your activation! Link in bio 👆',
+    hashtags: '#TeamBuilding #CorporateCulture #EmployeeEngagement #TradingCards #HREvents #CompanyEvents #AIExperience #EventActivation #WorkplaceFun #EmployeeAppreciation',
+  },
+  {
+    id: '13',
+    title: 'Luxury PixelWear Experience',
+    type: 'post',
+    image: igPostPixelwearLuxury,
+    caption: '✨ Where AI meets haute couture!\n\nOur PixelWear experience transformed guests at this luxury brand gala — virtually trying on designer collections in seconds.\n\nFeaturing:\n👗 Real-time AI fashion try-on\n🎨 Custom brand integration\n📸 Instant social-ready content\n🌟 VIP guest experience\n\nPerfect for fashion events, luxury brand activations, and high-end galas.\n\nDM us for your exclusive experience! 💌',
+    hashtags: '#LuxuryEvents #FashionTech #PixelWear #AIFashion #BrandActivation #HighEndEvents #VirtualTryOn #DesignerFashion #LuxuryBrands #ExperientialLuxury',
+  },
+  {
+    id: '14',
+    title: 'Conference Headshots',
+    type: 'post',
+    image: igPostHeadshotsConference,
+    caption: '💼 Professional headshots. Zero scheduling. Instant delivery.\n\nAt this industry conference, attendees walked away with LinkedIn-ready portraits in under 60 seconds.\n\nWhy event planners love it:\n📸 No photographer bottleneck\n⚡ AI-powered perfection\n🎯 Consistent quality every time\n📲 Instant digital delivery\n\nUpgrade your next conference! Link in bio 🔗',
+    hashtags: '#ConferencePhotography #AIHeadshots #ProfessionalPortrait #LinkedInReady #EventPlanning #CorporateConference #NetworkingEvents #BusinessEvents #InstantHeadshots #EventTech',
+  },
+  {
+    id: '15',
+    title: 'Persona Pop Team Event',
+    type: 'post',
+    image: igPostPersonaPopTeam,
+    caption: '🦸 Unleash your team\'s inner superheroes!\n\nOur Persona Pop experience turned this corporate team into legendary characters — talk about a memorable team building moment!\n\nTransformations include:\n🦸‍♂️ Superheroes\n🎬 Movie characters\n🎮 Gaming legends\n🎨 Anime styles\n\nWhich transformation would YOUR team choose?\n\nBook your superhero experience today! 🔗',
+    hashtags: '#TeamBuilding #PersonaPop #CorporateFun #AITransformation #SuperheroTeam #EmployeeEngagement #WorkplaceEvents #TeamSpirit #CreativeEvents #MemorableMoments',
   },
 ];
 
