@@ -50,6 +50,51 @@ export type Database = {
         }
         Relationships: []
       }
+      scheduled_posts: {
+        Row: {
+          caption: string
+          created_at: string
+          error_message: string | null
+          hashtags: string | null
+          id: string
+          image_url: string
+          instagram_post_id: string | null
+          published_at: string | null
+          scheduled_for: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          caption: string
+          created_at?: string
+          error_message?: string | null
+          hashtags?: string | null
+          id?: string
+          image_url: string
+          instagram_post_id?: string | null
+          published_at?: string | null
+          scheduled_for: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          caption?: string
+          created_at?: string
+          error_message?: string | null
+          hashtags?: string | null
+          id?: string
+          image_url?: string
+          instagram_post_id?: string | null
+          published_at?: string | null
+          scheduled_for?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
