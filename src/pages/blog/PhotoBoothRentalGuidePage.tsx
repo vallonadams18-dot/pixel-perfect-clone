@@ -1,6 +1,7 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import InternalLinks from '@/components/InternalLinks';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Calendar, Clock, User, CheckCircle, DollarSign, MapPin, Star, Users } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -12,6 +13,11 @@ const PhotoBoothRentalGuidePage = () => {
     ogImage: '/og-image.jpg',
     canonicalPath: '/blog/photo-booth-rental-guide',
     keywords: 'photo booth rental, photo booth rental near me, photo booth rental cost, photo booth rental for events, how much does photo booth rental cost, best photo booth rental, photo booth rental NYC, photo booth rental prices, event photo booth rental',
+    breadcrumbs: [
+      { name: 'Home', url: '/' },
+      { name: 'Blog', url: '/blog' },
+      { name: 'Photo Booth Rental Guide', url: '/blog/photo-booth-rental-guide' }
+    ],
     schema: [
       {
         "@context": "https://schema.org",
@@ -444,6 +450,10 @@ const PhotoBoothRentalGuidePage = () => {
                   </div>
                 </div>
               </section>
+
+              {/* Internal Links */}
+              <InternalLinks category="experiences" maxItems={4} title="Explore Our AI Photo Booth Experiences" />
+              <InternalLinks category="locations" maxItems={6} title="Photo Booth Rental by Location" />
 
             </div>
           </div>
