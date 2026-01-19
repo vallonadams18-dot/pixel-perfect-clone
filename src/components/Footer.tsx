@@ -66,6 +66,14 @@ const Footer = () => {
               <Link to="/experiences/ai-video-booths" className="text-primary hover:underline"> AI video booths</Link> for 
               experiential marketing activations.
             </p>
+            <div className="text-muted-foreground mb-4 text-sm space-y-1">
+              <p>
+                <a href="tel:+19177246051" className="hover:text-primary transition-colors">(917) 724-6051</a>
+              </p>
+              <p>
+                <a href="mailto:pixelaipronyc@gmail.com" className="hover:text-primary transition-colors">pixelaipronyc@gmail.com</a>
+              </p>
+            </div>
             <p className="text-muted-foreground mb-6 text-sm">
               Serving Manhattan, Brooklyn, and the tri-state area. <Link to="/contact" className="text-primary hover:underline">Book your NYC event today</Link>.
             </p>

@@ -43,8 +43,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <div className="text-sm text-muted-foreground">Email Us</div>
-                  <a href="mailto:hello@pixelaipro.com" className="text-foreground hover:text-primary transition-colors">
-                    hello@pixelaipro.com
+                  <a href="mailto:pixelaipronyc@gmail.com" className="text-foreground hover:text-primary transition-colors">
+                    pixelaipronyc@gmail.com
                   </a>
                 </div>
               </div>
@@ -55,8 +55,8 @@ const Contact = () => {
                 </div>
                 <div>
                   <div className="text-sm text-muted-foreground">Call Us</div>
-                  <a href="tel:+12125551234" className="text-foreground hover:text-primary transition-colors">
-                    +1 (212) 555-1234
+                  <a href="tel:+19177246051" className="text-foreground hover:text-primary transition-colors">
+                    (917) 724-6051
                   </a>
                 </div>
               </div>
