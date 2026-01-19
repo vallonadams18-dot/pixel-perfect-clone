@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Upload, Trash2, Image, LogIn, LogOut, Eye, EyeOff } from 'lucide-react';
+import uploadHero from '@/assets/upload-hero.jpg';
 
 interface MediaItem {
   id: string;
@@ -209,8 +210,8 @@ const MediaUploadPage = () => {
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="w-full max-w-md bg-card rounded-2xl p-8 shadow-xl border">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Upload className="w-8 h-8 text-primary" />
+            <div className="w-24 h-24 rounded-2xl overflow-hidden mx-auto mb-4 shadow-lg">
+              <img src={uploadHero} alt="Upload Media" className="w-full h-full object-cover" />
             </div>
             <h1 className="text-2xl font-bold">Media Upload Portal</h1>
             <p className="text-muted-foreground mt-2">Sign in to upload event photos</p>

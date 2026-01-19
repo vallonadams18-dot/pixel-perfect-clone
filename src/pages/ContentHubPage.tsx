@@ -31,6 +31,15 @@ import reelCoverHeadshots from '@/assets/instagram/reel-cover-headshots.jpg';
 import reelCoverPersonaPop from '@/assets/instagram/reel-cover-persona-pop.jpg';
 import reelCoverCoStar from '@/assets/instagram/reel-cover-co-star.jpg';
 
+// Axon AI & Video Booths
+import storyTemplateAxonAi from '@/assets/instagram/story-template-axon-ai.jpg';
+import storyTemplateVideoBooths from '@/assets/instagram/story-template-video-booths.jpg';
+import reelCoverAxonAi from '@/assets/instagram/reel-cover-axon-ai.jpg';
+import reelCoverVideoBooths from '@/assets/instagram/reel-cover-video-booths.jpg';
+
+// Hero Image
+import downloadHero from '@/assets/download-hero.jpg';
+
 interface ContentItem {
   id: string;
   title: string;
@@ -199,6 +208,40 @@ const contentItems: ContentItem[] = [
     caption: '🎬 Red carpet moments, made real!\n\nWatch guests light up when they "meet" their favorite celebrities with our Co-Star AI experience.\n\nSave for your next VIP event! ⭐',
     hashtags: '#CoStarReel #CelebrityAI #RedCarpetMoments #VIPEvents #EventMarketing #LuxuryActivation',
   },
+  // Axon AI Templates
+  {
+    id: '20',
+    title: 'Axon AI Story Template',
+    type: 'story',
+    image: storyTemplateAxonAi,
+    caption: '🤖 Meet AXON AI!\n\nOur interactive AI robot hosts, entertains, and amazes guests at every event.\n\nThe future of event entertainment is here! ⚡',
+    hashtags: '#AxonAI #AIRobot #EventTech #FuturisticEvents #RobotHost #InteractiveAI #CorporateEvents',
+  },
+  {
+    id: '21',
+    title: 'Axon AI Reel Cover',
+    type: 'reel',
+    image: reelCoverAxonAi,
+    caption: '⚡ When AI meets entertainment!\n\nWatch guests interact with Axon AI — our humanoid robot that captivates crowds and creates unforgettable moments.\n\nBook Axon for your next event! 🤖',
+    hashtags: '#AxonAIReel #AIRobot #FutureTech #EventEntertainment #RobotExperience #TechEvents',
+  },
+  // Video Booths Templates
+  {
+    id: '22',
+    title: 'Video Booths Story Template',
+    type: 'story',
+    image: storyTemplateVideoBooths,
+    caption: '🎬 Create VIRAL content!\n\nOur AI Video Booths transform guests into movie stars with green screen magic and AI effects.\n\nPerfect for brand activations! 🌟',
+    hashtags: '#VideoBooths #AIVideo #GreenScreen #ContentCreation #EventTech #BrandActivation',
+  },
+  {
+    id: '23',
+    title: 'Video Booths Reel Cover',
+    type: 'reel',
+    image: reelCoverVideoBooths,
+    caption: '🎥 Lights, camera, AI action!\n\nWatch guests create professional video content with AI-powered special effects in our Video Booth experience.\n\nSave for your next activation! 🎬',
+    hashtags: '#VideoBoothsReel #AIVideo #ContentCreation #EventMarketing #VideoProduction #BrandContent',
+  },
 ];
 
 const ContentHubPage = () => {
@@ -236,6 +279,9 @@ const ContentHubPage = () => {
         <div className="container mx-auto px-4">
           {/* Header */}
           <div className="text-center mb-12">
+            <div className="w-32 h-32 rounded-2xl overflow-hidden mx-auto mb-6 shadow-xl">
+              <img src={downloadHero} alt="Download Content" className="w-full h-full object-cover" />
+            </div>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-primary text-sm mb-4">
               <Instagram size={16} />
               <span>Private Content Hub</span>
