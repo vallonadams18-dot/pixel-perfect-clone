@@ -10,7 +10,7 @@ import {
   LogIn, LogOut, Eye, EyeOff, Loader2, CheckCircle, 
   XCircle, AlertCircle, Image as ImageIcon, Upload,
   FolderOpen, Search, X, Sparkles, TrendingUp, RefreshCw,
-  Download, Grid, List, LayoutGrid
+  Download, Grid, List, LayoutGrid, Wand2
 } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -77,6 +77,11 @@ const InstagramSchedulerPage = () => {
   // Image upload state
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  
+  // AI generation state
+  const [generatingCaption, setGeneratingCaption] = useState(false);
+  const [selectedService, setSelectedService] = useState<string>('');
+  const [captionTone, setCaptionTone] = useState<'professional' | 'playful' | 'engaging' | 'luxurious'>('engaging');
   
   // Main panel tab
   const [mainTab, setMainTab] = useState<'library' | 'scheduler' | 'posts'>('library');
@@ -338,6 +343,52 @@ const InstagramSchedulerPage = () => {
       item.tags?.some(tag => tag.toLowerCase().includes(search))
     );
   });
+
+  // AI Caption Generation
+  const handleGenerateCaption = async () => {
+    if (!session) return;
+    
+    setGeneratingCaption(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-instagram-caption', {
+        body: {
+          imageDescription: selectedLibraryItem?.description || selectedLibraryItem?.event_name || 'AI photo booth transformation',
+          eventName: selectedLibraryItem?.event_name || '',
+          service: selectedService || 'AI Photo Booths',
+          tone: captionTone,
+          includeHashtags: true,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      if (data?.caption) {
+        setCaption(data.caption);
+      }
+      if (data?.hashtags) {
+        setHashtags(data.hashtags);
+      }
+
+      toast({ 
+        title: 'Caption generated!', 
+        description: 'AI has created a caption based on your content' 
+      });
+    } catch (error: any) {
+      console.error('Caption generation error:', error);
+      toast({ 
+        title: 'Generation failed', 
+        description: error.message || 'Could not generate caption', 
+        variant: 'destructive' 
+      });
+    } finally {
+      setGeneratingCaption(false);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -848,15 +899,90 @@ const InstagramSchedulerPage = () => {
                       </Button>
                     </div>
                   )}
+
+                  {/* AI Caption Generator */}
+                  <div className="bg-muted/50 rounded-xl p-4 border border-dashed">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Wand2 className="w-5 h-5 text-primary" />
+                      <h3 className="font-semibold">AI Caption Generator</h3>
+                      <Badge variant="secondary" className="text-xs">Powered by AI</Badge>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3 mb-3">
+                      <div>
+                        <Label className="text-xs mb-1 block">Service</Label>
+                        <select
+                          value={selectedService}
+                          onChange={(e) => setSelectedService(e.target.value)}
+                          className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+                        >
+                          <option value="">Auto-detect</option>
+                          <option value="AI Photo Booths">AI Photo Booths</option>
+                          <option value="PixelWear">PixelWear</option>
+                          <option value="AI Headshots">AI Headshots</option>
+                          <option value="Persona Pop">Persona Pop</option>
+                          <option value="Co-Star">Co-Star</option>
+                          <option value="AI Trading Cards">AI Trading Cards</option>
+                          <option value="AI Video Booths">AI Video Booths</option>
+                          <option value="Axon AI">Axon AI</option>
+                          <option value="Sketch">Sketch</option>
+                        </select>
+                      </div>
+                      <div>
+                        <Label className="text-xs mb-1 block">Tone</Label>
+                        <select
+                          value={captionTone}
+                          onChange={(e) => setCaptionTone(e.target.value as any)}
+                          className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+                        >
+                          <option value="engaging">Engaging</option>
+                          <option value="professional">Professional</option>
+                          <option value="playful">Playful</option>
+                          <option value="luxurious">Luxurious</option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      onClick={handleGenerateCaption} 
+                      disabled={generatingCaption || (!imageUrl && !imageFile)}
+                      variant="secondary"
+                      className="w-full"
+                    >
+                      {generatingCaption ? (
+                        <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generating...</>
+                      ) : (
+                        <><Sparkles className="w-4 h-4 mr-2" /> Generate Caption with AI</>
+                      )}
+                    </Button>
+                    
+                    {(!imageUrl && !imageFile) && (
+                      <p className="text-xs text-muted-foreground text-center mt-2">
+                        Select an image first to generate a caption
+                      </p>
+                    )}
+                  </div>
                   
                   {/* Caption */}
                   <div>
-                    <Label htmlFor="caption">Caption *</Label>
+                    <div className="flex items-center justify-between mb-1">
+                      <Label htmlFor="caption">Caption *</Label>
+                      {caption && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-6 text-xs"
+                          onClick={() => setCaption('')}
+                        >
+                          Clear
+                        </Button>
+                      )}
+                    </div>
                     <Textarea
                       id="caption"
                       value={caption}
                       onChange={(e) => setCaption(e.target.value)}
-                      placeholder="Write your caption..."
+                      placeholder="Write your caption or use AI to generate one..."
                       rows={4}
                     />
                     <p className="text-xs text-muted-foreground mt-1">{caption.length}/2,200</p>
@@ -864,12 +990,24 @@ const InstagramSchedulerPage = () => {
                   
                   {/* Hashtags */}
                   <div>
-                    <Label htmlFor="hashtags">Hashtags</Label>
+                    <div className="flex items-center justify-between mb-1">
+                      <Label htmlFor="hashtags">Hashtags</Label>
+                      {hashtags && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-6 text-xs"
+                          onClick={() => setHashtags('')}
+                        >
+                          Clear
+                        </Button>
+                      )}
+                    </div>
                     <Textarea
                       id="hashtags"
                       value={hashtags}
                       onChange={(e) => setHashtags(e.target.value)}
-                      placeholder="#AIPhotoBooth #EventTech"
+                      placeholder="#AIPhotoBooth #EventTech (AI will generate these)"
                       rows={2}
                     />
                   </div>
