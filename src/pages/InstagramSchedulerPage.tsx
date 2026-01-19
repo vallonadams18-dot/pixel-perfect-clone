@@ -490,8 +490,18 @@ const InstagramSchedulerPage = () => {
       }
     }
     
-    if (!finalImageUrl || !caption || !scheduledDate || !scheduledTime) {
-      toast({ title: 'Missing fields', variant: 'destructive' });
+    const missingFields = [];
+    if (!finalImageUrl) missingFields.push('image');
+    if (!caption) missingFields.push('caption');
+    if (!scheduledDate) missingFields.push('date');
+    if (!scheduledTime) missingFields.push('time');
+    
+    if (missingFields.length > 0) {
+      toast({ 
+        title: 'Missing fields', 
+        description: `Please fill in: ${missingFields.join(', ')}`, 
+        variant: 'destructive' 
+      });
       return;
     }
 
