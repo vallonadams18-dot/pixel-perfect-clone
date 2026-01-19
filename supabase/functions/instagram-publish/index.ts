@@ -70,6 +70,40 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Pre-validate that Instagram can access the image URL
+    console.log('Validating image accessibility...');
+    try {
+      const imageCheck = await fetch(imageUrl, { method: 'HEAD' });
+      if (!imageCheck.ok) {
+        console.error('Image not accessible:', imageCheck.status);
+        return new Response(
+          JSON.stringify({ 
+            error: `Instagram cannot access this image (HTTP ${imageCheck.status}). Please ensure the image is publicly accessible.` 
+          }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      const contentType = imageCheck.headers.get('content-type');
+      if (contentType && !contentType.startsWith('image/')) {
+        console.error('URL does not point to an image:', contentType);
+        return new Response(
+          JSON.stringify({ 
+            error: `URL does not point to an image (${contentType}). Please use a valid image URL.` 
+          }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      console.log('Image accessible, content-type:', contentType);
+    } catch (checkError: any) {
+      console.error('Image check failed:', checkError.message);
+      return new Response(
+        JSON.stringify({ 
+          error: `Cannot verify image URL: ${checkError.message}. Please re-select the image.` 
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Step 1: Create media container
     console.log('Step 1: Creating media container...');
     const containerUrl = `https://graph.facebook.com/v19.0/${businessAccountId}/media`;
