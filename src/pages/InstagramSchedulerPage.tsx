@@ -10,7 +10,7 @@ import {
   LogIn, LogOut, Eye, EyeOff, Loader2, CheckCircle, 
   XCircle, AlertCircle, Image as ImageIcon, Upload,
   FolderOpen, Search, X, Sparkles, TrendingUp, RefreshCw,
-  Download, Grid, List, LayoutGrid, Wand2
+  Download, Grid, List, LayoutGrid, Wand2, Wifi, WifiOff
 } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -86,6 +86,10 @@ const InstagramSchedulerPage = () => {
   // Main panel tab
   const [mainTab, setMainTab] = useState<'library' | 'scheduler' | 'posts'>('library');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  
+  // Instagram connection state
+  const [connectionStatus, setConnectionStatus] = useState<'unknown' | 'checking' | 'connected' | 'error'>('unknown');
+  const [connectionMessage, setConnectionMessage] = useState('');
   
   const { toast } = useToast();
   
@@ -346,12 +350,22 @@ const InstagramSchedulerPage = () => {
 
   // AI Caption Generation
   const handleGenerateCaption = async () => {
-    if (!session) return;
+    if (!session?.access_token) {
+      toast({ 
+        title: 'Please log in', 
+        description: 'You must be logged in to generate captions', 
+        variant: 'destructive' 
+      });
+      return;
+    }
     
     setGeneratingCaption(true);
     
     try {
       const { data, error } = await supabase.functions.invoke('generate-instagram-caption', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: {
           imageDescription: selectedLibraryItem?.description || selectedLibraryItem?.event_name || 'AI photo booth transformation',
           eventName: selectedLibraryItem?.event_name || '',
@@ -414,6 +428,54 @@ const InstagramSchedulerPage = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setScheduledPosts([]);
+    setConnectionStatus('unknown');
+    setConnectionMessage('');
+  };
+
+  // Test Instagram connection
+  const handleTestConnection = async () => {
+    if (!session?.access_token) {
+      toast({ title: 'Please log in first', variant: 'destructive' });
+      return;
+    }
+    
+    setConnectionStatus('checking');
+    setConnectionMessage('');
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('instagram-connection-status', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.connected) {
+        setConnectionStatus('connected');
+        setConnectionMessage(`Connected: @${data.accountName || data.accountId}`);
+        toast({ 
+          title: 'Instagram Connected!', 
+          description: `Account: @${data.accountName || data.accountId}` 
+        });
+      } else {
+        setConnectionStatus('error');
+        setConnectionMessage(data?.message || 'Connection failed');
+        toast({ 
+          title: 'Connection Issue', 
+          description: data?.message || 'Could not connect to Instagram', 
+          variant: 'destructive' 
+        });
+      }
+    } catch (error: any) {
+      setConnectionStatus('error');
+      setConnectionMessage(error.message || 'Connection check failed');
+      toast({ 
+        title: 'Connection Error', 
+        description: error.message, 
+        variant: 'destructive' 
+      });
+    }
   };
 
   const handleSchedulePost = async () => {
@@ -469,10 +531,22 @@ const InstagramSchedulerPage = () => {
   };
 
   const handlePublishNow = async (post: ScheduledPost) => {
+    if (!session?.access_token) {
+      toast({ 
+        title: 'Please log in', 
+        description: 'You must be logged in to publish', 
+        variant: 'destructive' 
+      });
+      return;
+    }
+    
     setPublishing(post.id);
     
     try {
       const { data, error } = await supabase.functions.invoke('instagram-publish', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: {
           imageUrl: post.image_url,
           caption: post.caption,
@@ -624,6 +698,28 @@ const InstagramSchedulerPage = () => {
             </div>
             
             <div className="flex items-center gap-3">
+              {/* Instagram Connection Status */}
+              <Button 
+                variant={connectionStatus === 'connected' ? 'outline' : connectionStatus === 'error' ? 'destructive' : 'outline'} 
+                size="sm" 
+                onClick={handleTestConnection}
+                disabled={connectionStatus === 'checking'}
+                className={connectionStatus === 'connected' ? 'border-green-500 text-green-600' : ''}
+              >
+                {connectionStatus === 'checking' ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : connectionStatus === 'connected' ? (
+                  <Wifi className="w-4 h-4 mr-2" />
+                ) : connectionStatus === 'error' ? (
+                  <WifiOff className="w-4 h-4 mr-2" />
+                ) : (
+                  <Instagram className="w-4 h-4 mr-2" />
+                )}
+                {connectionStatus === 'checking' ? 'Checking...' : 
+                 connectionStatus === 'connected' ? 'Connected' :
+                 connectionStatus === 'error' ? 'Not Connected' : 'Test Connection'}
+              </Button>
+              
               <Button variant="outline" size="sm" onClick={syncMediaToInstagram} disabled={syncing}>
                 <RefreshCw className={`w-4 h-4 mr-2 ${syncing ? 'animate-spin' : ''}`} />
                 Sync
@@ -634,6 +730,20 @@ const InstagramSchedulerPage = () => {
               </Button>
             </div>
           </div>
+
+          {/* Connection Error Banner */}
+          {connectionStatus === 'error' && connectionMessage && (
+            <div className="mb-6 p-4 bg-destructive/10 border border-destructive/30 rounded-lg flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-destructive shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-destructive">Instagram Connection Issue</p>
+                <p className="text-sm text-muted-foreground">{connectionMessage}</p>
+              </div>
+              <Button size="sm" variant="outline" onClick={handleTestConnection}>
+                Retry
+              </Button>
+            </div>
+          )}
 
           {/* Stats Bar */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
