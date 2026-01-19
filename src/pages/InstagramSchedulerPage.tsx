@@ -135,11 +135,56 @@ const InstagramSchedulerPage = () => {
     setMediaLoading(false);
   };
 
-  const handleSelectFromLibrary = (item: MediaItem) => {
-    if (item.url) {
-      setImageUrl(item.url);
-      setShowLibrary(false);
-      toast({ title: 'Image selected from library' });
+  const [selectedLibraryItem, setSelectedLibraryItem] = useState<MediaItem | null>(null);
+  const [copyingToInstagram, setCopyingToInstagram] = useState(false);
+
+  const handleSelectFromLibrary = async (item: MediaItem) => {
+    if (!item.url || !session?.user?.id) return;
+    
+    setSelectedLibraryItem(item);
+    setCopyingToInstagram(true);
+    
+    try {
+      // Download the image from the signed URL
+      const response = await fetch(item.url);
+      const blob = await response.blob();
+      
+      // Upload to the public instagram-images bucket
+      const timestamp = Date.now();
+      const ext = item.file_name.split('.').pop()?.toLowerCase() || 'jpg';
+      const fileName = `library-${timestamp}.${ext}`;
+      const filePath = `${session.user.id}/${fileName}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('instagram-images')
+        .upload(filePath, blob, { contentType: item.file_type || 'image/jpeg' });
+      
+      if (uploadError) throw uploadError;
+      
+      // Get public URL
+      const { data: publicUrlData } = supabase.storage
+        .from('instagram-images')
+        .getPublicUrl(filePath);
+      
+      setImageUrl(publicUrlData.publicUrl);
+      
+      // Pre-fill caption from description if available
+      if (item.description && !caption) {
+        setCaption(item.description);
+      }
+      
+      // Pre-fill hashtags from tags if available
+      if (item.tags && item.tags.length > 0 && !hashtags) {
+        setHashtags(item.tags.map(t => `#${t.replace(/\s+/g, '')}`).join(' '));
+      }
+      
+      toast({ title: 'Image ready for Instagram', description: 'Copied to public storage for posting' });
+    } catch (error: any) {
+      console.error('Failed to copy image:', error);
+      toast({ title: 'Failed to prepare image', description: error.message, variant: 'destructive' });
+    } finally {
+      setCopyingToInstagram(false);
+      setSelectedLibraryItem(null);
     }
   };
 
@@ -510,26 +555,34 @@ const InstagramSchedulerPage = () => {
                         ) : (
                           <ScrollArea className="h-[200px]">
                             <div className="grid grid-cols-4 gap-2">
-                              {filteredMediaItems.map((item) => (
-                                <button
-                                  key={item.id}
-                                  onClick={() => handleSelectFromLibrary(item)}
-                                  className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all hover:border-primary ${
-                                    imageUrl === item.url ? 'border-primary ring-2 ring-primary/20' : 'border-transparent'
-                                  }`}
-                                >
-                                  <img
-                                    src={item.url}
-                                    alt={item.file_name}
-                                    className="w-full h-full object-cover"
-                                  />
-                                  {imageUrl === item.url && (
-                                    <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
-                                      <CheckCircle className="w-6 h-6 text-primary" />
-                                    </div>
-                                  )}
-                                </button>
-                              ))}
+                              {filteredMediaItems.map((item) => {
+                                const isSelected = selectedLibraryItem?.id === item.id;
+                                const isCopying = isSelected && copyingToInstagram;
+                                
+                                return (
+                                  <button
+                                    key={item.id}
+                                    onClick={() => handleSelectFromLibrary(item)}
+                                    disabled={copyingToInstagram}
+                                    className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all hover:border-primary disabled:opacity-50 ${
+                                      imageUrl.includes(item.file_name.split('.')[0]) || isCopying
+                                        ? 'border-primary ring-2 ring-primary/20' 
+                                        : 'border-transparent'
+                                    }`}
+                                  >
+                                    <img
+                                      src={item.url}
+                                      alt={item.file_name}
+                                      className="w-full h-full object-cover"
+                                    />
+                                    {isCopying && (
+                                      <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                                        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                                      </div>
+                                    )}
+                                  </button>
+                                );
+                              })}
                             </div>
                           </ScrollArea>
                         )}
