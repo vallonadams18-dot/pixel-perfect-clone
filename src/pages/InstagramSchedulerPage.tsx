@@ -91,6 +91,15 @@ const InstagramSchedulerPage = () => {
   const [connectionStatus, setConnectionStatus] = useState<'unknown' | 'checking' | 'connected' | 'error'>('unknown');
   const [connectionMessage, setConnectionMessage] = useState('');
   
+  // Diagnostics state
+  const [lastApiCall, setLastApiCall] = useState<{
+    function: string;
+    status: 'success' | 'error' | 'pending';
+    message: string;
+    timestamp: Date | null;
+  }>({ function: '', status: 'pending', message: '', timestamp: null });
+  const [showDiagnostics, setShowDiagnostics] = useState(false);
+  
   const { toast } = useToast();
   
   // Content stats
@@ -104,12 +113,23 @@ const InstagramSchedulerPage = () => {
     return { libraryPosts, totalPosts, percentage, targetMet };
   }, [scheduledPosts]);
 
+  // Auto-fill default schedule time (15 minutes from now)
+  const setDefaultSchedule = () => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 15);
+    const dateStr = now.toISOString().split('T')[0];
+    const timeStr = now.toTimeString().slice(0, 5);
+    setScheduledDate(dateStr);
+    setScheduledTime(timeStr);
+  };
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session) {
         fetchScheduledPosts();
         fetchMediaLibrary();
+        setDefaultSchedule();
       } else {
         setLoading(false);
       }
@@ -120,6 +140,7 @@ const InstagramSchedulerPage = () => {
       if (session) {
         fetchScheduledPosts();
         fetchMediaLibrary();
+        setDefaultSchedule();
       }
     });
 
@@ -360,6 +381,7 @@ const InstagramSchedulerPage = () => {
     }
     
     setGeneratingCaption(true);
+    setLastApiCall({ function: 'generate-instagram-caption', status: 'pending', message: 'Generating...', timestamp: new Date() });
     
     try {
       const { data, error } = await supabase.functions.invoke('generate-instagram-caption', {
@@ -388,12 +410,14 @@ const InstagramSchedulerPage = () => {
         setHashtags(data.hashtags);
       }
 
+      setLastApiCall({ function: 'generate-instagram-caption', status: 'success', message: 'Caption generated successfully', timestamp: new Date() });
       toast({ 
         title: 'Caption generated!', 
         description: 'AI has created a caption based on your content' 
       });
     } catch (error: any) {
       console.error('Caption generation error:', error);
+      setLastApiCall({ function: 'generate-instagram-caption', status: 'error', message: error.message || 'Generation failed', timestamp: new Date() });
       toast({ 
         title: 'Generation failed', 
         description: error.message || 'Could not generate caption', 
@@ -441,6 +465,7 @@ const InstagramSchedulerPage = () => {
     
     setConnectionStatus('checking');
     setConnectionMessage('');
+    setLastApiCall({ function: 'instagram-connection-status', status: 'pending', message: 'Checking connection...', timestamp: new Date() });
     
     try {
       const { data, error } = await supabase.functions.invoke('instagram-connection-status', {
@@ -454,6 +479,7 @@ const InstagramSchedulerPage = () => {
       if (data?.connected) {
         setConnectionStatus('connected');
         setConnectionMessage(`Connected: @${data.accountName || data.accountId}`);
+        setLastApiCall({ function: 'instagram-connection-status', status: 'success', message: `Connected to @${data.accountName || data.accountId}`, timestamp: new Date() });
         toast({ 
           title: 'Instagram Connected!', 
           description: `Account: @${data.accountName || data.accountId}` 
@@ -461,6 +487,7 @@ const InstagramSchedulerPage = () => {
       } else {
         setConnectionStatus('error');
         setConnectionMessage(data?.message || 'Connection failed');
+        setLastApiCall({ function: 'instagram-connection-status', status: 'error', message: data?.message || 'Connection failed', timestamp: new Date() });
         toast({ 
           title: 'Connection Issue', 
           description: data?.message || 'Could not connect to Instagram', 
@@ -470,6 +497,7 @@ const InstagramSchedulerPage = () => {
     } catch (error: any) {
       setConnectionStatus('error');
       setConnectionMessage(error.message || 'Connection check failed');
+      setLastApiCall({ function: 'instagram-connection-status', status: 'error', message: error.message || 'Connection check failed', timestamp: new Date() });
       toast({ 
         title: 'Connection Error', 
         description: error.message, 
@@ -754,6 +782,76 @@ const InstagramSchedulerPage = () => {
               </Button>
             </div>
           )}
+
+          {/* Diagnostics Panel */}
+          <div className="mb-6">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setShowDiagnostics(!showDiagnostics)}
+              className="text-muted-foreground text-xs"
+            >
+              {showDiagnostics ? <EyeOff className="w-3 h-3 mr-1" /> : <Eye className="w-3 h-3 mr-1" />}
+              {showDiagnostics ? 'Hide Diagnostics' : 'Show Diagnostics'}
+            </Button>
+            
+            {showDiagnostics && (
+              <div className="mt-3 p-4 bg-muted/50 rounded-xl border text-sm space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Login Status */}
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${session ? 'bg-green-500' : 'bg-red-500'}`} />
+                    <span className="text-muted-foreground">Login:</span>
+                    <span className="font-medium">
+                      {session ? `Logged in (${session.user?.email?.slice(0, 15)}...)` : 'Not logged in'}
+                    </span>
+                  </div>
+                  
+                  {/* Instagram Connection */}
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${
+                      connectionStatus === 'connected' ? 'bg-green-500' : 
+                      connectionStatus === 'error' ? 'bg-red-500' : 
+                      connectionStatus === 'checking' ? 'bg-yellow-500 animate-pulse' : 'bg-muted-foreground'
+                    }`} />
+                    <span className="text-muted-foreground">Instagram:</span>
+                    <span className="font-medium">
+                      {connectionStatus === 'connected' ? 'Connected' : 
+                       connectionStatus === 'error' ? 'Error' : 
+                       connectionStatus === 'checking' ? 'Checking...' : 'Unknown'}
+                    </span>
+                  </div>
+                  
+                  {/* Access Token Status */}
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${session?.access_token ? 'bg-green-500' : 'bg-red-500'}`} />
+                    <span className="text-muted-foreground">Auth Token:</span>
+                    <span className="font-medium">{session?.access_token ? 'Present' : 'Missing'}</span>
+                  </div>
+                </div>
+                
+                {/* Last API Call */}
+                {lastApiCall.timestamp && (
+                  <div className="pt-3 border-t border-border">
+                    <p className="text-xs text-muted-foreground mb-1">Last API Call:</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Badge variant={lastApiCall.status === 'success' ? 'default' : lastApiCall.status === 'error' ? 'destructive' : 'secondary'} className="text-xs">
+                        {lastApiCall.status === 'success' ? <CheckCircle className="w-3 h-3 mr-1" /> : 
+                         lastApiCall.status === 'error' ? <XCircle className="w-3 h-3 mr-1" /> : 
+                         <Loader2 className="w-3 h-3 mr-1 animate-spin" />}
+                        {lastApiCall.status}
+                      </Badge>
+                      <code className="text-xs bg-background px-2 py-1 rounded">{lastApiCall.function}</code>
+                      <span className="text-xs text-muted-foreground">{lastApiCall.message}</span>
+                      <span className="text-xs text-muted-foreground ml-auto">
+                        {lastApiCall.timestamp.toLocaleTimeString()}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
 
           {/* Stats Bar */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
