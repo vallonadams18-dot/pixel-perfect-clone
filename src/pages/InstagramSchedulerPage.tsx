@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,12 +9,14 @@ import {
   Calendar, Clock, Instagram, Send, Trash2, 
   LogIn, LogOut, Eye, EyeOff, Loader2, CheckCircle, 
   XCircle, AlertCircle, Image as ImageIcon, Upload,
-  FolderOpen, Search, X
+  FolderOpen, Search, X, Sparkles, TrendingUp, RefreshCw
 } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 
 interface ScheduledPost {
   id: string;
@@ -27,6 +29,7 @@ interface ScheduledPost {
   published_at: string | null;
   error_message: string | null;
   created_at: string;
+  source?: string; // 'library' or 'upload' or 'url'
 }
 
 interface MediaItem {
@@ -40,6 +43,7 @@ interface MediaItem {
   created_at: string;
   user_id: string | null;
   url?: string;
+  isUsed?: boolean; // Track if already scheduled
 }
 
 const InstagramSchedulerPage = () => {
@@ -56,6 +60,7 @@ const InstagramSchedulerPage = () => {
   const [scheduledTime, setScheduledTime] = useState('');
   const [scheduling, setScheduling] = useState(false);
   const [publishing, setPublishing] = useState<string | null>(null);
+  const [imageSource, setImageSource] = useState<'library' | 'upload' | 'url'>('library');
   
   const [scheduledPosts, setScheduledPosts] = useState<ScheduledPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,13 +69,24 @@ const InstagramSchedulerPage = () => {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [mediaLoading, setMediaLoading] = useState(false);
   const [mediaSearch, setMediaSearch] = useState('');
-  const [showLibrary, setShowLibrary] = useState(false);
+  const [syncing, setSyncing] = useState(false);
   
   // Image upload state
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   
   const { toast } = useToast();
+  
+  // Calculate content source statistics (70% from library target)
+  const contentStats = useMemo(() => {
+    const totalPosts = scheduledPosts.length;
+    const libraryPosts = scheduledPosts.filter(p => 
+      p.image_url?.includes('instagram-images') && p.image_url?.includes('library-')
+    ).length;
+    const percentage = totalPosts > 0 ? Math.round((libraryPosts / totalPosts) * 100) : 0;
+    const targetMet = percentage >= 70;
+    return { libraryPosts, totalPosts, percentage, targetMet };
+  }, [scheduledPosts]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -111,7 +127,7 @@ const InstagramSchedulerPage = () => {
 
   const fetchMediaLibrary = async () => {
     setMediaLoading(true);
-    // Fetch images from event_media table (PixelAI Social content)
+    // Fetch images from event_media table (PixelAI Social content - uploaded via portal)
     const { data, error } = await supabase
       .from('event_media')
       .select('*')
@@ -121,18 +137,99 @@ const InstagramSchedulerPage = () => {
     if (error) {
       console.error('Error fetching media library:', error);
     } else {
-      // Get public URLs for each image
+      // Get public URLs for each image and check if already used
+      const scheduledImageUrls = scheduledPosts.map(p => p.image_url);
+      
       const mediaWithUrls = await Promise.all(
         (data || []).map(async (item) => {
           const { data: urlData } = await supabase.storage
             .from('event-media')
             .createSignedUrl(item.file_path, 3600);
-          return { ...item, url: urlData?.signedUrl };
+          
+          // Check if this image has been used (by matching filename pattern)
+          const isUsed = scheduledImageUrls.some(url => 
+            url?.includes(item.file_name.split('.')[0])
+          );
+          
+          return { ...item, url: urlData?.signedUrl, isUsed };
         })
       );
       setMediaItems(mediaWithUrls.filter(item => item.url));
     }
     setMediaLoading(false);
+  };
+
+  // Sync new uploads to Instagram library automatically
+  const syncMediaToInstagram = async () => {
+    if (!session?.user?.id) return;
+    
+    setSyncing(true);
+    let syncedCount = 0;
+    
+    try {
+      // Get recent uploads from the portal (last 24 hours)
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      
+      const { data: recentMedia, error } = await supabase
+        .from('event_media')
+        .select('*')
+        .like('file_type', 'image%')
+        .gte('created_at', oneDayAgo)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      
+      for (const item of recentMedia || []) {
+        // Get signed URL for the private bucket
+        const { data: urlData } = await supabase.storage
+          .from('event-media')
+          .createSignedUrl(item.file_path, 3600);
+        
+        if (!urlData?.signedUrl) continue;
+        
+        // Check if already synced to instagram-images
+        const syncFileName = `sync-${item.id}.jpg`;
+        const syncPath = `${session.user.id}/${syncFileName}`;
+        
+        const { data: exists } = await supabase.storage
+          .from('instagram-images')
+          .list(session.user.id, { search: `sync-${item.id}` });
+        
+        if (exists && exists.length > 0) continue; // Already synced
+        
+        // Download and re-upload to public bucket
+        const response = await fetch(urlData.signedUrl);
+        const blob = await response.blob();
+        
+        await supabase.storage
+          .from('instagram-images')
+          .upload(syncPath, blob, { contentType: item.file_type || 'image/jpeg' });
+        
+        syncedCount++;
+      }
+      
+      if (syncedCount > 0) {
+        toast({ 
+          title: `Synced ${syncedCount} new images`, 
+          description: 'Content from uploader is ready for Instagram' 
+        });
+        fetchMediaLibrary();
+      } else {
+        toast({ 
+          title: 'All synced', 
+          description: 'No new images to sync from uploader' 
+        });
+      }
+    } catch (error: any) {
+      console.error('Sync error:', error);
+      toast({ 
+        title: 'Sync failed', 
+        description: error.message, 
+        variant: 'destructive' 
+      });
+    } finally {
+      setSyncing(false);
+    }
   };
 
   const [selectedLibraryItem, setSelectedLibraryItem] = useState<MediaItem | null>(null);
@@ -502,6 +599,90 @@ const InstagramSchedulerPage = () => {
             </Button>
           </div>
 
+          {/* Content Source Stats Banner */}
+          <div className="mb-6 bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl p-4 border border-primary/20">
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/20 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-sm">Content from Uploader</h3>
+                  <p className="text-xs text-muted-foreground">
+                    {contentStats.libraryPosts} of {contentStats.totalPosts} posts from upload portal
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-4 flex-1 max-w-xs">
+                <div className="flex-1">
+                  <div className="flex justify-between text-xs mb-1">
+                    <span>{contentStats.percentage}%</span>
+                    <span className="text-muted-foreground">Target: 70%</span>
+                  </div>
+                  <Progress 
+                    value={contentStats.percentage} 
+                    className="h-2"
+                  />
+                </div>
+                <Badge variant={contentStats.targetMet ? 'default' : 'secondary'}>
+                  {contentStats.targetMet ? '✓ On Target' : 'Below Target'}
+                </Badge>
+              </div>
+              
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={syncMediaToInstagram}
+                disabled={syncing}
+              >
+                <RefreshCw className={`w-4 h-4 mr-2 ${syncing ? 'animate-spin' : ''}`} />
+                {syncing ? 'Syncing...' : 'Sync New Uploads'}
+              </Button>
+            </div>
+          </div>
+
+          {/* Recommended from Uploader */}
+          {mediaItems.filter(m => !m.isUsed).length > 0 && (
+            <div className="mb-6 bg-card rounded-xl p-4 border">
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="w-5 h-5 text-primary" />
+                <h3 className="font-semibold">Recommended from Upload Portal</h3>
+                <Badge variant="outline" className="ml-auto text-xs">
+                  {mediaItems.filter(m => !m.isUsed).length} unused
+                </Badge>
+              </div>
+              <ScrollArea className="w-full">
+                <div className="flex gap-3 pb-2">
+                  {mediaItems.filter(m => !m.isUsed).slice(0, 6).map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => handleSelectFromLibrary(item)}
+                      disabled={copyingToInstagram}
+                      className="relative flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden border-2 border-transparent hover:border-primary transition-all group"
+                    >
+                      <img
+                        src={item.url}
+                        alt={item.file_name}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
+                        <span className="text-white text-xs truncate">
+                          {item.event_name || 'Upload'}
+                        </span>
+                      </div>
+                      {selectedLibraryItem?.id === item.id && copyingToInstagram && (
+                        <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
+                          <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          )}
+
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Schedule Form */}
             <div className="bg-card rounded-2xl p-6 shadow-lg border">
@@ -513,12 +694,16 @@ const InstagramSchedulerPage = () => {
               <div className="space-y-4">
                 {/* Image Source Tabs */}
                 <div>
-                  <Label className="mb-2 block">Image Source *</Label>
-                  <Tabs defaultValue="library" className="w-full">
+                  <Label className="mb-2 block flex items-center justify-between">
+                    <span>Image Source *</span>
+                    <span className="text-xs text-muted-foreground">Use Library for 70% target</span>
+                  </Label>
+                  <Tabs defaultValue="library" className="w-full" onValueChange={(v) => setImageSource(v as any)}>
                     <TabsList className="grid w-full grid-cols-3">
                       <TabsTrigger value="library" className="flex items-center gap-1">
                         <FolderOpen className="w-3 h-3" />
                         Library
+                        <Badge variant="secondary" className="ml-1 text-[10px] px-1">70%</Badge>
                       </TabsTrigger>
                       <TabsTrigger value="upload" className="flex items-center gap-1">
                         <Upload className="w-3 h-3" />
@@ -532,14 +717,24 @@ const InstagramSchedulerPage = () => {
                     
                     <TabsContent value="library" className="mt-3">
                       <div className="border rounded-lg p-3 bg-background/50">
-                        <div className="relative mb-3">
-                          <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                          <Input
-                            placeholder="Search library..."
-                            value={mediaSearch}
-                            onChange={(e) => setMediaSearch(e.target.value)}
-                            className="pl-8"
-                          />
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="relative flex-1">
+                            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                            <Input
+                              placeholder="Search uploader content..."
+                              value={mediaSearch}
+                              onChange={(e) => setMediaSearch(e.target.value)}
+                              className="pl-8"
+                            />
+                          </div>
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={fetchMediaLibrary}
+                            disabled={mediaLoading}
+                          >
+                            <RefreshCw className={`w-4 h-4 ${mediaLoading ? 'animate-spin' : ''}`} />
+                          </Button>
                         </div>
                         
                         {mediaLoading ? (
@@ -549,8 +744,13 @@ const InstagramSchedulerPage = () => {
                         ) : filteredMediaItems.length === 0 ? (
                           <div className="text-center py-6 text-muted-foreground text-sm">
                             <FolderOpen className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                            <p>No images in PixelAI Social library</p>
-                            <p className="text-xs mt-1">Upload content at /pixelai-social</p>
+                            <p>No images from upload portal</p>
+                            <a 
+                              href="/upload-m3d1a-p0rtal" 
+                              className="text-xs text-primary hover:underline mt-1 inline-block"
+                            >
+                              Upload content at portal →
+                            </a>
                           </div>
                         ) : (
                           <ScrollArea className="h-[200px]">
@@ -567,7 +767,9 @@ const InstagramSchedulerPage = () => {
                                     className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all hover:border-primary disabled:opacity-50 ${
                                       imageUrl.includes(item.file_name.split('.')[0]) || isCopying
                                         ? 'border-primary ring-2 ring-primary/20' 
-                                        : 'border-transparent'
+                                        : item.isUsed 
+                                          ? 'border-muted opacity-60'
+                                          : 'border-transparent'
                                     }`}
                                   >
                                     <img
@@ -575,6 +777,11 @@ const InstagramSchedulerPage = () => {
                                       alt={item.file_name}
                                       className="w-full h-full object-cover"
                                     />
+                                    {item.isUsed && (
+                                      <div className="absolute top-1 right-1">
+                                        <Badge variant="secondary" className="text-[8px] px-1">Used</Badge>
+                                      </div>
+                                    )}
                                     {isCopying && (
                                       <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
                                         <Loader2 className="w-6 h-6 animate-spin text-primary" />
