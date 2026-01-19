@@ -57,6 +57,7 @@ import LinkInBioPage from "./pages/LinkInBioPage";
 import ContentHubPage from "./pages/ContentHubPage";
 import MediaUploadPage from "./pages/MediaUploadPage";
 import PixelAISocialPage from "./pages/PixelAISocialPage";
+import InstagramSchedulerPage from "./pages/InstagramSchedulerPage";
 
 const queryClient = new QueryClient();
 
@@ -141,6 +142,8 @@ const App = () => (
           <Route path="/upload-m3d1a-p0rtal" element={<MediaUploadPage />} />
           {/* PixelAI Social - Admin Dashboard */}
           <Route path="/pixelai-social" element={<PixelAISocialPage />} />
+          {/* Instagram Scheduler */}
+          <Route path="/instagram-scheduler" element={<InstagramSchedulerPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
