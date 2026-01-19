@@ -27,12 +27,22 @@ const Index = () => {
         "url": "https://pixelaipro.lovable.app",
         "image": "https://pixelaipro.lovable.app/og-image.jpg",
         "priceRange": "$$$",
+        "telephone": "+1-917-724-6051",
+        "email": "pixelaipronyc@gmail.com",
         "address": {
           "@type": "PostalAddress",
           "addressLocality": "New York",
           "addressRegion": "NY",
           "addressCountry": "US"
         },
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            "opens": "09:00",
+            "closes": "18:00"
+          }
+        ],
         "aggregateRating": {
           "@type": "AggregateRating",
           "ratingValue": "4.9",
