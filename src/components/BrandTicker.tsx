@@ -9,15 +9,15 @@ import spectrumNewsLogo from '@/assets/logos/spectrum-news.svg';
 import theTradeDeskLogo from '@/assets/logos/the-trade-desk.png';
 
 const brands = [
-  { name: 'Google', logo: googleLogo },
-  { name: 'Netflix', logo: netflixLogo },
-  { name: 'Nestlé', logo: nestleLogo },
-  { name: 'ServiceNow', logo: servicenowLogo },
-  { name: 'The Trade Desk', logo: theTradeDeskLogo },
-  { name: 'Betsey Johnson', logo: betseyJohnsonLogo },
-  { name: 'Good Morning America', logo: goodMorningAmericaLogo },
-  { name: 'WNBA', logo: wnbaLogo },
-  { name: 'Spectrum News', logo: spectrumNewsLogo },
+  { name: 'Google', logo: googleLogo, isDark: false },
+  { name: 'Netflix', logo: netflixLogo, isDark: false },
+  { name: 'Nestlé', logo: nestleLogo, isDark: true },
+  { name: 'ServiceNow', logo: servicenowLogo, isDark: true },
+  { name: 'The Trade Desk', logo: theTradeDeskLogo, isDark: true },
+  { name: 'Betsey Johnson', logo: betseyJohnsonLogo, isDark: true },
+  { name: 'Good Morning America', logo: goodMorningAmericaLogo, isDark: false },
+  { name: 'WNBA', logo: wnbaLogo, isDark: false },
+  { name: 'Spectrum News', logo: spectrumNewsLogo, isDark: false },
 ];
 
 const BrandTicker = () => {
@@ -40,7 +40,7 @@ const BrandTicker = () => {
                 alt={`${brand.name} logo`}
                 loading="lazy"
                 decoding="async"
-                className="h-10 md:h-12 w-auto max-w-[160px] object-contain opacity-90 hover:opacity-100 transition-all duration-300 brightness-0 invert"
+                className={`h-10 md:h-12 w-auto max-w-[160px] object-contain opacity-90 hover:opacity-100 transition-all duration-300 ${brand.isDark ? 'brightness-0 invert' : ''}`}
               />
             </div>
           ))}
