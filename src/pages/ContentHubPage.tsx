@@ -21,11 +21,15 @@ import igStoryBooking from '@/assets/instagram/ig-story-booking.jpg';
 import storyTemplatePixelwear from '@/assets/instagram/story-template-pixelwear.jpg';
 import storyTemplateTradingCards from '@/assets/instagram/story-template-trading-cards.jpg';
 import storyTemplateHeadshots from '@/assets/instagram/story-template-headshots.jpg';
+import storyTemplatePersonaPop from '@/assets/instagram/story-template-persona-pop.jpg';
+import storyTemplateCoStar from '@/assets/instagram/story-template-co-star.jpg';
 
 // Reel Covers
 import reelCoverPixelwear from '@/assets/instagram/reel-cover-pixelwear.jpg';
 import reelCoverTradingCards from '@/assets/instagram/reel-cover-trading-cards.jpg';
 import reelCoverHeadshots from '@/assets/instagram/reel-cover-headshots.jpg';
+import reelCoverPersonaPop from '@/assets/instagram/reel-cover-persona-pop.jpg';
+import reelCoverCoStar from '@/assets/instagram/reel-cover-co-star.jpg';
 
 interface ContentItem {
   id: string;
@@ -160,6 +164,40 @@ const contentItems: ContentItem[] = [
     image: igPostPersonaPopTeam,
     caption: '🦸 Unleash your team\'s inner superheroes!\n\nOur Persona Pop experience turned this corporate team into legendary characters — talk about a memorable team building moment!\n\nTransformations include:\n🦸‍♂️ Superheroes\n🎬 Movie characters\n🎮 Gaming legends\n🎨 Anime styles\n\nWhich transformation would YOUR team choose?\n\nBook your superhero experience today! 🔗',
     hashtags: '#TeamBuilding #PersonaPop #CorporateFun #AITransformation #SuperheroTeam #EmployeeEngagement #WorkplaceEvents #TeamSpirit #CreativeEvents #MemorableMoments',
+  },
+  // Persona Pop Templates
+  {
+    id: '16',
+    title: 'Persona Pop Story Template',
+    type: 'story',
+    image: storyTemplatePersonaPop,
+    caption: '🦸 BECOME A LEGEND!\n\nTransform into your favorite superhero, anime character, or fantasy warrior in seconds.\n\nPerfect for corporate events, parties & brand activations! ⚡',
+    hashtags: '#PersonaPop #AITransformation #Superhero #AnimeStyle #EventTech #BrandActivation #CorporateEvents',
+  },
+  {
+    id: '17',
+    title: 'Persona Pop Reel Cover',
+    type: 'reel',
+    image: reelCoverPersonaPop,
+    caption: '⚡ Watch the TRANSFORMATION!\n\nFrom ordinary to extraordinary in seconds. Our Persona Pop AI creates mind-blowing character transformations.\n\nTag someone who needs this at their next event! 👇',
+    hashtags: '#PersonaPopReel #AITransformation #SuperheroMakeover #EventContent #ViralReels #CorporateFun',
+  },
+  // Co-Star Templates
+  {
+    id: '18',
+    title: 'Co-Star Story Template',
+    type: 'story',
+    image: storyTemplateCoStar,
+    caption: '⭐ MEET YOUR IDOL!\n\nOur Co-Star AI creates magical moments where guests pose with their favorite celebrities.\n\nThe ultimate VIP experience for events! 🌟',
+    hashtags: '#CoStar #CelebrityMoment #AIPhoto #VIPExperience #RedCarpet #EventTech #LuxuryEvents',
+  },
+  {
+    id: '19',
+    title: 'Co-Star Reel Cover',
+    type: 'reel',
+    image: reelCoverCoStar,
+    caption: '🎬 Red carpet moments, made real!\n\nWatch guests light up when they "meet" their favorite celebrities with our Co-Star AI experience.\n\nSave for your next VIP event! ⭐',
+    hashtags: '#CoStarReel #CelebrityAI #RedCarpetMoments #VIPEvents #EventMarketing #LuxuryActivation',
   },
 ];
 
