@@ -8,10 +8,13 @@ import { useToast } from '@/hooks/use-toast';
 import { 
   Calendar, Clock, Instagram, Send, Trash2, 
   LogIn, LogOut, Eye, EyeOff, Loader2, CheckCircle, 
-  XCircle, AlertCircle, Image as ImageIcon
+  XCircle, AlertCircle, Image as ImageIcon, Upload,
+  FolderOpen, Search, X
 } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ScheduledPost {
   id: string;
@@ -24,6 +27,19 @@ interface ScheduledPost {
   published_at: string | null;
   error_message: string | null;
   created_at: string;
+}
+
+interface MediaItem {
+  id: string;
+  file_name: string;
+  file_path: string;
+  file_type: string | null;
+  event_name: string | null;
+  description: string | null;
+  tags: string[] | null;
+  created_at: string;
+  user_id: string | null;
+  url?: string;
 }
 
 const InstagramSchedulerPage = () => {
@@ -44,18 +60,35 @@ const InstagramSchedulerPage = () => {
   const [scheduledPosts, setScheduledPosts] = useState<ScheduledPost[]>([]);
   const [loading, setLoading] = useState(true);
   
+  // Content library state
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
+  const [mediaLoading, setMediaLoading] = useState(false);
+  const [mediaSearch, setMediaSearch] = useState('');
+  const [showLibrary, setShowLibrary] = useState(false);
+  
+  // Image upload state
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  
   const { toast } = useToast();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      if (session) fetchScheduledPosts();
-      else setLoading(false);
+      if (session) {
+        fetchScheduledPosts();
+        fetchMediaLibrary();
+      } else {
+        setLoading(false);
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      if (session) fetchScheduledPosts();
+      if (session) {
+        fetchScheduledPosts();
+        fetchMediaLibrary();
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -75,6 +108,100 @@ const InstagramSchedulerPage = () => {
     }
     setLoading(false);
   };
+
+  const fetchMediaLibrary = async () => {
+    setMediaLoading(true);
+    // Fetch images from event_media table (PixelAI Social content)
+    const { data, error } = await supabase
+      .from('event_media')
+      .select('*')
+      .like('file_type', 'image%')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching media library:', error);
+    } else {
+      // Get public URLs for each image
+      const mediaWithUrls = await Promise.all(
+        (data || []).map(async (item) => {
+          const { data: urlData } = await supabase.storage
+            .from('event-media')
+            .createSignedUrl(item.file_path, 3600);
+          return { ...item, url: urlData?.signedUrl };
+        })
+      );
+      setMediaItems(mediaWithUrls.filter(item => item.url));
+    }
+    setMediaLoading(false);
+  };
+
+  const handleSelectFromLibrary = (item: MediaItem) => {
+    if (item.url) {
+      setImageUrl(item.url);
+      setShowLibrary(false);
+      toast({ title: 'Image selected from library' });
+    }
+  };
+
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file
+      if (file.size > 8 * 1024 * 1024) {
+        toast({ title: 'File too large', description: 'Max 8MB for Instagram', variant: 'destructive' });
+        return;
+      }
+      if (!['image/jpeg', 'image/png'].includes(file.type)) {
+        toast({ title: 'Invalid format', description: 'Use JPEG or PNG', variant: 'destructive' });
+        return;
+      }
+      setImageFile(file);
+    }
+  };
+
+  const handleUploadImage = async (): Promise<string | null> => {
+    if (!imageFile || !session?.user?.id) return null;
+    
+    setUploadingImage(true);
+    
+    try {
+      const timestamp = Date.now();
+      const ext = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg';
+      const fileName = `instagram-${timestamp}.${ext}`;
+      const filePath = `${session.user.id}/${fileName}`;
+
+      // Upload to instagram-images bucket (public)
+      const { error: uploadError } = await supabase.storage
+        .from('instagram-images')
+        .upload(filePath, imageFile);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Get public URL
+      const { data: publicUrlData } = supabase.storage
+        .from('instagram-images')
+        .getPublicUrl(filePath);
+
+      return publicUrlData.publicUrl;
+    } catch (error: any) {
+      toast({ title: 'Upload failed', description: error.message, variant: 'destructive' });
+      return null;
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const filteredMediaItems = mediaItems.filter(item => {
+    if (!mediaSearch) return true;
+    const search = mediaSearch.toLowerCase();
+    return (
+      item.file_name.toLowerCase().includes(search) ||
+      item.event_name?.toLowerCase().includes(search) ||
+      item.tags?.some(tag => tag.toLowerCase().includes(search))
+    );
+  });
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,7 +233,19 @@ const InstagramSchedulerPage = () => {
   };
 
   const handleSchedulePost = async () => {
-    if (!imageUrl || !caption || !scheduledDate || !scheduledTime) {
+    // Check if we have an image (either URL or file to upload)
+    let finalImageUrl = imageUrl;
+    
+    if (imageFile) {
+      const uploadedUrl = await handleUploadImage();
+      if (uploadedUrl) {
+        finalImageUrl = uploadedUrl;
+      } else {
+        return; // Upload failed
+      }
+    }
+    
+    if (!finalImageUrl || !caption || !scheduledDate || !scheduledTime) {
       toast({ title: 'Missing fields', description: 'Please fill in all required fields', variant: 'destructive' });
       return;
     }
@@ -123,7 +262,7 @@ const InstagramSchedulerPage = () => {
 
     const { error } = await supabase.from('scheduled_posts').insert({
       user_id: session.user.id,
-      image_url: imageUrl,
+      image_url: finalImageUrl,
       caption: fullCaption,
       hashtags: hashtags || null,
       scheduled_for: scheduledFor.toISOString(),
@@ -135,6 +274,7 @@ const InstagramSchedulerPage = () => {
     } else {
       toast({ title: 'Post scheduled successfully!' });
       setImageUrl('');
+      setImageFile(null);
       setCaption('');
       setHashtags('');
       setScheduledDate('');
@@ -326,27 +466,136 @@ const InstagramSchedulerPage = () => {
               </h2>
               
               <div className="space-y-4">
+                {/* Image Source Tabs */}
                 <div>
-                  <Label htmlFor="imageUrl">Image URL *</Label>
-                  <Input
-                    id="imageUrl"
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
-                    placeholder="https://example.com/image.jpg"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">Must be a publicly accessible URL (HTTPS)</p>
+                  <Label className="mb-2 block">Image Source *</Label>
+                  <Tabs defaultValue="library" className="w-full">
+                    <TabsList className="grid w-full grid-cols-3">
+                      <TabsTrigger value="library" className="flex items-center gap-1">
+                        <FolderOpen className="w-3 h-3" />
+                        Library
+                      </TabsTrigger>
+                      <TabsTrigger value="upload" className="flex items-center gap-1">
+                        <Upload className="w-3 h-3" />
+                        Upload
+                      </TabsTrigger>
+                      <TabsTrigger value="url" className="flex items-center gap-1">
+                        <ImageIcon className="w-3 h-3" />
+                        URL
+                      </TabsTrigger>
+                    </TabsList>
+                    
+                    <TabsContent value="library" className="mt-3">
+                      <div className="border rounded-lg p-3 bg-background/50">
+                        <div className="relative mb-3">
+                          <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Search library..."
+                            value={mediaSearch}
+                            onChange={(e) => setMediaSearch(e.target.value)}
+                            className="pl-8"
+                          />
+                        </div>
+                        
+                        {mediaLoading ? (
+                          <div className="text-center py-6">
+                            <Loader2 className="w-6 h-6 animate-spin mx-auto text-muted-foreground" />
+                          </div>
+                        ) : filteredMediaItems.length === 0 ? (
+                          <div className="text-center py-6 text-muted-foreground text-sm">
+                            <FolderOpen className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                            <p>No images in PixelAI Social library</p>
+                            <p className="text-xs mt-1">Upload content at /pixelai-social</p>
+                          </div>
+                        ) : (
+                          <ScrollArea className="h-[200px]">
+                            <div className="grid grid-cols-4 gap-2">
+                              {filteredMediaItems.map((item) => (
+                                <button
+                                  key={item.id}
+                                  onClick={() => handleSelectFromLibrary(item)}
+                                  className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all hover:border-primary ${
+                                    imageUrl === item.url ? 'border-primary ring-2 ring-primary/20' : 'border-transparent'
+                                  }`}
+                                >
+                                  <img
+                                    src={item.url}
+                                    alt={item.file_name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                  {imageUrl === item.url && (
+                                    <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                                      <CheckCircle className="w-6 h-6 text-primary" />
+                                    </div>
+                                  )}
+                                </button>
+                              ))}
+                            </div>
+                          </ScrollArea>
+                        )}
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="upload" className="mt-3">
+                      <div className="border rounded-lg p-4 bg-background/50">
+                        <Input
+                          type="file"
+                          accept="image/jpeg,image/png"
+                          onChange={handleImageFileChange}
+                          className="cursor-pointer"
+                        />
+                        <p className="text-xs text-muted-foreground mt-2">JPEG or PNG, max 8MB</p>
+                        
+                        {imageFile && (
+                          <div className="mt-3 flex items-center gap-2 p-2 bg-muted rounded-lg">
+                            <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-sm flex-1 truncate">{imageFile.name}</span>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => setImageFile(null)}
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="url" className="mt-3">
+                      <Input
+                        id="imageUrl"
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                        placeholder="https://example.com/image.jpg"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">Must be a publicly accessible URL (HTTPS)</p>
+                    </TabsContent>
+                  </Tabs>
                 </div>
 
-                {imageUrl && (
+                {/* Image Preview */}
+                {(imageUrl || imageFile) && (
                   <div className="relative aspect-square max-w-[200px] rounded-lg overflow-hidden border">
                     <img 
-                      src={imageUrl} 
+                      src={imageFile ? URL.createObjectURL(imageFile) : imageUrl} 
                       alt="Preview" 
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         (e.target as HTMLImageElement).style.display = 'none';
                       }}
                     />
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      className="absolute top-2 right-2"
+                      onClick={() => {
+                        setImageUrl('');
+                        setImageFile(null);
+                      }}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
                   </div>
                 )}
                 
@@ -397,11 +646,11 @@ const InstagramSchedulerPage = () => {
                 
                 <Button 
                   onClick={handleSchedulePost} 
-                  disabled={scheduling}
+                  disabled={scheduling || uploadingImage || (!imageUrl && !imageFile)}
                   className="w-full"
                 >
-                  {scheduling ? (
-                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Scheduling...</>
+                  {scheduling || uploadingImage ? (
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {uploadingImage ? 'Uploading...' : 'Scheduling...'}</>
                   ) : (
                     <><Calendar className="w-4 h-4 mr-2" /> Schedule Post</>
                   )}
