@@ -57,6 +57,7 @@ Deno.serve(async (req) => {
     // Verify authentication
     const authHeader = req.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
+      console.error('Missing or invalid Authorization header');
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -70,16 +71,18 @@ Deno.serve(async (req) => {
       global: { headers: { Authorization: authHeader } }
     });
 
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+    // Validate user with getUser()
+    const { data: userData, error: userError } = await supabase.auth.getUser();
     
-    if (claimsError || !claimsData?.claims) {
-      console.error('JWT validation failed:', claimsError);
+    if (userError || !userData?.user) {
+      console.error('User validation failed:', userError);
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    console.log('Authenticated user:', userData.user.id);
 
     const { 
       imageDescription, 
@@ -121,6 +124,8 @@ CAPTION:
 
 ${includeHashtags ? 'HASHTAGS:\n[Your hashtags here]' : ''}`;
 
+    console.log('Calling Lovable AI...');
+    
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -139,7 +144,21 @@ ${includeHashtags ? 'HASHTAGS:\n[Your hashtags here]' : ''}`;
 
     if (!aiResponse.ok) {
       const errorText = await aiResponse.text();
-      console.error('AI API error:', errorText);
+      console.error('AI API error:', aiResponse.status, errorText);
+      
+      if (aiResponse.status === 429) {
+        return new Response(
+          JSON.stringify({ error: 'Rate limit exceeded. Please try again in a moment.' }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      if (aiResponse.status === 402) {
+        return new Response(
+          JSON.stringify({ error: 'AI credits exhausted. Please add credits.' }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
       return new Response(
         JSON.stringify({ error: 'Failed to generate caption' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -149,7 +168,7 @@ ${includeHashtags ? 'HASHTAGS:\n[Your hashtags here]' : ''}`;
     const aiData = await aiResponse.json();
     const generatedText = aiData.choices?.[0]?.message?.content || '';
 
-    console.log('AI response:', generatedText);
+    console.log('AI response received, length:', generatedText.length);
 
     // Parse caption and hashtags
     let caption = '';
@@ -171,6 +190,8 @@ ${includeHashtags ? 'HASHTAGS:\n[Your hashtags here]' : ''}`;
     if (!caption) {
       caption = generatedText.replace(/CAPTION:|HASHTAGS:/gi, '').trim();
     }
+
+    console.log('Generated caption:', caption.substring(0, 50) + '...');
 
     return new Response(
       JSON.stringify({ 

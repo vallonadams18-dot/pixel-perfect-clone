@@ -11,14 +11,6 @@ interface InstagramPublishRequest {
   scheduledId?: string;
 }
 
-interface ContainerResponse {
-  id: string;
-}
-
-interface PublishResponse {
-  id: string;
-}
-
 Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -37,7 +29,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Verify authentication using getClaims for JWT validation
+    // Verify authentication
     const authHeader = req.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
       console.error('Missing or invalid Authorization header');
@@ -54,19 +46,18 @@ Deno.serve(async (req) => {
       global: { headers: { Authorization: authHeader } }
     });
 
-    // Use getClaims for efficient JWT validation
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+    // Validate user with getUser()
+    const { data: userData, error: userError } = await supabase.auth.getUser();
     
-    if (claimsError || !claimsData?.claims) {
-      console.error('JWT validation failed:', claimsError);
+    if (userError || !userData?.user) {
+      console.error('User validation failed:', userError);
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
     
-    const userId = claimsData.claims.sub;
+    const userId = userData.user.id;
     console.log('Authenticated user:', userId);
 
     const { imageUrl, caption, scheduledId }: InstagramPublishRequest = await req.json();
