@@ -108,19 +108,40 @@ const MediaUploadPage = () => {
     }
   };
 
+  const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/quicktime'];
+
   const handleUpload = async () => {
     if (files.length === 0) {
       toast({ title: 'No files selected', variant: 'destructive' });
       return;
     }
 
+    if (!session?.user?.id) {
+      toast({ title: 'You must be logged in to upload', variant: 'destructive' });
+      return;
+    }
+
     setUploading(true);
     const tagArray = tags.split(',').map(t => t.trim()).filter(t => t);
+    const userId = session.user.id;
+    let uploadedCount = 0;
 
     for (const file of files) {
+      // Client-side validation for better UX
+      if (file.size > MAX_FILE_SIZE) {
+        toast({ title: `${file.name} is too large`, description: 'Maximum file size is 50MB', variant: 'destructive' });
+        continue;
+      }
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        toast({ title: `${file.name} has invalid type`, description: 'Allowed: JPEG, PNG, GIF, WEBP, MP4', variant: 'destructive' });
+        continue;
+      }
+
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `uploads/${fileName}`;
+      // Store in user-specific folder for RLS security
+      const filePath = `${userId}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('event-media')
@@ -138,14 +159,19 @@ const MediaUploadPage = () => {
         event_name: eventName || null,
         description: description || null,
         tags: tagArray.length > 0 ? tagArray : null,
+        user_id: userId,
       });
 
       if (dbError) {
         toast({ title: `Failed to save ${file.name} metadata`, description: dbError.message, variant: 'destructive' });
+      } else {
+        uploadedCount++;
       }
     }
 
-    toast({ title: `${files.length} file(s) uploaded successfully!` });
+    if (uploadedCount > 0) {
+      toast({ title: `${uploadedCount} file(s) uploaded successfully!` });
+    }
     setFiles([]);
     setEventName('');
     setDescription('');
