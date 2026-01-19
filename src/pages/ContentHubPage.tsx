@@ -1,4 +1,4 @@
-import { Download, Instagram, Calendar, Copy, Check } from 'lucide-react';
+import { Download, Instagram, Calendar, Copy, Check, Clock, Sparkles, Camera, Users, TrendingUp, Megaphone, Heart } from 'lucide-react';
 import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -181,21 +181,177 @@ const ContentHubPage = () => {
             ))}
           </div>
 
-          {/* Tips Section */}
+          {/* Weekly Content Calendar */}
           <div className="mt-16 glass rounded-2xl p-8">
-            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+            <h2 className="text-2xl font-bold mb-2 flex items-center gap-3">
               <Calendar className="text-primary" />
-              Posting Schedule Tips
+              Weekly Content Calendar
+            </h2>
+            <p className="text-muted-foreground mb-8">Suggested posting schedule with optimal times for maximum engagement</p>
+            
+            <div className="grid gap-4">
+              {/* Monday */}
+              <div className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-background/50 rounded-xl border-l-4 border-blue-500">
+                <div className="md:w-32 flex-shrink-0">
+                  <h3 className="font-bold text-lg">Monday</h3>
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Clock size={14} />
+                    <span>11:00 AM EST</span>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Sparkles size={16} className="text-blue-500" />
+                    <span className="font-medium">Transformation Post</span>
+                    <span className="text-xs px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded-full">Carousel</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Before/after transformation showcasing AI Photo Booth magic. Start the week with visual impact!</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs text-green-400">High Engagement</span>
+                </div>
+              </div>
+
+              {/* Tuesday */}
+              <div className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-background/50 rounded-xl border-l-4 border-purple-500">
+                <div className="md:w-32 flex-shrink-0">
+                  <h3 className="font-bold text-lg">Tuesday</h3>
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Clock size={14} />
+                    <span>12:00 PM EST</span>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Camera size={16} className="text-purple-500" />
+                    <span className="font-medium">Behind the Scenes</span>
+                    <span className="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-400 rounded-full">Reel</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Show setup at events, team at work, or equipment in action. Build authenticity and trust.</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs text-yellow-400">Medium Engagement</span>
+                </div>
+              </div>
+
+              {/* Wednesday */}
+              <div className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-background/50 rounded-xl border-l-4 border-green-500">
+                <div className="md:w-32 flex-shrink-0">
+                  <h3 className="font-bold text-lg">Wednesday</h3>
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Clock size={14} />
+                    <span>7:00 PM EST</span>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Users size={16} className="text-green-500" />
+                    <span className="font-medium">Client Spotlight</span>
+                    <span className="text-xs px-2 py-0.5 bg-green-500/20 text-green-400 rounded-full">Post</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Feature a recent event success story. Tag the client, share results and testimonials.</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs text-green-400">High Engagement</span>
+                </div>
+              </div>
+
+              {/* Thursday */}
+              <div className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-background/50 rounded-xl border-l-4 border-orange-500">
+                <div className="md:w-32 flex-shrink-0">
+                  <h3 className="font-bold text-lg">Thursday</h3>
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Clock size={14} />
+                    <span>1:00 PM EST</span>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <TrendingUp size={16} className="text-orange-500" />
+                    <span className="font-medium">Industry Tips</span>
+                    <span className="text-xs px-2 py-0.5 bg-orange-500/20 text-orange-400 rounded-full">Carousel</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Share event planning tips, AI trends, or experiential marketing insights. Position as thought leader.</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs text-yellow-400">Medium Engagement</span>
+                </div>
+              </div>
+
+              {/* Friday */}
+              <div className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-background/50 rounded-xl border-l-4 border-pink-500">
+                <div className="md:w-32 flex-shrink-0">
+                  <h3 className="font-bold text-lg">Friday</h3>
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Clock size={14} />
+                    <span>8:00 PM EST</span>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Heart size={16} className="text-pink-500" />
+                    <span className="font-medium">Fun / Trending</span>
+                    <span className="text-xs px-2 py-0.5 bg-pink-500/20 text-pink-400 rounded-full">Reel</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Jump on trending audio, show personality, or share fun event moments. End the week on a high note!</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs text-green-400">High Engagement</span>
+                </div>
+              </div>
+
+              {/* Saturday */}
+              <div className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-background/50 rounded-xl border-l-4 border-cyan-500">
+                <div className="md:w-32 flex-shrink-0">
+                  <h3 className="font-bold text-lg">Saturday</h3>
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Clock size={14} />
+                    <span>Stories Only</span>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Megaphone size={16} className="text-cyan-500" />
+                    <span className="font-medium">Story Day</span>
+                    <span className="text-xs px-2 py-0.5 bg-cyan-500/20 text-cyan-400 rounded-full">3-5 Stories</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Repost client tags, share weekend vibes, use polls/questions to boost engagement. Keep feed rested.</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs text-muted-foreground">Light Day</span>
+                </div>
+              </div>
+
+              {/* Sunday */}
+              <div className="flex flex-col md:flex-row md:items-center gap-4 p-4 bg-background/50 rounded-xl border-l-4 border-amber-500">
+                <div className="md:w-32 flex-shrink-0">
+                  <h3 className="font-bold text-lg">Sunday</h3>
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Clock size={14} />
+                    <span>10:00 AM EST</span>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Sparkles size={16} className="text-amber-500" />
+                    <span className="font-medium">Week Preview / CTA</span>
+                    <span className="text-xs px-2 py-0.5 bg-amber-500/20 text-amber-400 rounded-full">Post</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Tease upcoming events, share booking availability, or post a powerful CTA. Prime the audience for Monday!</p>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs text-yellow-400">Medium Engagement</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tips Section */}
+          <div className="mt-8 glass rounded-2xl p-8">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+              💡 Pro Tips
             </h2>
             <div className="grid md:grid-cols-3 gap-6">
-              <div className="p-4 bg-background/50 rounded-xl">
-                <h3 className="font-semibold mb-2">📅 Best Times to Post</h3>
-                <p className="text-sm text-muted-foreground">
-                  Tues-Thurs: 11am-1pm EST<br />
-                  Wed & Fri: 7-9pm EST<br />
-                  Sunday: 10am-12pm EST
-                </p>
-              </div>
               <div className="p-4 bg-background/50 rounded-xl">
                 <h3 className="font-semibold mb-2">🎯 Content Mix</h3>
                 <p className="text-sm text-muted-foreground">
@@ -206,11 +362,19 @@ const ContentHubPage = () => {
                 </p>
               </div>
               <div className="p-4 bg-background/50 rounded-xl">
-                <h3 className="font-semibold mb-2">💡 Pro Tips</h3>
+                <h3 className="font-semibold mb-2">📍 Location Strategy</h3>
                 <p className="text-sm text-muted-foreground">
-                  Post Stories 3-5x daily<br />
-                  Use location tags (NYC)<br />
-                  Engage 15 mins before/after posting
+                  Always tag NYC location<br />
+                  Use venue-specific tags<br />
+                  Add "New York Events" hashtag
+                </p>
+              </div>
+              <div className="p-4 bg-background/50 rounded-xl">
+                <h3 className="font-semibold mb-2">⚡ Engagement Boost</h3>
+                <p className="text-sm text-muted-foreground">
+                  Engage 15 mins before/after<br />
+                  Reply to all comments<br />
+                  Post Stories 3-5x daily
                 </p>
               </div>
             </div>
