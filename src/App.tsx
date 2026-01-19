@@ -55,6 +55,7 @@ import CaseStudiesPage from "./pages/CaseStudiesPage";
 import LinkInBioPage from "./pages/LinkInBioPage";
 // Private Content Hub
 import ContentHubPage from "./pages/ContentHubPage";
+import MediaUploadPage from "./pages/MediaUploadPage";
 
 const queryClient = new QueryClient();
 
@@ -135,6 +136,8 @@ const App = () => (
           <Route path="/links" element={<LinkInBioPage />} />
           {/* Private Content Hub */}
           <Route path="/content-hub-x7k9" element={<ContentHubPage />} />
+          {/* Private Media Upload Portal */}
+          <Route path="/upload-m3d1a-p0rtal" element={<MediaUploadPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
