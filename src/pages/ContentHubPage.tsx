@@ -11,6 +11,16 @@ import igPostTradingCards from '@/assets/instagram/ig-post-trading-cards.jpg';
 // Instagram Story
 import igStoryBooking from '@/assets/instagram/ig-story-booking.jpg';
 
+// Story Templates
+import storyTemplatePixelwear from '@/assets/instagram/story-template-pixelwear.jpg';
+import storyTemplateTradingCards from '@/assets/instagram/story-template-trading-cards.jpg';
+import storyTemplateHeadshots from '@/assets/instagram/story-template-headshots.jpg';
+
+// Reel Covers
+import reelCoverPixelwear from '@/assets/instagram/reel-cover-pixelwear.jpg';
+import reelCoverTradingCards from '@/assets/instagram/reel-cover-trading-cards.jpg';
+import reelCoverHeadshots from '@/assets/instagram/reel-cover-headshots.jpg';
+
 interface ContentItem {
   id: string;
   title: string;
@@ -53,6 +63,56 @@ const contentItems: ContentItem[] = [
     image: igStoryBooking,
     caption: 'Behind the scenes at our latest corporate activation! 🎬\n\nNow booking Q1 & Q2 2025 — DM to reserve your date!',
     hashtags: '#BTS #EventSetup #NowBooking #2025Events',
+  },
+  // Story Templates
+  {
+    id: '5',
+    title: 'PixelWear Story Template',
+    type: 'story',
+    image: storyTemplatePixelwear,
+    caption: '👗 Try on ANY brand instantly!\n\nOur PixelWear AI lets guests virtually wear Nike, Gucci, Supreme & more in seconds.\n\nSwipe up to book your branded experience! 🔗',
+    hashtags: '#PixelWear #VirtualTryOn #FashionTech #AIFashion #BrandActivation #EventTech',
+  },
+  {
+    id: '6',
+    title: 'Trading Cards Story Template',
+    type: 'story',
+    image: storyTemplateTradingCards,
+    caption: '🏆 Become a LEGEND!\n\nCreate your own premium AI trading card in under 30 seconds.\n\nPerfect for sports events, gaming cons & corporate team building! ⚡',
+    hashtags: '#TradingCards #AICards #SportsCards #Collectibles #EventActivation #CustomCards',
+  },
+  {
+    id: '7',
+    title: 'Headshots Story Template',
+    type: 'story',
+    image: storyTemplateHeadshots,
+    caption: '💼 Professional headshots in SECONDS!\n\nNo studio needed. No appointments. Just AI magic.\n\nPerfect for conferences & corporate events! ✨',
+    hashtags: '#AIHeadshots #ProfessionalHeadshots #CorporateEvents #LinkedInReady #EventTech',
+  },
+  // Reel Covers
+  {
+    id: '8',
+    title: 'PixelWear Reel Cover',
+    type: 'reel',
+    image: reelCoverPixelwear,
+    caption: '🔥 Watch the PixelWear transformation!\n\nFrom casual to couture in seconds. Our AI virtual try-on experience is the ultimate crowd-pleaser.\n\nTag someone who needs this at their next event! 👇',
+    hashtags: '#PixelWear #AITransformation #FashionTech #EventContent #ReelsCover #BrandActivation',
+  },
+  {
+    id: '9',
+    title: 'Trading Cards Reel Cover',
+    type: 'reel',
+    image: reelCoverTradingCards,
+    caption: '⚡ From fan to LEGEND in 30 seconds!\n\nWatch guests light up when they see themselves on a premium trading card.\n\nSave this for your next sports event! 🏈',
+    hashtags: '#TradingCardReel #AIExperience #SportsActivation #EventMarketing #FanEngagement',
+  },
+  {
+    id: '10',
+    title: 'Headshots Reel Cover',
+    type: 'reel',
+    image: reelCoverHeadshots,
+    caption: '✨ Before vs After: AI Headshot Magic!\n\nWatch guests go from selfie to professional portrait in seconds.\n\nThe perfect addition to any corporate event! 💼',
+    hashtags: '#HeadshotsReel #AIPortrait #CorporateEvents #BeforeAfter #EventTech #LinkedInReady',
   },
 ];
 
