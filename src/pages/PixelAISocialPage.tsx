@@ -24,7 +24,11 @@ import {
   FileImage,
   Calendar,
   Archive,
-  Loader2
+  Loader2,
+  Instagram,
+  Send,
+  X,
+  Clock
 } from 'lucide-react';
 import {
   Select,
@@ -34,6 +38,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface MediaItem {
   id: string;
@@ -66,6 +77,16 @@ const PixelAISocialPage = () => {
   const [bulkDownloading, setBulkDownloading] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  
+  // Instagram scheduling state
+  const [instagramDialogOpen, setInstagramDialogOpen] = useState(false);
+  const [selectedForInstagram, setSelectedForInstagram] = useState<MediaItem | null>(null);
+  const [instagramCaption, setInstagramCaption] = useState('');
+  const [instagramHashtags, setInstagramHashtags] = useState('#AIPhotoBooth #PixelAIPro #NYC #EventPhotography #CorporateEvents');
+  const [instagramDate, setInstagramDate] = useState('');
+  const [instagramTime, setInstagramTime] = useState('');
+  const [schedulingInstagram, setSchedulingInstagram] = useState(false);
+  
   const { toast } = useToast();
   const { isAdmin, loading: adminLoading } = useAdminRole();
 
@@ -394,6 +415,95 @@ const PixelAISocialPage = () => {
 
   const clearSelection = () => {
     setSelectedItems(new Set());
+  };
+
+  // Instagram scheduling functions
+  const openInstagramDialog = (item: MediaItem) => {
+    setSelectedForInstagram(item);
+    // Pre-fill caption with SEO description
+    setInstagramCaption(item.description || `${item.event_name || 'Amazing event'} captured by PixelAI Pro`);
+    setInstagramDialogOpen(true);
+  };
+
+  const handleScheduleToInstagram = async () => {
+    if (!selectedForInstagram?.url || !instagramCaption || !instagramDate || !instagramTime) {
+      toast({ title: 'Missing fields', description: 'Please fill in all required fields', variant: 'destructive' });
+      return;
+    }
+
+    const scheduledFor = new Date(`${instagramDate}T${instagramTime}`);
+    if (scheduledFor <= new Date()) {
+      toast({ title: 'Invalid date', description: 'Scheduled time must be in the future', variant: 'destructive' });
+      return;
+    }
+
+    setSchedulingInstagram(true);
+
+    try {
+      const fullCaption = instagramHashtags ? `${instagramCaption}\n\n${instagramHashtags}` : instagramCaption;
+
+      const { error } = await supabase.from('scheduled_posts').insert({
+        user_id: session.user.id,
+        image_url: selectedForInstagram.url,
+        caption: fullCaption,
+        hashtags: instagramHashtags || null,
+        scheduled_for: scheduledFor.toISOString(),
+        status: 'pending',
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      toast({ 
+        title: 'Scheduled for Instagram!', 
+        description: `Post will be published on ${scheduledFor.toLocaleDateString()} at ${scheduledFor.toLocaleTimeString()}` 
+      });
+      
+      // Reset form
+      setInstagramDialogOpen(false);
+      setSelectedForInstagram(null);
+      setInstagramCaption('');
+      setInstagramDate('');
+      setInstagramTime('');
+    } catch (error: any) {
+      toast({ title: 'Scheduling failed', description: error.message, variant: 'destructive' });
+    } finally {
+      setSchedulingInstagram(false);
+    }
+  };
+
+  const handlePublishNowToInstagram = async () => {
+    if (!selectedForInstagram?.url || !instagramCaption) {
+      toast({ title: 'Missing fields', description: 'Please add a caption', variant: 'destructive' });
+      return;
+    }
+
+    setSchedulingInstagram(true);
+
+    try {
+      const fullCaption = instagramHashtags ? `${instagramCaption}\n\n${instagramHashtags}` : instagramCaption;
+
+      const { data, error } = await supabase.functions.invoke('instagram-publish', {
+        body: {
+          imageUrl: selectedForInstagram.url,
+          caption: fullCaption,
+        },
+      });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      toast({ title: 'Published to Instagram!', description: `Post ID: ${data.postId}` });
+      
+      setInstagramDialogOpen(false);
+      setSelectedForInstagram(null);
+      setInstagramCaption('');
+    } catch (error: any) {
+      toast({ title: 'Publish failed', description: error.message, variant: 'destructive' });
+    } finally {
+      setSchedulingInstagram(false);
+    }
   };
 
   // Filter media based on search and type
@@ -766,6 +876,18 @@ const PixelAISocialPage = () => {
                   
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3 pointer-events-none group-hover:pointer-events-auto">
                     <div className="flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                      {/* Instagram Button - only for images */}
+                      {item.file_type?.startsWith('image') && (
+                        <Button
+                          size="icon"
+                          variant="secondary"
+                          className="h-8 w-8 bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0"
+                          onClick={() => openInstagramDialog(item)}
+                          title="Send to Instagram"
+                        >
+                          <Instagram className="w-4 h-4" />
+                        </Button>
+                      )}
                       <Button
                         size="icon"
                         variant="secondary"
@@ -802,6 +924,117 @@ const PixelAISocialPage = () => {
             </div>
           )}
         </div>
+
+        {/* Instagram Scheduling Dialog */}
+        <Dialog open={instagramDialogOpen} onOpenChange={setInstagramDialogOpen}>
+          <DialogContent className="sm:max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                  <Instagram className="w-4 h-4 text-white" />
+                </div>
+                Send to Instagram
+              </DialogTitle>
+              <DialogDescription>
+                Schedule or publish this image to Instagram
+              </DialogDescription>
+            </DialogHeader>
+
+            {selectedForInstagram && (
+              <div className="space-y-4">
+                {/* Image Preview */}
+                <div className="flex gap-4">
+                  <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 border">
+                    <img 
+                      src={selectedForInstagram.url} 
+                      alt="" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{selectedForInstagram.event_name || 'Event Photo'}</p>
+                    <p className="text-sm text-muted-foreground truncate">{selectedForInstagram.file_name}</p>
+                  </div>
+                </div>
+
+                {/* Caption */}
+                <div>
+                  <Label htmlFor="ig-caption">Caption *</Label>
+                  <Textarea
+                    id="ig-caption"
+                    value={instagramCaption}
+                    onChange={(e) => setInstagramCaption(e.target.value)}
+                    placeholder="Write your Instagram caption..."
+                    rows={3}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">{instagramCaption.length}/2,200</p>
+                </div>
+
+                {/* Hashtags */}
+                <div>
+                  <Label htmlFor="ig-hashtags">Hashtags</Label>
+                  <Textarea
+                    id="ig-hashtags"
+                    value={instagramHashtags}
+                    onChange={(e) => setInstagramHashtags(e.target.value)}
+                    placeholder="#AIPhotoBooth #EventTech"
+                    rows={2}
+                  />
+                </div>
+
+                {/* Schedule Date/Time */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="ig-date">Schedule Date</Label>
+                    <Input
+                      id="ig-date"
+                      type="date"
+                      value={instagramDate}
+                      onChange={(e) => setInstagramDate(e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="ig-time">Time</Label>
+                    <Input
+                      id="ig-time"
+                      type="time"
+                      value={instagramTime}
+                      onChange={(e) => setInstagramTime(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    onClick={handleScheduleToInstagram}
+                    disabled={schedulingInstagram || !instagramDate || !instagramTime}
+                    className="flex-1"
+                  >
+                    {schedulingInstagram ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Scheduling...</>
+                    ) : (
+                      <><Clock className="w-4 h-4 mr-2" /> Schedule Post</>
+                    )}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={handlePublishNowToInstagram}
+                    disabled={schedulingInstagram}
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0"
+                  >
+                    {schedulingInstagram ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <><Send className="w-4 h-4 mr-2" /> Publish Now</>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
