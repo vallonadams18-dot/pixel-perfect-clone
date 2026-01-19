@@ -59,7 +59,9 @@ export type Database = {
           id: string
           image_url: string
           instagram_post_id: string | null
+          next_retry_at: string | null
           published_at: string | null
+          retry_count: number
           scheduled_for: string
           status: string
           updated_at: string
@@ -73,7 +75,9 @@ export type Database = {
           id?: string
           image_url: string
           instagram_post_id?: string | null
+          next_retry_at?: string | null
           published_at?: string | null
+          retry_count?: number
           scheduled_for: string
           status?: string
           updated_at?: string
@@ -87,7 +91,9 @@ export type Database = {
           id?: string
           image_url?: string
           instagram_post_id?: string | null
+          next_retry_at?: string | null
           published_at?: string | null
+          retry_count?: number
           scheduled_for?: string
           status?: string
           updated_at?: string

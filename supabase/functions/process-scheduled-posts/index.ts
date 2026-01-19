@@ -5,13 +5,39 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Retry configuration
+const MAX_RETRIES = 5;
+const BASE_DELAY_MS = 60000; // 1 minute base delay
+
+// Calculate exponential backoff delay
+function getBackoffDelay(retryCount: number): number {
+  // Exponential backoff: 1min, 2min, 4min, 8min, 16min
+  return BASE_DELAY_MS * Math.pow(2, retryCount);
+}
+
+// Check if error is retryable
+function isRetryableError(errorMessage: string): boolean {
+  const nonRetryablePatterns = [
+    'Invalid OAuth access token',
+    'access token has expired',
+    'permission',
+    'Invalid parameter',
+    'URL is not allowed',
+    'image URL',
+  ];
+  
+  return !nonRetryablePatterns.some(pattern => 
+    errorMessage.toLowerCase().includes(pattern.toLowerCase())
+  );
+}
+
 Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
-  console.log('Processing scheduled posts...');
+  console.log('Processing scheduled posts with retry logic...');
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -30,13 +56,17 @@ Deno.serve(async (req) => {
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   try {
-    // Fetch pending posts that are due for publishing
     const now = new Date().toISOString();
+    
+    // Fetch pending posts that are due for publishing
+    // Include posts that are ready for retry (next_retry_at has passed or is null)
     const { data: pendingPosts, error: fetchError } = await supabase
       .from('scheduled_posts')
       .select('*')
-      .eq('status', 'pending')
+      .or(`status.eq.pending,status.eq.retrying`)
       .lte('scheduled_for', now)
+      .or(`next_retry_at.is.null,next_retry_at.lte.${now}`)
+      .lt('retry_count', MAX_RETRIES)
       .order('scheduled_for', { ascending: true })
       .limit(10); // Process up to 10 posts per run
 
@@ -61,7 +91,8 @@ Deno.serve(async (req) => {
     const results = [];
 
     for (const post of pendingPosts) {
-      console.log(`Processing post ${post.id}...`);
+      const currentRetry = post.retry_count || 0;
+      console.log(`Processing post ${post.id} (attempt ${currentRetry + 1}/${MAX_RETRIES})...`);
       
       try {
         // Step 1: Create media container
@@ -127,13 +158,15 @@ Deno.serve(async (req) => {
           throw new Error(publishData.error.message || 'Failed to publish');
         }
 
-        // Update post status to published
+        // Success! Update post status to published
         await supabase
           .from('scheduled_posts')
           .update({ 
             status: 'published', 
             published_at: new Date().toISOString(),
-            instagram_post_id: publishData.id 
+            instagram_post_id: publishData.id,
+            error_message: null,
+            next_retry_at: null
           })
           .eq('id', post.id);
 
@@ -144,16 +177,52 @@ Deno.serve(async (req) => {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         console.error(`Error processing post ${post.id}:`, error);
         
-        // Update post status to failed
-        await supabase
-          .from('scheduled_posts')
-          .update({ 
-            status: 'failed', 
-            error_message: errorMessage 
-          })
-          .eq('id', post.id);
+        const newRetryCount = currentRetry + 1;
+        const canRetry = newRetryCount < MAX_RETRIES && isRetryableError(errorMessage);
+        
+        if (canRetry) {
+          // Schedule for retry with exponential backoff
+          const backoffMs = getBackoffDelay(newRetryCount);
+          const nextRetryAt = new Date(Date.now() + backoffMs);
+          
+          console.log(`Scheduling retry ${newRetryCount}/${MAX_RETRIES} for post ${post.id} at ${nextRetryAt.toISOString()} (backoff: ${backoffMs / 1000}s)`);
+          
+          await supabase
+            .from('scheduled_posts')
+            .update({ 
+              status: 'retrying',
+              retry_count: newRetryCount,
+              next_retry_at: nextRetryAt.toISOString(),
+              error_message: `Attempt ${newRetryCount}/${MAX_RETRIES} failed: ${errorMessage}`
+            })
+            .eq('id', post.id);
 
-        results.push({ id: post.id, status: 'failed', error: errorMessage });
+          results.push({ 
+            id: post.id, 
+            status: 'retrying', 
+            retry: newRetryCount,
+            nextRetryAt: nextRetryAt.toISOString(),
+            error: errorMessage 
+          });
+        } else {
+          // Max retries reached or non-retryable error - mark as failed permanently
+          const failReason = !isRetryableError(errorMessage) 
+            ? `Non-retryable error: ${errorMessage}`
+            : `Max retries (${MAX_RETRIES}) exceeded. Last error: ${errorMessage}`;
+          
+          console.log(`Post ${post.id} permanently failed: ${failReason}`);
+          
+          await supabase
+            .from('scheduled_posts')
+            .update({ 
+              status: 'failed', 
+              error_message: failReason,
+              next_retry_at: null
+            })
+            .eq('id', post.id);
+
+          results.push({ id: post.id, status: 'failed', error: failReason });
+        }
       }
     }
 
