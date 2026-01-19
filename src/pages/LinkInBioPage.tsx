@@ -97,7 +97,7 @@ const LinkInBioPage = () => {
         {/* Social Icons */}
         <div className="flex justify-center gap-4 mt-4">
           <a
-            href="https://instagram.com/pixelaipro"
+            href="https://www.instagram.com/pixelaipronyc"
             target="_blank"
             rel="noopener noreferrer"
             className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
