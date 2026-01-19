@@ -24,6 +24,7 @@ export type Database = {
           file_type: string | null
           id: string
           tags: string[] | null
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -34,6 +35,7 @@ export type Database = {
           file_type?: string | null
           id?: string
           tags?: string[] | null
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -44,6 +46,7 @@ export type Database = {
           file_type?: string | null
           id?: string
           tags?: string[] | null
+          user_id?: string | null
         }
         Relationships: []
       }
