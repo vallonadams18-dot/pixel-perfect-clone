@@ -1,5 +1,10 @@
 import { useEffect } from 'react';
 
+interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
 interface PageMetaOptions {
   title: string;
   description: string;
@@ -8,9 +13,26 @@ interface PageMetaOptions {
   canonicalPath?: string;
   schema?: object | object[];
   keywords?: string;
+  breadcrumbs?: BreadcrumbItem[];
 }
 
 const BASE_URL = 'https://pixelaipro.lovable.app';
+
+/**
+ * Generate BreadcrumbList JSON-LD schema
+ */
+const generateBreadcrumbSchema = (breadcrumbs: BreadcrumbItem[]) => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": breadcrumbs.map((item, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "name": item.name,
+      "item": item.url.startsWith('http') ? item.url : `${BASE_URL}${item.url}`
+    }))
+  };
+};
 
 export const usePageMeta = ({
   title,
@@ -20,6 +42,7 @@ export const usePageMeta = ({
   canonicalPath,
   schema,
   keywords,
+  breadcrumbs,
 }: PageMetaOptions) => {
   useEffect(() => {
     // Set document title
@@ -79,9 +102,23 @@ export const usePageMeta = ({
       setMeta('meta[name="twitter:image"]', 'content', fullImageUrl);
     }
 
-    // Inject JSON-LD schema
+    // Combine schemas (including breadcrumbs)
+    const allSchemas: object[] = [];
+    
+    if (breadcrumbs && breadcrumbs.length > 0) {
+      allSchemas.push(generateBreadcrumbSchema(breadcrumbs));
+    }
+    
     if (schema) {
-      const schemas = Array.isArray(schema) ? schema : [schema];
+      if (Array.isArray(schema)) {
+        allSchemas.push(...schema);
+      } else {
+        allSchemas.push(schema);
+      }
+    }
+
+    // Inject JSON-LD schema
+    if (allSchemas.length > 0) {
       const schemaId = 'page-schema-ld';
       
       // Remove existing page-specific schema
@@ -94,7 +131,7 @@ export const usePageMeta = ({
       const scriptEl = document.createElement('script');
       scriptEl.id = schemaId;
       scriptEl.type = 'application/ld+json';
-      scriptEl.textContent = JSON.stringify(schemas.length === 1 ? schemas[0] : schemas);
+      scriptEl.textContent = JSON.stringify(allSchemas.length === 1 ? allSchemas[0] : allSchemas);
       document.head.appendChild(scriptEl);
 
       // Cleanup on unmount
@@ -105,7 +142,7 @@ export const usePageMeta = ({
         }
       };
     }
-  }, [title, description, ogImage, ogType, canonicalPath, schema, keywords]);
+  }, [title, description, ogImage, ogType, canonicalPath, schema, keywords, breadcrumbs]);
 };
 
 export default usePageMeta;

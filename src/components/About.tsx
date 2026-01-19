@@ -81,6 +81,8 @@ const About = () => {
                 afterImage={afterImage}
                 beforeLabel="Original"
                 afterLabel="AI Transformed"
+                beforeAlt="Original photo before AI photo booth transformation at NYC corporate event"
+                afterAlt="AI-transformed portrait from PixelAI Pro photo booth showing real-time brand activation"
               />
             </div>
 

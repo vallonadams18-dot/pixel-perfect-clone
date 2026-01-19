@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
+import InternalLinks from '@/components/InternalLinks';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import FAQSection from '@/components/FAQSection';
@@ -89,6 +90,11 @@ const HeadshotsPage = () => {
     ogImage: '/og-headshots.jpg',
     canonicalPath: '/experiences/headshots',
     keywords: 'AI headshots NYC, corporate headshots event, conference headshot booth, professional portrait photo booth, LinkedIn headshots NYC, trade show headshots, instant AI portraits',
+    breadcrumbs: [
+      { name: 'Home', url: '/' },
+      { name: 'Services', url: '/services' },
+      { name: 'AI Headshots', url: '/experiences/headshots' }
+    ],
     schema: [
       {
         "@context": "https://schema.org",
@@ -335,6 +341,12 @@ const HeadshotsPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Internal Links */}
+        <div className="container-custom pb-8">
+          <InternalLinks category="blog" maxItems={3} title="Learn More About Photo Booths" />
+          <InternalLinks category="locations" maxItems={6} title="Available Nationwide" />
+        </div>
 
         {/* Related Services */}
         <RelatedServices currentSlug="headshots" />

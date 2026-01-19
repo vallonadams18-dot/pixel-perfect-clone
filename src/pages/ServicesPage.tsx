@@ -2,6 +2,7 @@ import Header from '@/components/Header';
 import Services from '@/components/Services';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import InternalLinks from '@/components/InternalLinks';
 import usePageMeta from '@/hooks/usePageMeta';
 
 const ServicesPage = () => {
@@ -11,6 +12,10 @@ const ServicesPage = () => {
     ogImage: '/og-image.jpg',
     canonicalPath: '/services',
     keywords: 'AI photo booth services, photo booth rental NYC, corporate event activation NYC, trade show lead capture, brand activation services, experiential marketing solutions, AI headshots, virtual try-on booth, trading cards photo booth, glam photo booth NYC, 360 photo booth rental, corporate photo booth, event photo booth near me',
+    breadcrumbs: [
+      { name: 'Home', url: '/' },
+      { name: 'Services', url: '/services' }
+    ],
     schema: [
       {
         "@context": "https://schema.org",
@@ -84,6 +89,10 @@ const ServicesPage = () => {
           <Breadcrumbs items={[{ label: 'Services' }]} />
         </div>
         <Services />
+        <div className="container-custom pb-16">
+          <InternalLinks category="locations" maxItems={6} title="Available in These Locations" />
+          <InternalLinks category="blog" maxItems={3} title="Related Blog Posts" />
+        </div>
       </div>
       <Footer />
     </div>
