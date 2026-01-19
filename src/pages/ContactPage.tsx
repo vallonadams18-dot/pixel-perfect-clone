@@ -21,12 +21,12 @@ const ContactPage = () => {
           "@type": "LocalBusiness",
           "@id": "https://pixelaipro.lovable.app/#business",
           "name": "PixelAI Pro",
-          "email": "hello@pixelaipro.com",
+          "telephone": "+1-917-724-6051",
+          "email": "pixelaipronyc@gmail.com",
           "address": {
             "@type": "PostalAddress",
             "addressLocality": "New York",
             "addressRegion": "NY",
-            "postalCode": "10001",
             "addressCountry": "US"
           },
           "openingHoursSpecification": {
