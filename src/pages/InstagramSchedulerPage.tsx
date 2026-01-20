@@ -1554,7 +1554,51 @@ const InstagramSchedulerPage = () => {
                   </div>
                   <div>
                     <h2 className="text-xl font-bold">Instagram API Settings</h2>
-                    <p className="text-sm text-muted-foreground">Configure your Instagram Graph API credentials</p>
+                    <p className="text-sm text-muted-foreground">Connect your Instagram Business account</p>
+                  </div>
+                </div>
+                
+                {/* Quick Setup Guide */}
+                <div className="mb-6 p-5 rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20">
+                  <h3 className="font-bold mb-4 text-lg">🚀 Quick Setup (3 Steps)</h3>
+                  <div className="space-y-4">
+                    <div className="flex gap-3">
+                      <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold shrink-0">1</div>
+                      <div>
+                        <p className="font-medium">Open Meta Token Generator</p>
+                        <p className="text-sm text-muted-foreground mb-2">Click the button below to open Meta's Graph API Explorer</p>
+                        <a 
+                          href="https://developers.facebook.com/tools/explorer/" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                        >
+                          <Key className="w-4 h-4" />
+                          Open Graph API Explorer →
+                        </a>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-3">
+                      <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold shrink-0">2</div>
+                      <div>
+                        <p className="font-medium">Generate Your Token</p>
+                        <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                          <li>Select your Meta App (or create one)</li>
+                          <li>Click "Generate Access Token"</li>
+                          <li>Check permissions: <code className="bg-muted px-1.5 py-0.5 rounded text-xs">instagram_basic</code>, <code className="bg-muted px-1.5 py-0.5 rounded text-xs">instagram_content_publish</code></li>
+                          <li>Copy the long access token</li>
+                        </ul>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-3">
+                      <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold shrink-0">3</div>
+                      <div>
+                        <p className="font-medium">Get Your Account ID</p>
+                        <p className="text-sm text-muted-foreground">In Graph API Explorer, query: <code className="bg-muted px-1.5 py-0.5 rounded text-xs">me?fields=id</code> and copy the ID</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 
@@ -1569,9 +1613,9 @@ const InstagramSchedulerPage = () => {
                       }`} />
                       <div>
                         <p className="font-medium">
-                          {connectionStatus === 'connected' ? 'Connected' : 
+                          {connectionStatus === 'connected' ? 'Connected to Instagram' : 
                            connectionStatus === 'error' ? 'Connection Error' : 
-                           connectionStatus === 'checking' ? 'Checking...' : 'Not Tested'}
+                           connectionStatus === 'checking' ? 'Checking...' : 'Not Connected'}
                         </p>
                         {connectionMessage && (
                           <p className="text-sm text-muted-foreground">{connectionMessage}</p>
@@ -1594,14 +1638,15 @@ const InstagramSchedulerPage = () => {
                   </div>
                 </div>
                 
+                {/* Credential Inputs */}
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="ig-token" className="flex items-center gap-2">
+                    <Label htmlFor="ig-token" className="flex items-center gap-2 font-medium">
                       <Key className="w-4 h-4" />
-                      Instagram Access Token
+                      Access Token
                     </Label>
                     <p className="text-xs text-muted-foreground mb-2">
-                      Get this from the Meta Developer Portal → Your App → Access Tokens
+                      Paste the token from Step 2 above
                     </p>
                     <div className="relative">
                       <Input
@@ -1613,7 +1658,7 @@ const InstagramSchedulerPage = () => {
                           setCredentialsLoaded(false);
                         }}
                         placeholder="EAAxxxxxxxxx..."
-                        className="pr-10"
+                        className="pr-10 font-mono text-sm"
                       />
                       <button
                         type="button"
@@ -1625,18 +1670,18 @@ const InstagramSchedulerPage = () => {
                     </div>
                     {credentialsLoaded && (
                       <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
-                        <CheckCircle className="w-3 h-3" /> Token saved (showing masked)
+                        <CheckCircle className="w-3 h-3" /> Token saved
                       </p>
                     )}
                   </div>
                   
                   <div>
-                    <Label htmlFor="ig-account-id" className="flex items-center gap-2">
+                    <Label htmlFor="ig-account-id" className="flex items-center gap-2 font-medium">
                       <Instagram className="w-4 h-4" />
                       Business Account ID
                     </Label>
                     <p className="text-xs text-muted-foreground mb-2">
-                      Your Instagram Business Account ID (numeric)
+                      Paste the ID from Step 3 above
                     </p>
                     <Input
                       id="ig-account-id"
@@ -1644,38 +1689,38 @@ const InstagramSchedulerPage = () => {
                       value={instagramAccountId}
                       onChange={(e) => setInstagramAccountId(e.target.value)}
                       placeholder="17841400000000000"
+                      className="font-mono text-sm"
                     />
                   </div>
                   
-                  <div className="pt-4 border-t">
+                  <div className="pt-4">
                     <Button 
                       onClick={handleSaveCredentials} 
                       disabled={savingCredentials || !instagramToken || !instagramAccountId}
-                      className="w-full sm:w-auto"
+                      className="w-full"
+                      size="lg"
                     >
                       {savingCredentials ? (
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       ) : (
                         <Save className="w-4 h-4 mr-2" />
                       )}
-                      Save Credentials
+                      Save & Connect
                     </Button>
                   </div>
                 </div>
                 
-                {/* Help Section */}
-                <div className="mt-8 p-4 rounded-xl bg-muted/50 border">
-                  <h3 className="font-medium mb-2 flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4" />
-                    How to get your Instagram credentials
-                  </h3>
-                  <ol className="text-sm text-muted-foreground space-y-2 list-decimal list-inside">
-                    <li>Go to <a href="https://developers.facebook.com" target="_blank" rel="noopener noreferrer" className="text-primary underline">Meta Developer Portal</a></li>
-                    <li>Create or select your app with Instagram Graph API enabled</li>
-                    <li>Navigate to Instagram → API Setup with Instagram Business Login</li>
-                    <li>Generate a long-lived access token (60+ days)</li>
-                    <li>Copy your Instagram Business Account ID from the API response</li>
-                  </ol>
+                {/* Extend Token Link */}
+                <div className="mt-6 pt-4 border-t text-center">
+                  <p className="text-sm text-muted-foreground mb-2">Token expires in 60 days</p>
+                  <a 
+                    href="https://developers.facebook.com/tools/debug/accesstoken/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm text-primary hover:underline"
+                  >
+                    Check token expiry & extend →
+                  </a>
                 </div>
               </div>
             </TabsContent>
