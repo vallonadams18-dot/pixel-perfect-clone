@@ -32,15 +32,27 @@ const SERVICE_STYLES: Record<string, string> = {
 };
 
 function extractGeneratedImageUrl(data: any): string | null {
+  // Gateway format (Gemini image models)
   const direct = data?.choices?.[0]?.message?.images?.[0]?.image_url?.url;
   if (typeof direct === 'string' && direct.length > 0) return direct;
 
+  // Some providers return message.content as an array of parts
   const content = data?.choices?.[0]?.message?.content;
   if (Array.isArray(content)) {
     const part = content.find((p: any) => p?.type === 'image_url' && p?.image_url?.url);
     if (part?.image_url?.url) return part.image_url.url;
   }
 
+  // Some providers (notably OpenAI via the gateway) may return a data URL inside a plain string,
+  // e.g. "[data:image/png;base64,...]". Extract it defensively.
+  if (typeof content === 'string') {
+    // Sometimes base64 is wrapped with brackets/markdown and may include newlines.
+    const compact = content.replace(/\s+/g, '');
+    const match = compact.match(/data:image\/[a-zA-Z0-9+.-]+;base64,[A-Za-z0-9+/=]+/);
+    if (match?.[0]) return match[0];
+  }
+
+  // Older/alternate response shapes
   if (Array.isArray(data?.images) && data.images?.[0]?.url) return data.images[0].url;
 
   if (Array.isArray(data?.data)) {
