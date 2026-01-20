@@ -10,7 +10,8 @@ import {
   LogIn, LogOut, Eye, EyeOff, Loader2, CheckCircle, 
   XCircle, AlertCircle, Image as ImageIcon, Upload,
   FolderOpen, Search, X, Sparkles, TrendingUp, RefreshCw,
-  Download, Grid, List, LayoutGrid, Wand2, Wifi, WifiOff
+  Download, Grid, List, LayoutGrid, Wand2, Wifi, WifiOff,
+  Settings, Save, Key
 } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -86,8 +87,15 @@ const InstagramSchedulerPage = () => {
   const [captionTone, setCaptionTone] = useState<'professional' | 'playful' | 'engaging' | 'luxurious'>('engaging');
   
   // Main panel tab
-  const [mainTab, setMainTab] = useState<'library' | 'scheduler' | 'posts'>('library');
+  const [mainTab, setMainTab] = useState<'library' | 'scheduler' | 'posts' | 'settings'>('library');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  
+  // Instagram credentials state
+  const [instagramToken, setInstagramToken] = useState('');
+  const [instagramAccountId, setInstagramAccountId] = useState('');
+  const [savingCredentials, setSavingCredentials] = useState(false);
+  const [credentialsLoaded, setCredentialsLoaded] = useState(false);
+  const [showToken, setShowToken] = useState(false);
   
   // Instagram connection state
   const [connectionStatus, setConnectionStatus] = useState<'unknown' | 'checking' | 'connected' | 'error'>('unknown');
@@ -131,6 +139,7 @@ const InstagramSchedulerPage = () => {
       if (session) {
         fetchScheduledPosts();
         fetchMediaLibrary();
+        fetchInstagramCredentials();
         setDefaultSchedule();
       } else {
         setLoading(false);
@@ -142,12 +151,98 @@ const InstagramSchedulerPage = () => {
       if (session) {
         fetchScheduledPosts();
         fetchMediaLibrary();
+        fetchInstagramCredentials();
         setDefaultSchedule();
       }
     });
 
     return () => subscription.unsubscribe();
   }, []);
+  
+  const fetchInstagramCredentials = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('instagram_credentials')
+        .select('access_token, business_account_id')
+        .limit(1)
+        .single();
+      
+      if (data && !error) {
+        // Mask the token for display (show first 10 and last 4 chars)
+        const maskedToken = data.access_token.length > 20 
+          ? `${data.access_token.substring(0, 10)}...${data.access_token.substring(data.access_token.length - 4)}`
+          : '••••••••';
+        setInstagramToken(maskedToken);
+        setInstagramAccountId(data.business_account_id);
+        setCredentialsLoaded(true);
+      }
+    } catch (error) {
+      console.log('No credentials found or not admin');
+    }
+  };
+
+  const handleSaveCredentials = async () => {
+    if (!instagramToken || !instagramAccountId) {
+      toast({ title: 'Missing fields', description: 'Please enter both token and account ID', variant: 'destructive' });
+      return;
+    }
+    
+    // Don't save masked tokens
+    if (instagramToken.includes('...') || instagramToken.includes('••')) {
+      toast({ title: 'Enter new token', description: 'Please enter a new access token', variant: 'destructive' });
+      return;
+    }
+    
+    setSavingCredentials(true);
+    
+    try {
+      // Check if credentials exist
+      const { data: existing } = await supabase
+        .from('instagram_credentials')
+        .select('id')
+        .limit(1)
+        .single();
+      
+      if (existing) {
+        // Update existing
+        const { error } = await supabase
+          .from('instagram_credentials')
+          .update({
+            access_token: instagramToken.trim(),
+            business_account_id: instagramAccountId.trim(),
+            updated_by: session?.user?.id,
+          })
+          .eq('id', existing.id);
+        
+        if (error) throw error;
+      } else {
+        // Insert new
+        const { error } = await supabase
+          .from('instagram_credentials')
+          .insert({
+            access_token: instagramToken.trim(),
+            business_account_id: instagramAccountId.trim(),
+            updated_by: session?.user?.id,
+          });
+        
+        if (error) throw error;
+      }
+      
+      toast({ title: 'Credentials saved!', description: 'Testing connection...' });
+      
+      // Mask the saved token
+      const maskedToken = `${instagramToken.substring(0, 10)}...${instagramToken.substring(instagramToken.length - 4)}`;
+      setInstagramToken(maskedToken);
+      setCredentialsLoaded(true);
+      
+      // Test connection
+      handleTestConnection();
+    } catch (error: any) {
+      toast({ title: 'Failed to save', description: error.message, variant: 'destructive' });
+    } finally {
+      setSavingCredentials(false);
+    }
+  };
 
   const fetchScheduledPosts = async () => {
     setLoading(true);
@@ -923,20 +1018,30 @@ const InstagramSchedulerPage = () => {
 
           {/* Main Tabs */}
           <Tabs value={mainTab} onValueChange={(v) => setMainTab(v as any)} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-6">
+            <TabsList className="grid w-full grid-cols-4 mb-6">
               <TabsTrigger value="library" className="flex items-center gap-2">
                 <FolderOpen className="w-4 h-4" />
-                Content Library
+                <span className="hidden sm:inline">Content Library</span>
+                <span className="sm:hidden">Library</span>
                 <Badge variant="secondary" className="ml-1">{mediaItems.length}</Badge>
               </TabsTrigger>
               <TabsTrigger value="scheduler" className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
-                Schedule Post
+                <span className="hidden sm:inline">Schedule Post</span>
+                <span className="sm:hidden">Schedule</span>
               </TabsTrigger>
               <TabsTrigger value="posts" className="flex items-center gap-2">
                 <Clock className="w-4 h-4" />
-                Scheduled
+                <span className="hidden sm:inline">Scheduled</span>
+                <span className="sm:hidden">Posts</span>
                 <Badge variant="secondary" className="ml-1">{scheduledPosts.filter(p => p.status === 'pending').length}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="flex items-center gap-2">
+                <Settings className="w-4 h-4" />
+                <span className="hidden sm:inline">Settings</span>
+                {connectionStatus === 'error' && (
+                  <span className="w-2 h-2 bg-destructive rounded-full animate-pulse" />
+                )}
               </TabsTrigger>
             </TabsList>
 
@@ -1437,6 +1542,141 @@ const InstagramSchedulerPage = () => {
                     ))}
                   </div>
                 )}
+              </div>
+            </TabsContent>
+            
+            {/* Settings Tab */}
+            <TabsContent value="settings">
+              <div className="bg-card rounded-2xl border p-6 max-w-2xl">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                    <Key className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold">Instagram API Settings</h2>
+                    <p className="text-sm text-muted-foreground">Configure your Instagram Graph API credentials</p>
+                  </div>
+                </div>
+                
+                {/* Connection Status */}
+                <div className="mb-6 p-4 rounded-xl border bg-muted/30">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full ${
+                        connectionStatus === 'connected' ? 'bg-green-500' : 
+                        connectionStatus === 'error' ? 'bg-destructive' : 
+                        connectionStatus === 'checking' ? 'bg-yellow-500 animate-pulse' : 'bg-muted-foreground'
+                      }`} />
+                      <div>
+                        <p className="font-medium">
+                          {connectionStatus === 'connected' ? 'Connected' : 
+                           connectionStatus === 'error' ? 'Connection Error' : 
+                           connectionStatus === 'checking' ? 'Checking...' : 'Not Tested'}
+                        </p>
+                        {connectionMessage && (
+                          <p className="text-sm text-muted-foreground">{connectionMessage}</p>
+                        )}
+                      </div>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={handleTestConnection}
+                      disabled={connectionStatus === 'checking'}
+                    >
+                      {connectionStatus === 'checking' ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <RefreshCw className="w-4 h-4 mr-2" />
+                      )}
+                      Test
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="ig-token" className="flex items-center gap-2">
+                      <Key className="w-4 h-4" />
+                      Instagram Access Token
+                    </Label>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      Get this from the Meta Developer Portal → Your App → Access Tokens
+                    </p>
+                    <div className="relative">
+                      <Input
+                        id="ig-token"
+                        type={showToken ? 'text' : 'password'}
+                        value={instagramToken}
+                        onChange={(e) => {
+                          setInstagramToken(e.target.value);
+                          setCredentialsLoaded(false);
+                        }}
+                        placeholder="EAAxxxxxxxxx..."
+                        className="pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowToken(!showToken)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        {showToken ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    {credentialsLoaded && (
+                      <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                        <CheckCircle className="w-3 h-3" /> Token saved (showing masked)
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="ig-account-id" className="flex items-center gap-2">
+                      <Instagram className="w-4 h-4" />
+                      Business Account ID
+                    </Label>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      Your Instagram Business Account ID (numeric)
+                    </p>
+                    <Input
+                      id="ig-account-id"
+                      type="text"
+                      value={instagramAccountId}
+                      onChange={(e) => setInstagramAccountId(e.target.value)}
+                      placeholder="17841400000000000"
+                    />
+                  </div>
+                  
+                  <div className="pt-4 border-t">
+                    <Button 
+                      onClick={handleSaveCredentials} 
+                      disabled={savingCredentials || !instagramToken || !instagramAccountId}
+                      className="w-full sm:w-auto"
+                    >
+                      {savingCredentials ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Save className="w-4 h-4 mr-2" />
+                      )}
+                      Save Credentials
+                    </Button>
+                  </div>
+                </div>
+                
+                {/* Help Section */}
+                <div className="mt-8 p-4 rounded-xl bg-muted/50 border">
+                  <h3 className="font-medium mb-2 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4" />
+                    How to get your Instagram credentials
+                  </h3>
+                  <ol className="text-sm text-muted-foreground space-y-2 list-decimal list-inside">
+                    <li>Go to <a href="https://developers.facebook.com" target="_blank" rel="noopener noreferrer" className="text-primary underline">Meta Developer Portal</a></li>
+                    <li>Create or select your app with Instagram Graph API enabled</li>
+                    <li>Navigate to Instagram → API Setup with Instagram Business Login</li>
+                    <li>Generate a long-lived access token (60+ days)</li>
+                    <li>Copy your Instagram Business Account ID from the API response</li>
+                  </ol>
+                </div>
               </div>
             </TabsContent>
           </Tabs>

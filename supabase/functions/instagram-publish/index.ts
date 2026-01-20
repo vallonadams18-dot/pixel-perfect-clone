@@ -18,43 +18,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const rawAccessToken = Deno.env.get('INSTAGRAM_ACCESS_TOKEN');
-    
-    // Debug: Log token info (safely)
-    console.log('Token debug:', {
-      rawLength: rawAccessToken?.length || 0,
-      hasNewlines: rawAccessToken?.includes('\n'),
-      hasCarriageReturn: rawAccessToken?.includes('\r'),
-      startsWithBearer: rawAccessToken?.toLowerCase().startsWith('bearer'),
-      firstChars: rawAccessToken?.substring(0, 10),
-      lastChars: rawAccessToken?.substring((rawAccessToken?.length || 0) - 10),
-    });
-    
-    // Clean the token: remove Bearer prefix, all whitespace including newlines
-    const accessToken = rawAccessToken
-      ? rawAccessToken
-          .replace(/^Bearer\s+/i, '')
-          .replace(/[\s\r\n]+/g, '')
-          .trim()
-      : null;
-    
-    console.log('Cleaned token:', {
-      length: accessToken?.length || 0,
-      firstChars: accessToken?.substring(0, 10),
-      lastChars: accessToken?.substring((accessToken?.length || 0) - 10),
-    });
-    
-    const businessAccountId = Deno.env.get('INSTAGRAM_BUSINESS_ACCOUNT_ID')?.trim();
-
-    if (!accessToken || !businessAccountId) {
-      console.error('Missing Instagram credentials');
-      return new Response(
-        JSON.stringify({ error: 'Instagram credentials not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Verify authentication
+    // Verify authentication first
     const authHeader = req.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
       console.error('Missing or invalid Authorization header');
@@ -66,7 +30,12 @@ Deno.serve(async (req) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     
+    // Use service role to read credentials (admin-only table)
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+    
+    // User client for auth validation
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } }
     });
@@ -84,6 +53,42 @@ Deno.serve(async (req) => {
     
     const userId = userData.user.id;
     console.log('Authenticated user:', userId);
+
+    // Get Instagram credentials from database first, fall back to env vars
+    let accessToken: string | null = null;
+    let businessAccountId: string | null = null;
+
+    const { data: credentials, error: credError } = await supabaseAdmin
+      .from('instagram_credentials')
+      .select('access_token, business_account_id')
+      .limit(1)
+      .single();
+
+    if (credentials && !credError) {
+      console.log('Using credentials from database');
+      accessToken = credentials.access_token;
+      businessAccountId = credentials.business_account_id;
+    } else {
+      console.log('Falling back to environment variables');
+      const rawAccessToken = Deno.env.get('INSTAGRAM_ACCESS_TOKEN');
+      accessToken = rawAccessToken
+        ? rawAccessToken.replace(/^Bearer\s+/i, '').replace(/[\s\r\n]+/g, '').trim()
+        : null;
+      businessAccountId = Deno.env.get('INSTAGRAM_BUSINESS_ACCOUNT_ID')?.trim() || null;
+    }
+
+    if (!accessToken || !businessAccountId) {
+      console.error('Missing Instagram credentials');
+      return new Response(
+        JSON.stringify({ error: 'Instagram credentials not configured. Please add your access token in Settings.' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('Credentials loaded:', {
+      tokenLength: accessToken.length,
+      accountIdLength: businessAccountId.length,
+    });
 
     const { imageUrl, caption, scheduledId }: InstagramPublishRequest = await req.json();
     console.log('Publishing to Instagram:', { imageUrl, captionLength: caption?.length, scheduledId });
@@ -153,7 +158,7 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({
           error: isTokenError
-            ? 'Instagram token is invalid/expired. Please update the Instagram access token and try again.'
+            ? 'Instagram token is invalid/expired. Please update the Instagram access token in Settings and try again.'
             : msg,
         }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
