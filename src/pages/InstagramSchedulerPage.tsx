@@ -100,6 +100,14 @@ const InstagramSchedulerPage = () => {
   const [selectedModel, setSelectedModel] = useState<'gemini' | 'chatgpt'>('gemini');
   const [batchSelectedModel, setBatchSelectedModel] = useState<'gemini' | 'chatgpt'>('gemini');
   
+  // Model comparison state
+  const [compareMode, setCompareMode] = useState(false);
+  const [comparing, setComparing] = useState(false);
+  const [comparisonResults, setComparisonResults] = useState<{
+    gemini: { url: string; success: boolean; error?: string } | null;
+    chatgpt: { url: string; success: boolean; error?: string } | null;
+  }>({ gemini: null, chatgpt: null });
+  
   // Batch transformation state
   const [batchMode, setBatchMode] = useState(false);
   const [selectedBatchItems, setSelectedBatchItems] = useState<Set<string>>(new Set());
@@ -643,7 +651,108 @@ const InstagramSchedulerPage = () => {
       setImageUrl(originalImageUrl);
       setTransformedPreview('');
       setShowBeforeAfter(false);
+      setComparisonResults({ gemini: null, chatgpt: null });
       toast({ title: 'Reverted to original' });
+    }
+  };
+
+  // Compare both models side-by-side
+  const handleCompareModels = async () => {
+    const currentImageUrl = imageFile ? URL.createObjectURL(imageFile) : imageUrl;
+    
+    if (!currentImageUrl) {
+      toast({ title: 'No image selected', description: 'Select an image first to compare', variant: 'destructive' });
+      return;
+    }
+    
+    if (!selectedTransformStyle) {
+      toast({ title: 'Select a style', description: 'Choose a transformation style', variant: 'destructive' });
+      return;
+    }
+
+    if (selectedTransformStyle === 'custom' && !customStylePrompt.trim()) {
+      toast({ title: 'Custom prompt required', description: 'Describe the style you want', variant: 'destructive' });
+      return;
+    }
+    
+    if (!session?.access_token) {
+      toast({ title: 'Please log in', variant: 'destructive' });
+      return;
+    }
+    
+    // Store original if not already stored
+    if (!originalImageUrl) {
+      setOriginalImageUrl(currentImageUrl);
+    }
+    
+    setComparing(true);
+    setComparisonResults({ gemini: null, chatgpt: null });
+    setLastApiCall({ function: 'compare-models', status: 'pending', message: 'Comparing both models...', timestamp: new Date() });
+    
+    // Run both models in parallel
+    const [geminiResult, chatgptResult] = await Promise.allSettled([
+      supabase.functions.invoke('transform-image-style', {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: {
+          imageUrl: currentImageUrl,
+          style: selectedTransformStyle,
+          customPrompt: customStylePrompt.trim() || undefined,
+          model: 'gemini',
+        },
+      }),
+      supabase.functions.invoke('transform-image-style', {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: {
+          imageUrl: currentImageUrl,
+          style: selectedTransformStyle,
+          customPrompt: customStylePrompt.trim() || undefined,
+          model: 'chatgpt',
+        },
+      }),
+    ]);
+    
+    const results = {
+      gemini: geminiResult.status === 'fulfilled' && geminiResult.value.data?.imageUrl 
+        ? { url: geminiResult.value.data.imageUrl, success: true }
+        : { url: '', success: false, error: geminiResult.status === 'rejected' ? geminiResult.reason?.message : 'Generation failed' },
+      chatgpt: chatgptResult.status === 'fulfilled' && chatgptResult.value.data?.imageUrl
+        ? { url: chatgptResult.value.data.imageUrl, success: true }
+        : { url: '', success: false, error: chatgptResult.status === 'rejected' ? chatgptResult.reason?.message : 'Generation failed' },
+    };
+    
+    setComparisonResults(results);
+    
+    // Save prompt to history if custom
+    if (customStylePrompt.trim()) {
+      addPromptToHistory(customStylePrompt.trim(), selectedTransformStyle === 'custom' ? 'custom' : selectedTransformStyle);
+    }
+    
+    const successCount = [results.gemini.success, results.chatgpt.success].filter(Boolean).length;
+    setLastApiCall({ 
+      function: 'compare-models', 
+      status: successCount >= 1 ? 'success' : 'error', 
+      message: `${successCount}/2 models succeeded`, 
+      timestamp: new Date() 
+    });
+    
+    toast({ 
+      title: 'Comparison complete!', 
+      description: `${successCount}/2 models generated results` 
+    });
+    
+    setComparing(false);
+  };
+
+  // Select a result from comparison to use
+  const handleSelectComparisonResult = (model: 'gemini' | 'chatgpt') => {
+    const result = comparisonResults[model];
+    if (result?.success && result.url) {
+      setTransformedPreview(result.url);
+      setImageUrl(result.url);
+      setImageFile(null);
+      setSelectedModel(model);
+      setComparisonResults({ gemini: null, chatgpt: null });
+      toast({ title: `Selected ${model === 'gemini' ? 'Nano Banana' : 'ChatGPT'} result` });
     }
   };
 
@@ -1841,7 +1950,7 @@ const InstagramSchedulerPage = () => {
                       <div className="flex gap-2 flex-wrap">
                         <Button 
                           onClick={handleTransformImage} 
-                          disabled={transformingImage || !selectedTransformStyle || (selectedTransformStyle === 'custom' && !customStylePrompt.trim())}
+                          disabled={transformingImage || comparing || !selectedTransformStyle || (selectedTransformStyle === 'custom' && !customStylePrompt.trim())}
                           className="flex-1"
                         >
                           {transformingImage ? (
@@ -1851,36 +1960,129 @@ const InstagramSchedulerPage = () => {
                           )}
                         </Button>
                         
+                        <Button 
+                          variant="outline"
+                          onClick={handleCompareModels} 
+                          disabled={transformingImage || comparing || !selectedTransformStyle || (selectedTransformStyle === 'custom' && !customStylePrompt.trim())}
+                        >
+                          {comparing ? (
+                            <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Comparing...</>
+                          ) : (
+                            <>⚔️ Compare</>
+                          )}
+                        </Button>
+                        
+                        {(transformedPreview || comparisonResults.gemini || comparisonResults.chatgpt) && originalImageUrl && (
+                          <Button 
+                            variant="outline" 
+                            onClick={handleRevertTransform}
+                            disabled={transformingImage || comparing}
+                          >
+                            <RefreshCw className="w-4 h-4" />
+                          </Button>
+                        )}
+                        
                         {transformedPreview && originalImageUrl && (
-                          <>
-                            <Button 
-                              variant="outline" 
-                              onClick={handleRevertTransform}
-                              disabled={transformingImage}
-                            >
-                              <RefreshCw className="w-4 h-4" />
-                            </Button>
-                            <Button 
-                              variant="secondary" 
-                              onClick={handleSaveToLibrary}
-                              disabled={savingToLibrary}
-                            >
-                              {savingToLibrary ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                              ) : (
-                                <>
-                                  <FolderOpen className="w-4 h-4 mr-2" />
-                                  Save to Library
-                                </>
-                              )}
-                            </Button>
-                          </>
+                          <Button 
+                            variant="secondary" 
+                            onClick={handleSaveToLibrary}
+                            disabled={savingToLibrary}
+                          >
+                            {savingToLibrary ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <>
+                                <FolderOpen className="w-4 h-4 mr-2" />
+                                Save
+                              </>
+                            )}
+                          </Button>
                         )}
                       </div>
                       
-                      {transformedPreview && (
+                      {/* Comparison Results Side-by-Side */}
+                      {(comparisonResults.gemini || comparisonResults.chatgpt) && (
+                        <div className="mt-4 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <Label className="text-sm font-medium">🔀 Model Comparison</Label>
+                            <p className="text-xs text-muted-foreground">Click a result to use it</p>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-3">
+                            {/* Gemini Result */}
+                            <button
+                              onClick={() => handleSelectComparisonResult('gemini')}
+                              disabled={!comparisonResults.gemini?.success}
+                              className={`relative rounded-xl overflow-hidden border-2 transition-all ${
+                                comparisonResults.gemini?.success 
+                                  ? 'border-border hover:border-primary cursor-pointer hover:shadow-lg'
+                                  : 'border-destructive/30 opacity-60 cursor-not-allowed'
+                              }`}
+                            >
+                              <div className="aspect-square bg-muted">
+                                {comparisonResults.gemini?.success ? (
+                                  <img 
+                                    src={comparisonResults.gemini.url} 
+                                    alt="Gemini result" 
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                    <XCircle className="w-8 h-8" />
+                                  </div>
+                                )}
+                              </div>
+                              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-lg">🍌</span>
+                                  <span className="text-white text-xs font-medium">Nano Banana</span>
+                                </div>
+                                {!comparisonResults.gemini?.success && (
+                                  <p className="text-destructive text-xs mt-1 truncate">{comparisonResults.gemini?.error || 'Failed'}</p>
+                                )}
+                              </div>
+                            </button>
+                            
+                            {/* ChatGPT Result */}
+                            <button
+                              onClick={() => handleSelectComparisonResult('chatgpt')}
+                              disabled={!comparisonResults.chatgpt?.success}
+                              className={`relative rounded-xl overflow-hidden border-2 transition-all ${
+                                comparisonResults.chatgpt?.success 
+                                  ? 'border-border hover:border-primary cursor-pointer hover:shadow-lg'
+                                  : 'border-destructive/30 opacity-60 cursor-not-allowed'
+                              }`}
+                            >
+                              <div className="aspect-square bg-muted">
+                                {comparisonResults.chatgpt?.success ? (
+                                  <img 
+                                    src={comparisonResults.chatgpt.url} 
+                                    alt="ChatGPT result" 
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                    <XCircle className="w-8 h-8" />
+                                  </div>
+                                )}
+                              </div>
+                              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-lg">🤖</span>
+                                  <span className="text-white text-xs font-medium">ChatGPT</span>
+                                </div>
+                                {!comparisonResults.chatgpt?.success && (
+                                  <p className="text-destructive text-xs mt-1 truncate">{comparisonResults.chatgpt?.error || 'Failed'}</p>
+                                )}
+                              </div>
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {transformedPreview && !comparisonResults.gemini && !comparisonResults.chatgpt && (
                         <div className="mt-3 p-2 bg-background rounded-lg border flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+                          <CheckCircle className="w-4 h-4 text-primary shrink-0" />
                           <span className="text-xs text-muted-foreground flex-1">
                             Transformed to <strong>{selectedTransformStyle === 'custom' ? 'custom style' : styleOptions.find(s => s.id === selectedTransformStyle)?.name || selectedTransformStyle}</strong> - ready to post!
                           </span>
