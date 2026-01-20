@@ -3519,51 +3519,55 @@ const InstagramSchedulerPage = () => {
             {isAdmin && (
               <TabsContent value="demo-gallery">
                 <div className="bg-card rounded-2xl border p-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                        <Images className="w-6 h-6 text-primary" />
+                  {/* Header with gradient accent */}
+                  <div className="relative mb-6">
+                    <div className="absolute inset-0 rounded-xl opacity-10" style={{ background: 'var(--gradient-primary)' }} />
+                    <div className="relative flex items-center justify-between p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'var(--gradient-primary)' }}>
+                          <Images className="w-6 h-6 text-primary-foreground" />
+                        </div>
+                        <div>
+                          <h2 className="text-xl font-bold">Demo Gallery</h2>
+                          <p className="text-sm text-muted-foreground">{demoGallery.length} before/after pairs from public demos</p>
+                        </div>
                       </div>
-                      <div>
-                        <h2 className="text-xl font-bold">Demo Gallery</h2>
-                        <p className="text-sm text-muted-foreground">{demoGallery.length} before/after pairs from public demos</p>
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button onClick={fetchDemoGallery} variant="outline" size="sm" disabled={demoGalleryLoading}>
-                        <RefreshCw className={`w-4 h-4 mr-2 ${demoGalleryLoading ? 'animate-spin' : ''}`} />
-                        Refresh
-                      </Button>
-                      {selectedDemoItems.size > 0 && (
-                        <Button onClick={downloadSelectedDemos} disabled={downloadingDemos} size="sm">
-                          {downloadingDemos ? (
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          ) : (
-                            <Download className="w-4 h-4 mr-2" />
-                          )}
-                          Download {selectedDemoItems.size} Selected
+                      <div className="flex gap-2">
+                        <Button onClick={fetchDemoGallery} variant="outline" size="sm" disabled={demoGalleryLoading}>
+                          <RefreshCw className={`w-4 h-4 mr-2 ${demoGalleryLoading ? 'animate-spin' : ''}`} />
+                          Refresh
                         </Button>
-                      )}
+                        {selectedDemoItems.size > 0 && (
+                          <Button onClick={downloadSelectedDemos} disabled={downloadingDemos} size="sm" className="btn-primary">
+                            {downloadingDemos ? (
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            ) : (
+                              <Download className="w-4 h-4 mr-2" />
+                            )}
+                            Download {selectedDemoItems.size} Selected
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                  {/* Stats */}
+                  {/* Stats with gradient borders */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div className="bg-muted/30 rounded-xl p-4 border">
+                    <div className="relative rounded-xl p-4 border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
                       <p className="text-sm text-muted-foreground">Total Demos</p>
-                      <p className="text-2xl font-bold">{demoGallery.length}</p>
+                      <p className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{demoGallery.length}</p>
                     </div>
-                    <div className="bg-muted/30 rounded-xl p-4 border">
+                    <div className="relative rounded-xl p-4 border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
                       <p className="text-sm text-muted-foreground">Filtered</p>
-                      <p className="text-2xl font-bold">{filteredDemoGallery.length}</p>
+                      <p className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{filteredDemoGallery.length}</p>
                     </div>
-                    <div className="bg-muted/30 rounded-xl p-4 border">
+                    <div className="relative rounded-xl p-4 border border-accent/30 bg-gradient-to-br from-accent/10 to-transparent">
                       <p className="text-sm text-muted-foreground">Selected</p>
-                      <p className="text-2xl font-bold text-primary">{selectedDemoItems.size}</p>
+                      <p className="text-2xl font-bold text-accent">{selectedDemoItems.size}</p>
                     </div>
-                    <div className="bg-muted/30 rounded-xl p-4 border">
+                    <div className="relative rounded-xl p-4 border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
                       <p className="text-sm text-muted-foreground">Experiences</p>
-                      <p className="text-2xl font-bold">{new Set(demoGallery.map(d => d.experience_type)).size}</p>
+                      <p className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{new Set(demoGallery.map(d => d.experience_type)).size}</p>
                     </div>
                   </div>
 
@@ -3617,18 +3621,26 @@ const InstagramSchedulerPage = () => {
                       {filteredDemoGallery.map((item) => (
                         <div 
                           key={item.id} 
-                          className={`border rounded-xl overflow-hidden transition-all ${
-                            selectedDemoItems.has(item.id) ? 'ring-2 ring-primary border-primary' : 'hover:border-primary/50'
+                          className={`rounded-xl overflow-hidden transition-all ${
+                            selectedDemoItems.has(item.id) 
+                              ? 'ring-2 ring-primary shadow-lg' 
+                              : 'border border-border/50 hover:border-primary/50 hover:shadow-md'
                           }`}
+                          style={selectedDemoItems.has(item.id) ? { 
+                            background: 'linear-gradient(to bottom right, hsl(var(--primary) / 0.05), transparent)' 
+                          } : undefined}
                         >
-                          {/* Header */}
-                          <div className="flex items-center justify-between p-3 bg-muted/30 border-b">
+                          {/* Header with gradient */}
+                          <div 
+                            className="flex items-center justify-between p-3 border-b"
+                            style={{ background: 'linear-gradient(to right, hsl(var(--primary) / 0.1), hsl(var(--accent) / 0.05))' }}
+                          >
                             <div className="flex items-center gap-2">
                               <Checkbox
                                 checked={selectedDemoItems.has(item.id)}
                                 onCheckedChange={() => handleSelectDemoItem(item.id)}
                               />
-                              <Badge variant="secondary" className="capitalize">
+                              <Badge className="capitalize bg-primary/20 text-primary border-0">
                                 {item.experience_type}
                               </Badge>
                             </div>
@@ -3671,12 +3683,15 @@ const InstagramSchedulerPage = () => {
                                   <Download className="w-4 h-4" />
                                 </Button>
                               </div>
-                              <span className="absolute bottom-2 left-2 text-xs bg-primary/90 text-white px-2 py-1 rounded">After</span>
+                              <span className="absolute bottom-2 left-2 text-xs px-2 py-1 rounded font-medium text-primary-foreground" style={{ background: 'var(--gradient-primary)' }}>After</span>
                             </div>
                           </div>
                           
-                          {/* Footer */}
-                          <div className="p-3 border-t bg-muted/20">
+                          {/* Footer with subtle gradient */}
+                          <div 
+                            className="p-3 border-t"
+                            style={{ background: 'linear-gradient(to right, hsl(var(--muted) / 0.3), transparent)' }}
+                          >
                             <p className="text-sm text-muted-foreground truncate" title={item.email}>
                               <Mail className="w-3 h-3 inline mr-1" />
                               {item.email}
