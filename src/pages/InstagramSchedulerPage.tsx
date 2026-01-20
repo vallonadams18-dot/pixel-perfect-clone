@@ -122,6 +122,10 @@ const InstagramSchedulerPage = () => {
   const [mainTab, setMainTab] = useState<'library' | 'scheduler' | 'posts' | 'settings' | 'optimize'>('library');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   
+  // Auto-scheduling state
+  const [autoScheduling, setAutoScheduling] = useState(false);
+  const [autoScheduleProgress, setAutoScheduleProgress] = useState({ current: 0, total: 0 });
+  
   // Instagram credentials state
   const [instagramToken, setInstagramToken] = useState('');
   const [instagramAccountId, setInstagramAccountId] = useState('');
@@ -1184,6 +1188,141 @@ const InstagramSchedulerPage = () => {
     return `${hours} hour${hours > 1 ? 's' : ''}`;
   };
 
+  // Content calendar schedule configuration
+  const contentCalendar = [
+    { day: 1, name: 'Monday', time: '11:00', type: 'Transformation Post', tag: 'transformation' },
+    { day: 2, name: 'Tuesday', time: '12:00', type: 'Behind the Scenes', tag: 'bts' },
+    { day: 3, name: 'Wednesday', time: '19:00', type: 'Client Spotlight', tag: 'spotlight' },
+    { day: 4, name: 'Thursday', time: '13:00', type: 'Industry Tips', tag: 'tips' },
+    { day: 5, name: 'Friday', time: '20:00', type: 'Fun / Trending', tag: 'trending' },
+    { day: 0, name: 'Sunday', time: '18:00', type: 'Week Ahead Preview', tag: 'preview' },
+  ];
+
+  // Get next occurrence of a specific day of week
+  const getNextDayOfWeek = (dayOfWeek: number, time: string) => {
+    const now = new Date();
+    const [hours, minutes] = time.split(':').map(Number);
+    const result = new Date(now);
+    result.setHours(hours, minutes, 0, 0);
+    
+    const daysUntil = (dayOfWeek - now.getDay() + 7) % 7 || 7;
+    result.setDate(now.getDate() + daysUntil);
+    
+    return result;
+  };
+
+  // Auto-schedule posts for the week based on content calendar
+  const handleAutoScheduleWeek = async () => {
+    if (!session?.user?.id || !session?.access_token) {
+      toast({ title: 'Please log in first', variant: 'destructive' });
+      return;
+    }
+
+    // Get unused images from the library
+    const unusedImages = filteredMediaItems.filter(item => !item.isUsed && item.url);
+    
+    if (unusedImages.length < contentCalendar.length) {
+      toast({ 
+        title: 'Not enough images', 
+        description: `Need at least ${contentCalendar.length} unused images in library`, 
+        variant: 'destructive' 
+      });
+      return;
+    }
+
+    setAutoScheduling(true);
+    setAutoScheduleProgress({ current: 0, total: contentCalendar.length });
+    
+    let scheduled = 0;
+    
+    try {
+      for (let i = 0; i < contentCalendar.length; i++) {
+        const calendarItem = contentCalendar[i];
+        const image = unusedImages[i];
+        
+        setAutoScheduleProgress({ current: i + 1, total: contentCalendar.length });
+        
+        // Copy image to instagram-images bucket
+        const response = await fetch(image.url!);
+        const blob = await response.blob();
+        
+        const timestamp = Date.now();
+        const ext = image.file_name.split('.').pop()?.toLowerCase() || 'jpg';
+        const fileName = `auto-${calendarItem.tag}-${timestamp}.${ext}`;
+        const filePath = `${session.user.id}/${fileName}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('instagram-images')
+          .upload(filePath, blob, { contentType: image.file_type || 'image/jpeg' });
+        
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          continue;
+        }
+        
+        const { data: publicUrlData } = supabase.storage
+          .from('instagram-images')
+          .getPublicUrl(filePath);
+        
+        // Generate AI caption for this content type
+        let caption = '';
+        let hashtags = '';
+        
+        try {
+          const { data: captionData } = await supabase.functions.invoke('generate-instagram-caption', {
+            headers: { Authorization: `Bearer ${session.access_token}` },
+            body: {
+              imageDescription: image.description || image.event_name || 'AI photo booth transformation',
+              eventName: image.event_name || '',
+              service: 'AI Photo Booths',
+              tone: calendarItem.tag === 'trending' ? 'playful' : calendarItem.tag === 'spotlight' ? 'professional' : 'engaging',
+              includeHashtags: true,
+              contentType: calendarItem.type,
+            },
+          });
+          
+          if (captionData?.caption) {
+            caption = captionData.caption;
+            hashtags = captionData.hashtags || '';
+          }
+        } catch (error) {
+          console.error('Caption generation failed:', error);
+          caption = `✨ ${calendarItem.type}\n\n📸 Check out this amazing moment!\n\n#PixelAIPro #AIPhotoBooth #NYC`;
+        }
+        
+        const scheduledFor = getNextDayOfWeek(calendarItem.day, calendarItem.time);
+        const fullCaption = hashtags ? `${caption}\n\n${hashtags}` : caption;
+        
+        const { error: insertError } = await supabase.from('scheduled_posts').insert({
+          user_id: session.user.id,
+          image_url: publicUrlData.publicUrl,
+          caption: fullCaption,
+          hashtags: hashtags || null,
+          scheduled_for: scheduledFor.toISOString(),
+          status: 'pending',
+        });
+        
+        if (!insertError) {
+          scheduled++;
+        }
+      }
+      
+      toast({ 
+        title: '📅 Week Scheduled!', 
+        description: `${scheduled} posts auto-scheduled based on your content calendar` 
+      });
+      
+      fetchScheduledPosts();
+      fetchMediaLibrary();
+      setMainTab('posts');
+    } catch (error: any) {
+      toast({ title: 'Auto-schedule failed', description: error.message, variant: 'destructive' });
+    } finally {
+      setAutoScheduling(false);
+      setAutoScheduleProgress({ current: 0, total: 0 });
+    }
+  };
+
   const handleRetryPost = async (post: ScheduledPost) => {
     // Reset the post to pending state
     const { error } = await supabase
@@ -1417,6 +1556,45 @@ const InstagramSchedulerPage = () => {
             )}
           </div>
 
+          {/* Auto-Schedule Banner */}
+          <div className="mb-6 bg-gradient-to-r from-primary/10 via-background to-secondary/10 rounded-2xl border-2 border-primary/20 p-6">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                  <Calendar className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg">📅 Auto-Schedule Week</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Automatically schedule posts based on your content calendar (Mon-Sun)
+                  </p>
+                </div>
+              </div>
+              <Button
+                onClick={handleAutoScheduleWeek}
+                disabled={autoScheduling || filteredMediaItems.filter(i => !i.isUsed).length < 6}
+                className="bg-primary hover:bg-primary/90 min-w-[180px]"
+              >
+                {autoScheduling ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Scheduling {autoScheduleProgress.current}/{autoScheduleProgress.total}
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Auto-Schedule Week
+                  </>
+                )}
+              </Button>
+            </div>
+            {filteredMediaItems.filter(i => !i.isUsed).length < 6 && (
+              <p className="text-xs text-destructive mt-3">
+                ⚠️ Need at least 6 unused images in library. You have {filteredMediaItems.filter(i => !i.isUsed).length}.
+              </p>
+            )}
+          </div>
+
           {/* Stats Bar */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div className="bg-card rounded-xl p-4 border">
@@ -1425,11 +1603,11 @@ const InstagramSchedulerPage = () => {
             </div>
             <div className="bg-card rounded-xl p-4 border">
               <p className="text-sm text-muted-foreground">Scheduled</p>
-              <p className="text-2xl font-bold text-yellow-500">{scheduledPosts.filter(p => p.status === 'pending').length}</p>
+              <p className="text-2xl font-bold text-amber-500">{scheduledPosts.filter(p => p.status === 'pending').length}</p>
             </div>
             <div className="bg-card rounded-xl p-4 border">
               <p className="text-sm text-muted-foreground">Published</p>
-              <p className="text-2xl font-bold text-green-500">{scheduledPosts.filter(p => p.status === 'published').length}</p>
+              <p className="text-2xl font-bold text-emerald-500">{scheduledPosts.filter(p => p.status === 'published').length}</p>
             </div>
             <div className="bg-card rounded-xl p-4 border">
               <div className="flex items-center justify-between mb-2">
