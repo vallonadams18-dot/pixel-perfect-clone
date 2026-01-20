@@ -19,9 +19,31 @@ Deno.serve(async (req) => {
 
   try {
     const rawAccessToken = Deno.env.get('INSTAGRAM_ACCESS_TOKEN');
+    
+    // Debug: Log token info (safely)
+    console.log('Token debug:', {
+      rawLength: rawAccessToken?.length || 0,
+      hasNewlines: rawAccessToken?.includes('\n'),
+      hasCarriageReturn: rawAccessToken?.includes('\r'),
+      startsWithBearer: rawAccessToken?.toLowerCase().startsWith('bearer'),
+      firstChars: rawAccessToken?.substring(0, 10),
+      lastChars: rawAccessToken?.substring((rawAccessToken?.length || 0) - 10),
+    });
+    
+    // Clean the token: remove Bearer prefix, all whitespace including newlines
     const accessToken = rawAccessToken
-      ? rawAccessToken.replace(/^Bearer\s+/i, '').replace(/\s+/g, '').trim()
+      ? rawAccessToken
+          .replace(/^Bearer\s+/i, '')
+          .replace(/[\s\r\n]+/g, '')
+          .trim()
       : null;
+    
+    console.log('Cleaned token:', {
+      length: accessToken?.length || 0,
+      firstChars: accessToken?.substring(0, 10),
+      lastChars: accessToken?.substring((accessToken?.length || 0) - 10),
+    });
+    
     const businessAccountId = Deno.env.get('INSTAGRAM_BUSINESS_ACCOUNT_ID')?.trim();
 
     if (!accessToken || !businessAccountId) {
