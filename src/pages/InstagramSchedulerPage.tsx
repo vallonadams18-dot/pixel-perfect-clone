@@ -107,6 +107,7 @@ const InstagramSchedulerPage = () => {
     gemini: { url: string; success: boolean; error?: string } | null;
     chatgpt: { url: string; success: boolean; error?: string } | null;
   }>({ gemini: null, chatgpt: null });
+  const [savingComparisonResult, setSavingComparisonResult] = useState<'gemini' | 'chatgpt' | null>(null);
   
   // Batch transformation state
   const [batchMode, setBatchMode] = useState(false);
@@ -753,6 +754,57 @@ const InstagramSchedulerPage = () => {
       setSelectedModel(model);
       setComparisonResults({ gemini: null, chatgpt: null });
       toast({ title: `Selected ${model === 'gemini' ? 'Nano Banana' : 'ChatGPT'} result` });
+    }
+  };
+
+  // Save a specific comparison result to library
+  const handleSaveComparisonToLibrary = async (model: 'gemini' | 'chatgpt', e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering the select action
+    
+    const result = comparisonResults[model];
+    if (!result?.success || !result.url || !session?.user?.id) {
+      toast({ title: 'Cannot save', description: 'No valid result to save', variant: 'destructive' });
+      return;
+    }
+    
+    setSavingComparisonResult(model);
+    
+    try {
+      const response = await fetch(result.url);
+      const blob = await response.blob();
+      
+      const timestamp = Date.now();
+      const modelName = model === 'gemini' ? 'nanobanana' : 'chatgpt';
+      const fileName = `ai-${modelName}-${selectedTransformStyle}-${timestamp}.jpg`;
+      const filePath = `${session.user.id}/${fileName}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('event-media')
+        .upload(filePath, blob, { contentType: 'image/jpeg' });
+      
+      if (uploadError) throw uploadError;
+      
+      const { error: insertError } = await supabase
+        .from('event_media')
+        .insert({
+          file_name: fileName,
+          file_path: filePath,
+          file_type: 'image/jpeg',
+          event_name: `AI ${model === 'gemini' ? 'Nano Banana' : 'ChatGPT'} - ${selectedTransformStyle}`,
+          description: `AI transformed image with ${selectedTransformStyle} style using ${model === 'gemini' ? 'Nano Banana' : 'ChatGPT'}`,
+          tags: ['ai-transformed', selectedTransformStyle, modelName, 'comparison-result'],
+          user_id: session.user.id,
+        });
+      
+      if (insertError) throw insertError;
+      
+      toast({ title: 'Saved!', description: `${model === 'gemini' ? 'Nano Banana' : 'ChatGPT'} result saved to library` });
+      fetchMediaLibrary();
+    } catch (error: any) {
+      console.error('Save comparison to library error:', error);
+      toast({ title: 'Save failed', description: error.message, variant: 'destructive' });
+    } finally {
+      setSavingComparisonResult(null);
     }
   };
 
@@ -2000,83 +2052,151 @@ const InstagramSchedulerPage = () => {
                         )}
                       </div>
                       
-                      {/* Comparison Results Side-by-Side */}
+                      {/* Comparison Results Side-by-Side - BOOSTED VIEW */}
                       {(comparisonResults.gemini || comparisonResults.chatgpt) && (
-                        <div className="mt-4 space-y-3">
+                        <div className="mt-6 space-y-4 p-4 bg-gradient-to-br from-primary/5 via-background to-secondary/5 rounded-2xl border-2 border-primary/20 shadow-lg">
                           <div className="flex items-center justify-between">
-                            <Label className="text-sm font-medium">🔀 Model Comparison</Label>
-                            <p className="text-xs text-muted-foreground">Click a result to use it</p>
+                            <div className="flex items-center gap-2">
+                              <span className="text-xl">⚔️</span>
+                              <Label className="text-base font-bold">Model Comparison</Label>
+                            </div>
+                            <p className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">Click to use • Save to keep both</p>
                           </div>
                           
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="grid grid-cols-2 gap-4">
                             {/* Gemini Result */}
-                            <button
-                              onClick={() => handleSelectComparisonResult('gemini')}
-                              disabled={!comparisonResults.gemini?.success}
-                              className={`relative rounded-xl overflow-hidden border-2 transition-all ${
-                                comparisonResults.gemini?.success 
-                                  ? 'border-border hover:border-primary cursor-pointer hover:shadow-lg'
-                                  : 'border-destructive/30 opacity-60 cursor-not-allowed'
-                              }`}
-                            >
-                              <div className="aspect-square bg-muted">
-                                {comparisonResults.gemini?.success ? (
-                                  <img 
-                                    src={comparisonResults.gemini.url} 
-                                    alt="Gemini result" 
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                                    <XCircle className="w-8 h-8" />
+                            <div className="space-y-2">
+                              <button
+                                onClick={() => handleSelectComparisonResult('gemini')}
+                                disabled={!comparisonResults.gemini?.success}
+                                className={`relative w-full rounded-xl overflow-hidden border-2 transition-all group ${
+                                  comparisonResults.gemini?.success 
+                                    ? 'border-yellow-400/50 hover:border-yellow-400 cursor-pointer hover:shadow-xl hover:scale-[1.02]'
+                                    : 'border-destructive/30 opacity-60 cursor-not-allowed'
+                                }`}
+                              >
+                                <div className="aspect-[4/5] bg-muted">
+                                  {comparisonResults.gemini?.success ? (
+                                    <img 
+                                      src={comparisonResults.gemini.url} 
+                                      alt="Nano Banana result" 
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                      <XCircle className="w-12 h-12" />
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-3">
+                                  <div className="flex items-center justify-center gap-2">
+                                    <span className="text-2xl">🍌</span>
+                                    <span className="text-white text-sm font-bold">Nano Banana</span>
+                                  </div>
+                                  {!comparisonResults.gemini?.success && (
+                                    <p className="text-destructive text-xs mt-1 text-center truncate">{comparisonResults.gemini?.error || 'Failed'}</p>
+                                  )}
+                                </div>
+                                {comparisonResults.gemini?.success && (
+                                  <div className="absolute top-2 right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                                    Click to Use
                                   </div>
                                 )}
-                              </div>
-                              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
-                                <div className="flex items-center gap-1.5">
-                                  <span className="text-lg">🍌</span>
-                                  <span className="text-white text-xs font-medium">Nano Banana</span>
-                                </div>
-                                {!comparisonResults.gemini?.success && (
-                                  <p className="text-destructive text-xs mt-1 truncate">{comparisonResults.gemini?.error || 'Failed'}</p>
-                                )}
-                              </div>
-                            </button>
+                              </button>
+                              
+                              {comparisonResults.gemini?.success && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="w-full border-yellow-400/50 hover:border-yellow-400 hover:bg-yellow-400/10"
+                                  onClick={(e) => handleSaveComparisonToLibrary('gemini', e)}
+                                  disabled={savingComparisonResult === 'gemini'}
+                                >
+                                  {savingComparisonResult === 'gemini' ? (
+                                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...</>
+                                  ) : (
+                                    <><FolderOpen className="w-4 h-4 mr-2" /> Save to Library</>
+                                  )}
+                                </Button>
+                              )}
+                            </div>
                             
                             {/* ChatGPT Result */}
-                            <button
-                              onClick={() => handleSelectComparisonResult('chatgpt')}
-                              disabled={!comparisonResults.chatgpt?.success}
-                              className={`relative rounded-xl overflow-hidden border-2 transition-all ${
-                                comparisonResults.chatgpt?.success 
-                                  ? 'border-border hover:border-primary cursor-pointer hover:shadow-lg'
-                                  : 'border-destructive/30 opacity-60 cursor-not-allowed'
-                              }`}
-                            >
-                              <div className="aspect-square bg-muted">
-                                {comparisonResults.chatgpt?.success ? (
-                                  <img 
-                                    src={comparisonResults.chatgpt.url} 
-                                    alt="ChatGPT result" 
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                                    <XCircle className="w-8 h-8" />
+                            <div className="space-y-2">
+                              <button
+                                onClick={() => handleSelectComparisonResult('chatgpt')}
+                                disabled={!comparisonResults.chatgpt?.success}
+                                className={`relative w-full rounded-xl overflow-hidden border-2 transition-all group ${
+                                  comparisonResults.chatgpt?.success 
+                                    ? 'border-green-400/50 hover:border-green-400 cursor-pointer hover:shadow-xl hover:scale-[1.02]'
+                                    : 'border-destructive/30 opacity-60 cursor-not-allowed'
+                                }`}
+                              >
+                                <div className="aspect-[4/5] bg-muted">
+                                  {comparisonResults.chatgpt?.success ? (
+                                    <img 
+                                      src={comparisonResults.chatgpt.url} 
+                                      alt="ChatGPT result" 
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                                      <XCircle className="w-12 h-12" />
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-3">
+                                  <div className="flex items-center justify-center gap-2">
+                                    <span className="text-2xl">🤖</span>
+                                    <span className="text-white text-sm font-bold">ChatGPT</span>
+                                  </div>
+                                  {!comparisonResults.chatgpt?.success && (
+                                    <p className="text-destructive text-xs mt-1 text-center truncate">{comparisonResults.chatgpt?.error || 'Failed'}</p>
+                                  )}
+                                </div>
+                                {comparisonResults.chatgpt?.success && (
+                                  <div className="absolute top-2 right-2 bg-green-400 text-green-900 text-xs font-bold px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                                    Click to Use
                                   </div>
                                 )}
-                              </div>
-                              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
-                                <div className="flex items-center gap-1.5">
-                                  <span className="text-lg">🤖</span>
-                                  <span className="text-white text-xs font-medium">ChatGPT</span>
-                                </div>
-                                {!comparisonResults.chatgpt?.success && (
-                                  <p className="text-destructive text-xs mt-1 truncate">{comparisonResults.chatgpt?.error || 'Failed'}</p>
-                                )}
-                              </div>
-                            </button>
+                              </button>
+                              
+                              {comparisonResults.chatgpt?.success && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="w-full border-green-400/50 hover:border-green-400 hover:bg-green-400/10"
+                                  onClick={(e) => handleSaveComparisonToLibrary('chatgpt', e)}
+                                  disabled={savingComparisonResult === 'chatgpt'}
+                                >
+                                  {savingComparisonResult === 'chatgpt' ? (
+                                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...</>
+                                  ) : (
+                                    <><FolderOpen className="w-4 h-4 mr-2" /> Save to Library</>
+                                  )}
+                                </Button>
+                              )}
+                            </div>
                           </div>
+                          
+                          {/* Save Both Button */}
+                          {comparisonResults.gemini?.success && comparisonResults.chatgpt?.success && (
+                            <Button
+                              variant="secondary"
+                              className="w-full mt-2"
+                              onClick={async (e) => {
+                                await handleSaveComparisonToLibrary('gemini', e);
+                                await handleSaveComparisonToLibrary('chatgpt', e);
+                              }}
+                              disabled={savingComparisonResult !== null}
+                            >
+                              {savingComparisonResult ? (
+                                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving Both...</>
+                              ) : (
+                                <><FolderOpen className="w-4 h-4 mr-2" /> Save Both Results to Library</>
+                              )}
+                            </Button>
+                          )}
                         </div>
                       )}
                       
