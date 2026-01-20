@@ -77,6 +77,34 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Validate imageUrl - only allow HTTPS from Supabase storage
+    try {
+      const url = new URL(imageUrl);
+      if (url.protocol !== 'https:' && !imageUrl.startsWith('blob:') && !imageUrl.startsWith('data:')) {
+        return new Response(
+          JSON.stringify({ error: 'Image URL must use HTTPS' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      if (imageUrl.length > 4096) {
+        return new Response(
+          JSON.stringify({ error: 'URL too long' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    } catch {
+      // Allow blob: and data: URLs for local previews
+      if (!imageUrl.startsWith('blob:') && !imageUrl.startsWith('data:')) {
+        return new Response(
+          JSON.stringify({ error: 'Invalid URL format' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+    }
+
+    // Handle custom style
+    const isCustomStyle = style === 'custom';
+    
     if (!style) {
       return new Response(
         JSON.stringify({ error: 'Style is required' }),
@@ -84,10 +112,35 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`Transforming image for user ${user.id} with style: ${style}`);
+    if (isCustomStyle && !customPrompt) {
+      return new Response(
+        JSON.stringify({ error: 'Custom prompt is required when using custom style' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
-    // Get the style prompt
-    const stylePrompt = SERVICE_STYLES[style.toLowerCase()] || customPrompt || `Transform this image into ${style} style.`;
+    // Validate custom prompt length
+    if (customPrompt && customPrompt.length > 1000) {
+      return new Response(
+        JSON.stringify({ error: 'Custom prompt too long (max 1000 characters)' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log(`Transforming image for user ${user.id} with style: ${style}${isCustomStyle ? ' (custom)' : ''}`);
+
+    // Get the style prompt - prioritize custom prompt for custom style
+    let stylePrompt: string;
+    if (isCustomStyle && customPrompt) {
+      stylePrompt = customPrompt;
+    } else if (SERVICE_STYLES[style.toLowerCase()]) {
+      stylePrompt = SERVICE_STYLES[style.toLowerCase()];
+    } else if (customPrompt) {
+      // Use custom prompt as enhancement for predefined style
+      stylePrompt = customPrompt;
+    } else {
+      stylePrompt = `Transform this image into ${style} style.`;
+    }
     
     const fullPrompt = `${stylePrompt} Maintain the person's likeness and identity. Create a high-quality, professional result suitable for social media posting.`;
 
