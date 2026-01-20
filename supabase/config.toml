@@ -14,3 +14,12 @@ verify_jwt = false
 
 [functions.transform-image-style]
 verify_jwt = false
+
+[functions.demo-transform]
+verify_jwt = false
+
+[functions.convert-image]
+verify_jwt = false
+
+[functions.manage-users]
+verify_jwt = false

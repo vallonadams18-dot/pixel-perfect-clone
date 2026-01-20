@@ -3,6 +3,7 @@ import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import FAQSection from '@/components/FAQSection';
+import ExperienceDemo from '@/components/ExperienceDemo';
 import { Link } from 'react-router-dom';
 import { Bot, Check, ArrowRight, Navigation, Eye, Cpu } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -285,6 +286,17 @@ const AxonAIPage = () => {
                   </li>
                 ))}
               </ul>
+            </div>
+        </section>
+
+          {/* Interactive Demo Section */}
+          <section className="section-padding bg-card/50" id="try-demo">
+            <div className="container-custom max-w-4xl">
+              <ExperienceDemo
+                experience="axon-ai"
+                experienceTitle="AXON AI"
+                experienceDescription="Experience AI robot photography with futuristic tech elements!"
+              />
             </div>
           </section>
 

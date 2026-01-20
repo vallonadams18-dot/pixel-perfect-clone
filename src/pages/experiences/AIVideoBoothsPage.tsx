@@ -3,6 +3,7 @@ import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import FAQSection from '@/components/FAQSection';
+import ExperienceDemo from '@/components/ExperienceDemo';
 import { Link } from 'react-router-dom';
 import { Video, Check, ArrowRight, Film, Palette, Share2 } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -232,6 +233,17 @@ const AIVideoBoothsPage = () => {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* Interactive Demo Section */}
+        <section className="section-padding bg-card/50" id="try-demo">
+          <div className="container-custom max-w-4xl">
+            <ExperienceDemo
+              experience="video-booths"
+              experienceTitle="AI Video Booths"
+              experienceDescription="Transform your photo with cyberpunk, neon, and futuristic effects!"
+            />
           </div>
         </section>
 

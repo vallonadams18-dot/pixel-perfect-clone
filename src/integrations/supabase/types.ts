@@ -125,6 +125,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_gallery: {
+        Row: {
+          created_at: string
+          custom_prompt: string | null
+          experience_type: string
+          id: string
+          original_image_url: string
+          style_used: string | null
+          transformed_image_url: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          custom_prompt?: string | null
+          experience_type: string
+          id?: string
+          original_image_url: string
+          style_used?: string | null
+          transformed_image_url: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          custom_prompt?: string | null
+          experience_type?: string
+          id?: string
+          original_image_url?: string
+          style_used?: string | null
+          transformed_image_url?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

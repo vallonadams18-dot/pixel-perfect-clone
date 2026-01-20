@@ -8,6 +8,7 @@ import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import FAQSection from '@/components/FAQSection';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import { GalleryGrid } from '@/components/GalleryGrid';
+import ExperienceDemo from '@/components/ExperienceDemo';
 import { Link } from 'react-router-dom';
 import { Camera, Check, ArrowRight, Briefcase, Users, Sparkles, X } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -316,6 +317,17 @@ const HeadshotsPage = () => {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* Interactive Demo Section */}
+        <section className="section-padding bg-card/50" id="try-demo">
+          <div className="container-custom max-w-4xl">
+            <ExperienceDemo
+              experience="headshots"
+              experienceTitle="AI Headshots"
+              experienceDescription="Get your LinkedIn-ready professional headshot in seconds!"
+            />
           </div>
         </section>
 
