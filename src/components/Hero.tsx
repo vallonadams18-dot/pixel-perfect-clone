@@ -1,5 +1,6 @@
 import { ArrowRight, Play } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
+import { analytics } from '@/lib/analytics';
 import heroImage from '@/assets/hero-background.jpg';
 
 // Animated counter hook
@@ -121,11 +122,19 @@ const Hero = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 fade-in-up" style={{ animationDelay: '0.3s' }}>
-              <a href="#contact" className="btn-primary flex items-center gap-2 group">
+              <a 
+                href="#contact" 
+                className="btn-primary flex items-center gap-2 group"
+                onClick={() => analytics.ctaClick('Get Started', 'hero_section')}
+              >
                 Get Started
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </a>
-              <a href="#portfolio" className="btn-outline flex items-center gap-2">
+              <a 
+                href="#portfolio" 
+                className="btn-outline flex items-center gap-2"
+                onClick={() => analytics.ctaClick('View Our Work', 'hero_section')}
+              >
                 <Play size={18} />
                 View Our Work
               </a>
