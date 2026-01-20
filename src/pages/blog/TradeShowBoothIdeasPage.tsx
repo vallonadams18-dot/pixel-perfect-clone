@@ -11,6 +11,15 @@ import RelatedServices from '@/components/RelatedServices';
 import tradeshowBasketball from '@/assets/tradeshow-trading-card-basketball.jpg';
 import tradeshowFootball from '@/assets/tradeshow-trading-card-football.jpg';
 import tradeshowBoothFemale from '@/assets/tradeshow-booth-football-female.jpg';
+import tradeshowGiantsGold from '@/assets/tradeshow-giants-gold.jpg';
+import tradeshowGiantsBlue from '@/assets/tradeshow-giants-blue.jpg';
+import tradeshowBrowns from '@/assets/tradeshow-browns.jpg';
+import tradeshowCowboys from '@/assets/tradeshow-cowboys.jpg';
+import tradeshowBleepshare from '@/assets/tradeshow-bleepshare.jpg';
+import tradeshowBraves from '@/assets/tradeshow-braves.jpg';
+import tradeshowPixelaipro1 from '@/assets/tradeshow-pixelaipro-1.jpg';
+import tradeshowPixelaipro2 from '@/assets/tradeshow-pixelaipro-2.jpg';
+import tradeshowGrfuRugby from '@/assets/tradeshow-grfu-rugby.jpg';
 
 const TradeShowBoothIdeasPage = () => {
   usePageMeta({
@@ -188,46 +197,37 @@ const TradeShowBoothIdeasPage = () => {
               <h2 className="font-display text-2xl font-bold text-foreground mb-6">
                 Real AI Booth Activations in Action
               </h2>
-              <div className="grid md:grid-cols-3 gap-4">
-                <div className="relative group overflow-hidden rounded-xl">
-                  <img 
-                    src={tradeshowBasketball} 
-                    alt="AI-generated basketball trading card at trade show booth"
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                    <span className="text-white text-sm font-medium">Custom Basketball Trading Card</span>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {[
+                  { src: tradeshowGiantsGold, alt: 'NY Giants Champions trading card', label: 'NY Giants Champions' },
+                  { src: tradeshowGiantsBlue, alt: 'NY Giants neon trading card', label: 'Giants Neon Edition' },
+                  { src: tradeshowBrowns, alt: 'Cleveland Browns trading card', label: 'Cleveland Browns' },
+                  { src: tradeshowCowboys, alt: 'Dallas Cowboys trading card', label: 'Dallas Cowboys' },
+                  { src: tradeshowBleepshare, alt: 'Custom basketball trading card', label: 'Custom Basketball' },
+                  { src: tradeshowBraves, alt: 'Atlanta Braves baseball trading card', label: 'Atlanta Braves' },
+                  { src: tradeshowPixelaipro1, alt: 'PixelAI Pro basketball card', label: 'PixelAI Pro Basketball' },
+                  { src: tradeshowPixelaipro2, alt: 'PixelAI Pro branded trading card', label: 'PixelAI Pro Edition' },
+                  { src: tradeshowGrfuRugby, alt: 'GRFU Rugby trading card', label: 'Rugby Trading Card' },
+                  { src: tradeshowBasketball, alt: 'Buffalo basketball trading card', label: 'Buffalo Basketball' },
+                  { src: tradeshowFootball, alt: 'Hurricanes football trading card', label: 'Miami Hurricanes' },
+                  { src: tradeshowBoothFemale, alt: 'AI photo booth interface', label: 'Interactive Booth' },
+                ].map((item, idx) => (
+                  <div key={idx} className="relative group overflow-hidden rounded-xl">
+                    <img 
+                      src={item.src} 
+                      alt={item.alt}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-64 md:h-80 object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                      <span className="text-white text-sm font-medium">{item.label}</span>
+                    </div>
                   </div>
-                </div>
-                <div className="relative group overflow-hidden rounded-xl">
-                  <img 
-                    src={tradeshowFootball} 
-                    alt="AI-generated football trading card at corporate event"
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                    <span className="text-white text-sm font-medium">Custom Football Trading Card</span>
-                  </div>
-                </div>
-                <div className="relative group overflow-hidden rounded-xl">
-                  <img 
-                    src={tradeshowBoothFemale} 
-                    alt="AI photo booth interface showing effect selection"
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                    <span className="text-white text-sm font-medium">Interactive Booth Experience</span>
-                  </div>
-                </div>
+                ))}
               </div>
               <p className="text-sm text-muted-foreground mt-4 text-center">
-                Examples of AI-powered activations that drive engagement at trade shows
+                Examples of AI-powered trading cards that drive engagement at trade shows and corporate events
               </p>
             </div>
 
