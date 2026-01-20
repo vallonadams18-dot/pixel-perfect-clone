@@ -91,6 +91,16 @@ const InstagramSchedulerPage = () => {
   const [selectedTransformStyle, setSelectedTransformStyle] = useState<string>('');
   const [originalImageUrl, setOriginalImageUrl] = useState<string>('');
   const [transformedPreview, setTransformedPreview] = useState<string>('');
+  const [showBeforeAfter, setShowBeforeAfter] = useState(false);
+  const [savingToLibrary, setSavingToLibrary] = useState(false);
+  
+  // Batch transformation state
+  const [batchMode, setBatchMode] = useState(false);
+  const [selectedBatchItems, setSelectedBatchItems] = useState<Set<string>>(new Set());
+  const [batchTransformStyle, setBatchTransformStyle] = useState<string>('');
+  const [batchTransforming, setBatchTransforming] = useState(false);
+  const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0 });
+  const [batchResults, setBatchResults] = useState<Array<{ id: string; original: string; transformed: string; success: boolean }>>([]);
   
   // Main panel tab
   const [mainTab, setMainTab] = useState<'library' | 'scheduler' | 'posts' | 'settings'>('library');
@@ -606,8 +616,147 @@ const InstagramSchedulerPage = () => {
     if (originalImageUrl) {
       setImageUrl(originalImageUrl);
       setTransformedPreview('');
+      setShowBeforeAfter(false);
       toast({ title: 'Reverted to original' });
     }
+  };
+
+  // Save transformed image to Content Library
+  const handleSaveToLibrary = async () => {
+    if (!transformedPreview || !session?.user?.id) {
+      toast({ title: 'No transformed image', description: 'Transform an image first', variant: 'destructive' });
+      return;
+    }
+    
+    setSavingToLibrary(true);
+    
+    try {
+      const response = await fetch(transformedPreview);
+      const blob = await response.blob();
+      
+      const timestamp = Date.now();
+      const fileName = `ai-transformed-${selectedTransformStyle}-${timestamp}.jpg`;
+      const filePath = `${session.user.id}/${fileName}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('event-media')
+        .upload(filePath, blob, { contentType: 'image/jpeg' });
+      
+      if (uploadError) throw uploadError;
+      
+      const { error: insertError } = await supabase
+        .from('event_media')
+        .insert({
+          file_name: fileName,
+          file_path: filePath,
+          file_type: 'image/jpeg',
+          event_name: `AI Transform - ${selectedTransformStyle}`,
+          description: `AI transformed image with ${selectedTransformStyle} style`,
+          tags: ['ai-transformed', selectedTransformStyle, 'pixelai-pro'],
+          user_id: session.user.id,
+        });
+      
+      if (insertError) throw insertError;
+      
+      toast({ title: 'Saved to library!', description: 'Image added to your Content Library' });
+      fetchMediaLibrary();
+    } catch (error: any) {
+      console.error('Save to library error:', error);
+      toast({ title: 'Save failed', description: error.message, variant: 'destructive' });
+    } finally {
+      setSavingToLibrary(false);
+    }
+  };
+
+  const toggleBatchItem = (itemId: string) => {
+    setSelectedBatchItems(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(itemId)) {
+        newSet.delete(itemId);
+      } else {
+        newSet.add(itemId);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedBatchItems.size === filteredMediaItems.length) {
+      setSelectedBatchItems(new Set());
+    } else {
+      setSelectedBatchItems(new Set(filteredMediaItems.map(item => item.id)));
+    }
+  };
+
+  const handleBatchTransform = async () => {
+    if (selectedBatchItems.size === 0) {
+      toast({ title: 'No images selected', description: 'Select images to transform', variant: 'destructive' });
+      return;
+    }
+    if (!batchTransformStyle) {
+      toast({ title: 'Select a style', description: 'Choose a transformation style', variant: 'destructive' });
+      return;
+    }
+    if (!session?.access_token) {
+      toast({ title: 'Please log in', variant: 'destructive' });
+      return;
+    }
+    
+    const selectedItems = filteredMediaItems.filter(item => selectedBatchItems.has(item.id));
+    setBatchTransforming(true);
+    setBatchProgress({ current: 0, total: selectedItems.length });
+    setBatchResults([]);
+    
+    const results: Array<{ id: string; original: string; transformed: string; success: boolean }> = [];
+    
+    for (let i = 0; i < selectedItems.length; i++) {
+      const item = selectedItems[i];
+      setBatchProgress({ current: i + 1, total: selectedItems.length });
+      
+      try {
+        const { data, error } = await supabase.functions.invoke('transform-image-style', {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+          body: { imageUrl: item.url, style: batchTransformStyle },
+        });
+
+        if (error) throw error;
+
+        if (data?.imageUrl) {
+          results.push({ id: item.id, original: item.url || '', transformed: data.imageUrl, success: true });
+          
+          const timestamp = Date.now();
+          const fileName = `batch-${batchTransformStyle}-${timestamp}-${i}.jpg`;
+          const filePath = `${session.user.id}/${fileName}`;
+          
+          const response = await fetch(data.imageUrl);
+          const blob = await response.blob();
+          
+          await supabase.storage.from('event-media').upload(filePath, blob, { contentType: 'image/jpeg' });
+          await supabase.from('event_media').insert({
+            file_name: fileName,
+            file_path: filePath,
+            file_type: 'image/jpeg',
+            event_name: `Batch Transform - ${batchTransformStyle}`,
+            description: `Batch AI transformed from ${item.file_name}`,
+            tags: ['ai-transformed', 'batch', batchTransformStyle],
+            user_id: session.user.id,
+          });
+        } else {
+          results.push({ id: item.id, original: item.url || '', transformed: '', success: false });
+        }
+      } catch (error) {
+        console.error(`Batch transform error for ${item.id}:`, error);
+        results.push({ id: item.id, original: item.url || '', transformed: '', success: false });
+      }
+    }
+    
+    setBatchResults(results);
+    setBatchTransforming(false);
+    
+    const successCount = results.filter(r => r.success).length;
+    toast({ title: 'Batch complete!', description: `${successCount}/${results.length} images transformed and saved` });
+    fetchMediaLibrary();
+    setSelectedBatchItems(new Set());
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -1134,35 +1283,137 @@ const InstagramSchedulerPage = () => {
             <TabsContent value="library">
               <div className="bg-card rounded-2xl border p-6">
                 {/* Search & Controls */}
-                <div className="flex flex-col md:flex-row gap-4 mb-6">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search by filename, event, or tag..."
-                      value={mediaSearch}
-                      onChange={(e) => setMediaSearch(e.target.value)}
-                      className="pl-10"
-                    />
+                <div className="flex flex-col gap-4 mb-6">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search by filename, event, or tag..."
+                        value={mediaSearch}
+                        onChange={(e) => setMediaSearch(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant={batchMode ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => {
+                          setBatchMode(!batchMode);
+                          setSelectedBatchItems(new Set());
+                          setBatchResults([]);
+                        }}
+                      >
+                        <Wand2 className="w-4 h-4 mr-2" />
+                        Batch Transform
+                      </Button>
+                      <Button
+                        variant={viewMode === 'grid' ? 'default' : 'outline'}
+                        size="icon"
+                        onClick={() => setViewMode('grid')}
+                      >
+                        <LayoutGrid className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant={viewMode === 'list' ? 'default' : 'outline'}
+                        size="icon"
+                        onClick={() => setViewMode('list')}
+                      >
+                        <List className="w-4 h-4" />
+                      </Button>
+                      <Button variant="outline" onClick={fetchMediaLibrary} disabled={mediaLoading}>
+                        <RefreshCw className={`w-4 h-4 ${mediaLoading ? 'animate-spin' : ''}`} />
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant={viewMode === 'grid' ? 'default' : 'outline'}
-                      size="icon"
-                      onClick={() => setViewMode('grid')}
-                    >
-                      <LayoutGrid className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant={viewMode === 'list' ? 'default' : 'outline'}
-                      size="icon"
-                      onClick={() => setViewMode('list')}
-                    >
-                      <List className="w-4 h-4" />
-                    </Button>
-                    <Button variant="outline" onClick={fetchMediaLibrary} disabled={mediaLoading}>
-                      <RefreshCw className={`w-4 h-4 ${mediaLoading ? 'animate-spin' : ''}`} />
-                    </Button>
-                  </div>
+
+                  {/* Batch Mode Controls */}
+                  {batchMode && (
+                    <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-4 border border-primary/20">
+                      <div className="flex flex-col md:flex-row md:items-center gap-4">
+                        <div className="flex items-center gap-3">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={toggleSelectAll}
+                          >
+                            {selectedBatchItems.size === filteredMediaItems.length ? 'Deselect All' : 'Select All'}
+                          </Button>
+                          <Badge variant="secondary">{selectedBatchItems.size} selected</Badge>
+                        </div>
+                        
+                        <div className="flex-1">
+                          <select
+                            value={batchTransformStyle}
+                            onChange={(e) => setBatchTransformStyle(e.target.value)}
+                            className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+                          >
+                            <option value="">Choose transformation style...</option>
+                            <optgroup label="Event Services">
+                              <option value="pixelwear">PixelWear</option>
+                              <option value="trading-cards">Trading Cards</option>
+                              <option value="headshots">Headshots</option>
+                              <option value="persona-pop">Persona Pop</option>
+                              <option value="co-star">Co-Star</option>
+                              <option value="sketch">Sketch</option>
+                            </optgroup>
+                            <optgroup label="Creative">
+                              <option value="superhero">Superhero</option>
+                              <option value="vintage">Vintage</option>
+                              <option value="cyberpunk">Cyberpunk</option>
+                              <option value="anime">Anime</option>
+                            </optgroup>
+                          </select>
+                        </div>
+                        
+                        <Button
+                          onClick={handleBatchTransform}
+                          disabled={batchTransforming || selectedBatchItems.size === 0 || !batchTransformStyle}
+                        >
+                          {batchTransforming ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              {batchProgress.current}/{batchProgress.total}
+                            </>
+                          ) : (
+                            <>
+                              <Wand2 className="w-4 h-4 mr-2" />
+                              Transform {selectedBatchItems.size > 0 ? `(${selectedBatchItems.size})` : ''}
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                      
+                      {batchTransforming && (
+                        <div className="mt-3">
+                          <Progress value={(batchProgress.current / batchProgress.total) * 100} className="h-2" />
+                          <p className="text-xs text-muted-foreground text-center mt-1">
+                            Transforming image {batchProgress.current} of {batchProgress.total}...
+                          </p>
+                        </div>
+                      )}
+
+                      {batchResults.length > 0 && !batchTransforming && (
+                        <div className="mt-3 p-2 bg-background rounded-lg border">
+                          <p className="text-xs font-medium mb-2">
+                            ✓ {batchResults.filter(r => r.success).length} transformed, saved to Content Library
+                          </p>
+                          <div className="flex gap-2 overflow-x-auto pb-2">
+                            {batchResults.filter(r => r.success).slice(0, 5).map((result, i) => (
+                              <div key={i} className="shrink-0 w-16 h-16 rounded border overflow-hidden">
+                                <img src={result.transformed} alt="" className="w-full h-full object-cover" />
+                              </div>
+                            ))}
+                            {batchResults.filter(r => r.success).length > 5 && (
+                              <div className="shrink-0 w-16 h-16 rounded border flex items-center justify-center bg-muted text-xs">
+                                +{batchResults.filter(r => r.success).length - 5}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Media Grid */}
@@ -1181,12 +1432,33 @@ const InstagramSchedulerPage = () => {
                 ) : viewMode === 'grid' ? (
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                     {filteredMediaItems.map((item) => (
-                      <div key={item.id} className="group relative rounded-xl overflow-hidden border bg-background aspect-square">
+                      <div 
+                        key={item.id} 
+                        className={`group relative rounded-xl overflow-hidden border bg-background aspect-square ${
+                          batchMode && selectedBatchItems.has(item.id) ? 'ring-2 ring-primary' : ''
+                        }`}
+                        onClick={batchMode ? () => toggleBatchItem(item.id) : undefined}
+                      >
                         <img
                           src={item.url}
                           alt={item.file_name}
                           className="w-full h-full object-cover transition-transform group-hover:scale-105"
                         />
+                        
+                        {/* Batch Selection Checkbox */}
+                        {batchMode && (
+                          <div className="absolute top-2 right-2 z-10">
+                            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                              selectedBatchItems.has(item.id) 
+                                ? 'bg-primary border-primary' 
+                                : 'bg-background/80 border-muted-foreground'
+                            }`}>
+                              {selectedBatchItems.has(item.id) && (
+                                <CheckCircle className="w-4 h-4 text-primary-foreground" />
+                              )}
+                            </div>
+                          </div>
+                        )}
                         
                         {/* Badges */}
                         <div className="absolute top-2 left-2 flex flex-wrap gap-1">
@@ -1198,33 +1470,35 @@ const InstagramSchedulerPage = () => {
                           )}
                         </div>
                         
-                        {/* Hover Actions */}
-                        <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-3">
-                          <Button
-                            size="sm"
-                            className="w-full"
-                            onClick={() => handleSelectFromLibrary(item)}
-                            disabled={copyingToInstagram && selectedLibraryItem?.id === item.id}
-                          >
-                            {copyingToInstagram && selectedLibraryItem?.id === item.id ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <>
-                                <Instagram className="w-4 h-4 mr-1" />
-                                Schedule
-                              </>
-                            )}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            className="w-full"
-                            onClick={() => handleDownload(item)}
-                          >
-                            <Download className="w-4 h-4 mr-1" />
-                            Download
-                          </Button>
-                        </div>
+                        {/* Hover Actions (only show when not in batch mode) */}
+                        {!batchMode && (
+                          <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-3">
+                            <Button
+                              size="sm"
+                              className="w-full"
+                              onClick={() => handleSelectFromLibrary(item)}
+                              disabled={copyingToInstagram && selectedLibraryItem?.id === item.id}
+                            >
+                              {copyingToInstagram && selectedLibraryItem?.id === item.id ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <>
+                                  <Instagram className="w-4 h-4 mr-1" />
+                                  Schedule
+                                </>
+                              )}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              className="w-full"
+                              onClick={() => handleDownload(item)}
+                            >
+                              <Download className="w-4 h-4 mr-1" />
+                              Download
+                            </Button>
+                          </div>
+                        )}
                         
                         {/* Filename */}
                         <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-2">
@@ -1332,22 +1606,64 @@ const InstagramSchedulerPage = () => {
                     </Tabs>
                   </div>
 
-                  {/* Preview */}
+                  {/* Preview - Before/After Comparison */}
                   {(imageUrl || imageFile) && (
-                    <div className="relative w-40 h-40 rounded-lg overflow-hidden border mx-auto">
-                      <img 
-                        src={imageFile ? URL.createObjectURL(imageFile) : imageUrl} 
-                        alt="Preview" 
-                        className="w-full h-full object-cover"
-                      />
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        className="absolute top-2 right-2"
-                        onClick={() => { setImageUrl(''); setImageFile(null); }}
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
+                    <div className="space-y-3">
+                      {/* Before/After Toggle */}
+                      {transformedPreview && originalImageUrl && (
+                        <div className="flex justify-center">
+                          <Button
+                            variant={showBeforeAfter ? 'default' : 'outline'}
+                            size="sm"
+                            onClick={() => setShowBeforeAfter(!showBeforeAfter)}
+                          >
+                            <Eye className="w-4 h-4 mr-2" />
+                            {showBeforeAfter ? 'Hide Comparison' : 'Show Before/After'}
+                          </Button>
+                        </div>
+                      )}
+                      
+                      {/* Before/After Side by Side */}
+                      {showBeforeAfter && transformedPreview && originalImageUrl ? (
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="relative rounded-lg overflow-hidden border">
+                            <img 
+                              src={originalImageUrl} 
+                              alt="Original" 
+                              className="w-full aspect-square object-cover"
+                            />
+                            <div className="absolute bottom-0 inset-x-0 bg-black/80 p-2">
+                              <p className="text-white text-xs text-center font-medium">BEFORE</p>
+                            </div>
+                          </div>
+                          <div className="relative rounded-lg overflow-hidden border border-primary">
+                            <img 
+                              src={transformedPreview} 
+                              alt="Transformed" 
+                              className="w-full aspect-square object-cover"
+                            />
+                            <div className="absolute bottom-0 inset-x-0 bg-primary p-2">
+                              <p className="text-primary-foreground text-xs text-center font-medium">AFTER</p>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="relative w-40 h-40 rounded-lg overflow-hidden border mx-auto">
+                          <img 
+                            src={imageFile ? URL.createObjectURL(imageFile) : imageUrl} 
+                            alt="Preview" 
+                            className="w-full h-full object-cover"
+                          />
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            className="absolute top-2 right-2"
+                            onClick={() => { setImageUrl(''); setImageFile(null); setOriginalImageUrl(''); setTransformedPreview(''); }}
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -1392,7 +1708,7 @@ const InstagramSchedulerPage = () => {
                         </select>
                       </div>
                       
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 flex-wrap">
                         <Button 
                           onClick={handleTransformImage} 
                           disabled={transformingImage || !selectedTransformStyle}
@@ -1401,27 +1717,42 @@ const InstagramSchedulerPage = () => {
                           {transformingImage ? (
                             <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Transforming...</>
                           ) : (
-                            <><Wand2 className="w-4 h-4 mr-2" /> Transform Image</>
+                            <><Wand2 className="w-4 h-4 mr-2" /> Transform</>
                           )}
                         </Button>
                         
                         {transformedPreview && originalImageUrl && (
-                          <Button 
-                            variant="outline" 
-                            onClick={handleRevertTransform}
-                            disabled={transformingImage}
-                          >
-                            <RefreshCw className="w-4 h-4 mr-2" />
-                            Revert
-                          </Button>
+                          <>
+                            <Button 
+                              variant="outline" 
+                              onClick={handleRevertTransform}
+                              disabled={transformingImage}
+                            >
+                              <RefreshCw className="w-4 h-4" />
+                            </Button>
+                            <Button 
+                              variant="secondary" 
+                              onClick={handleSaveToLibrary}
+                              disabled={savingToLibrary}
+                            >
+                              {savingToLibrary ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <>
+                                  <FolderOpen className="w-4 h-4 mr-2" />
+                                  Save to Library
+                                </>
+                              )}
+                            </Button>
+                          </>
                         )}
                       </div>
                       
                       {transformedPreview && (
                         <div className="mt-3 p-2 bg-background rounded-lg border flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
-                          <span className="text-xs text-muted-foreground">
-                            Transformed to <strong>{selectedTransformStyle}</strong> style - ready to post!
+                          <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
+                          <span className="text-xs text-muted-foreground flex-1">
+                            Transformed to <strong>{selectedTransformStyle}</strong> - ready to post!
                           </span>
                         </div>
                       )}
@@ -1433,6 +1764,7 @@ const InstagramSchedulerPage = () => {
                       )}
                     </div>
                   )}
+
 
                   {/* AI Caption Generator */}
                   <div className="bg-muted/50 rounded-xl p-4 border border-dashed">
