@@ -5,6 +5,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import FAQSection from '@/components/FAQSection';
 import ExperienceDemo from '@/components/ExperienceDemo';
+import DemoCTABanner from '@/components/DemoCTABanner';
 import { Link } from 'react-router-dom';
 import { Pencil, Check, ArrowRight, Palette, Clock, Sparkles } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -258,6 +259,12 @@ const IdentityPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Demo CTA Banner */}
+        <DemoCTABanner 
+          experienceTitle="AI Sketch" 
+          subtitle="Transform your photo into a stunning artistic sketch!" 
+        />
 
         {/* Gallery Section */}
         <section className="section-padding">

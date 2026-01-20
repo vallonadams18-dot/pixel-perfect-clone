@@ -6,6 +6,7 @@ import FAQSection from '@/components/FAQSection';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import { GalleryGrid } from '@/components/GalleryGrid';
 import ExperienceDemo from '@/components/ExperienceDemo';
+import DemoCTABanner from '@/components/DemoCTABanner';
 import { Link } from 'react-router-dom';
 import { Sparkles, Check, ArrowRight, Layers, Smartphone, Gem } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -237,6 +238,12 @@ const AITradingCardsPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Demo CTA Banner */}
+        <DemoCTABanner 
+          experienceTitle="AI Trading Cards" 
+          subtitle="Transform into a collectible sports card star. 2 free tries!" 
+        />
 
         {/* Features Section */}
         <section className="section-padding bg-card/50">

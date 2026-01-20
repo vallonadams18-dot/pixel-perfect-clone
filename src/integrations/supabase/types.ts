@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      demo_gallery: {
+        Row: {
+          created_at: string
+          email: string
+          experience_type: string
+          id: string
+          original_image_url: string
+          referrer: string | null
+          transformed_image_url: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          experience_type: string
+          id?: string
+          original_image_url: string
+          referrer?: string | null
+          transformed_image_url: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          experience_type?: string
+          id?: string
+          original_image_url?: string
+          referrer?: string | null
+          transformed_image_url?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       demo_usage: {
         Row: {
           created_at: string

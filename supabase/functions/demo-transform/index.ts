@@ -416,6 +416,9 @@ Deno.serve(async (req) => {
     await upsertLead(supabase, email, experience, userAgent, referrer);
     const newUsageCount = usageCount + 1;
     const remainingTries = Math.max(0, MAX_TRIES_PER_EMAIL - newUsageCount);
+    
+    // Store the input image URL for later saving to demo_gallery
+    const inputImageUrlForGallery = inputImageUrl;
 
     // If the model returns a data URL, persist it to storage
     let imageUrl = generatedImage;
@@ -447,6 +450,28 @@ Deno.serve(async (req) => {
       } catch (e) {
         console.error('Failed to decode/upload output image (returning data URL):', e);
       }
+    }
+
+    // Save both before and after images to demo_gallery for marketing
+    try {
+      const { error: galleryError } = await supabase
+        .from('demo_gallery')
+        .insert({
+          email: email.toLowerCase().trim(),
+          experience_type: experience.toLowerCase(),
+          original_image_url: inputImageUrlForGallery,
+          transformed_image_url: imageUrl,
+          user_agent: userAgent || null,
+          referrer: referrer || null,
+        });
+      
+      if (galleryError) {
+        console.error('Demo gallery insert error:', galleryError);
+      } else {
+        console.log('Demo images saved to gallery for marketing');
+      }
+    } catch (e) {
+      console.error('Failed to save to demo gallery:', e);
     }
 
     return new Response(

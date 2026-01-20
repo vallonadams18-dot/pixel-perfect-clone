@@ -9,6 +9,7 @@ import FAQSection from '@/components/FAQSection';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import { GalleryGrid } from '@/components/GalleryGrid';
 import ExperienceDemo from '@/components/ExperienceDemo';
+import DemoCTABanner from '@/components/DemoCTABanner';
 import { Link } from 'react-router-dom';
 import { Camera, Check, ArrowRight, Briefcase, Users, Sparkles, X } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -259,6 +260,12 @@ const HeadshotsPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Demo CTA Banner */}
+        <DemoCTABanner 
+          experienceTitle="AI Headshots" 
+          subtitle="Get your LinkedIn-ready professional headshot in seconds!" 
+        />
 
         {/* Features Section */}
         <section className="section-padding">
