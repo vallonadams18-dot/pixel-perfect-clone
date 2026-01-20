@@ -11,7 +11,7 @@ import {
   XCircle, AlertCircle, Image as ImageIcon, Upload,
   FolderOpen, Search, X, Sparkles, TrendingUp, RefreshCw,
   Download, Grid, List, LayoutGrid, Wand2, Wifi, WifiOff,
-  Settings, Save, Key, Zap
+  Settings, Save, Key, Zap, Users, UserCheck, Filter, CheckCircle2, Mail
 } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -22,6 +22,44 @@ import { Badge } from '@/components/ui/badge';
 import StylePreviewThumbnails, { styleOptions } from '@/components/StylePreviewThumbnails';
 import PromptHistory, { addPromptToHistory } from '@/components/PromptHistory';
 import ImageConverter from '@/components/ImageConverter';
+import { useAdminRole } from '@/hooks/useAdminRole';
+import { format } from 'date-fns';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Checkbox } from '@/components/ui/checkbox';
+
+interface Lead {
+  id: string;
+  email: string;
+  source: string;
+  experience_type: string | null;
+  first_seen_at: string;
+  last_interaction_at: string;
+  total_demos_used: number;
+  converted: boolean;
+  notes: string | null;
+  referrer: string | null;
+  user_agent: string | null;
+  created_at: string;
+}
+
+const EXPERIENCE_OPTIONS = [
+  { value: 'all', label: 'All Sources' },
+  { value: 'pixelwear', label: 'PixelWear' },
+  { value: 'trading-cards', label: 'Trading Cards' },
+  { value: 'headshots', label: 'Headshots' },
+  { value: 'persona-pop', label: 'Persona Pop' },
+  { value: 'co-star', label: 'Co-Star' },
+  { value: 'video-booths', label: 'Video Booths' },
+  { value: 'axon-ai', label: 'Axon AI' },
+  { value: 'identity', label: 'Identity' },
+];
 
 interface ScheduledPost {
   id: string;
@@ -53,6 +91,7 @@ interface MediaItem {
 }
 
 const InstagramSchedulerPage = () => {
+  const { isAdmin } = useAdminRole();
   const [session, setSession] = useState<any>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -127,7 +166,7 @@ const InstagramSchedulerPage = () => {
   const [batchResults, setBatchResults] = useState<Array<{ id: string; original: string; transformed: string; success: boolean }>>([]);
   
   // Main panel tab
-  const [mainTab, setMainTab] = useState<'library' | 'scheduler' | 'posts' | 'settings' | 'optimize'>('library');
+  const [mainTab, setMainTab] = useState<'library' | 'scheduler' | 'posts' | 'settings' | 'optimize' | 'leads'>('library');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   
   // Auto-scheduling state
@@ -153,6 +192,14 @@ const InstagramSchedulerPage = () => {
     timestamp: Date | null;
   }>({ function: '', status: 'pending', message: '', timestamp: null });
   const [showDiagnostics, setShowDiagnostics] = useState(false);
+  
+  // Leads management state
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [leadsLoading, setLeadsLoading] = useState(false);
+  const [leadsSearchQuery, setLeadsSearchQuery] = useState('');
+  const [leadsSourceFilter, setLeadsSourceFilter] = useState('all');
+  const [leadsConvertedFilter, setLeadsConvertedFilter] = useState<'all' | 'converted' | 'not-converted'>('all');
+  const [selectedLeadIds, setSelectedLeadIds] = useState<Set<string>>(new Set());
   
   const { toast } = useToast();
 
@@ -193,6 +240,32 @@ const InstagramSchedulerPage = () => {
     return { libraryPosts, totalPosts, percentage, targetMet };
   }, [scheduledPosts]);
 
+  // Leads stats
+  const leadsStats = useMemo(() => {
+    const total = leads.length;
+    const converted = leads.filter(l => l.converted).length;
+    const conversionRate = total > 0 ? ((converted / total) * 100).toFixed(1) : '0';
+    const uniqueSources = new Set(leads.map(l => l.source)).size;
+    const totalDemos = leads.reduce((acc, l) => acc + (l.total_demos_used || 0), 0);
+    return { total, converted, conversionRate, uniqueSources, totalDemos };
+  }, [leads]);
+
+  // Filtered leads
+  const filteredLeads = useMemo(() => {
+    return leads.filter(lead => {
+      const matchesSearch = 
+        lead.email.toLowerCase().includes(leadsSearchQuery.toLowerCase()) ||
+        lead.source?.toLowerCase().includes(leadsSearchQuery.toLowerCase()) ||
+        lead.referrer?.toLowerCase().includes(leadsSearchQuery.toLowerCase());
+      const matchesSource = leadsSourceFilter === 'all' || lead.source === leadsSourceFilter;
+      const matchesConverted = 
+        leadsConvertedFilter === 'all' ||
+        (leadsConvertedFilter === 'converted' && lead.converted) ||
+        (leadsConvertedFilter === 'not-converted' && !lead.converted);
+      return matchesSearch && matchesSource && matchesConverted;
+    });
+  }, [leads, leadsSearchQuery, leadsSourceFilter, leadsConvertedFilter]);
+
   // Auto-fill default schedule time (15 minutes from now)
   const setDefaultSchedule = () => {
     const now = new Date();
@@ -228,6 +301,13 @@ const InstagramSchedulerPage = () => {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Fetch leads when admin
+  useEffect(() => {
+    if (session && isAdmin) {
+      fetchLeads();
+    }
+  }, [session, isAdmin]);
   
   const fetchInstagramCredentials = async () => {
     try {
@@ -327,6 +407,105 @@ const InstagramSchedulerPage = () => {
       setScheduledPosts(data || []);
     }
     setLoading(false);
+  };
+
+  const fetchLeads = async () => {
+    if (!isAdmin) return;
+    setLeadsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setLeads(data || []);
+    } catch (error: any) {
+      console.error('Error fetching leads:', error);
+    } finally {
+      setLeadsLoading(false);
+    }
+  };
+
+  const handleToggleLeadConverted = async (lead: Lead) => {
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .update({ converted: !lead.converted })
+        .eq('id', lead.id);
+
+      if (error) throw error;
+      
+      setLeads(prev => prev.map(l => 
+        l.id === lead.id ? { ...l, converted: !l.converted } : l
+      ));
+      
+      toast({ 
+        title: lead.converted ? 'Marked as not converted' : 'Marked as converted'
+      });
+    } catch (error: any) {
+      toast({ title: 'Failed to update lead', variant: 'destructive' });
+    }
+  };
+
+  const handleSelectAllLeads = () => {
+    if (selectedLeadIds.size === filteredLeads.length) {
+      setSelectedLeadIds(new Set());
+    } else {
+      setSelectedLeadIds(new Set(filteredLeads.map(l => l.id)));
+    }
+  };
+
+  const handleSelectLead = (id: string) => {
+    setSelectedLeadIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const exportLeadsToCSV = (leadsToExport: Lead[]) => {
+    if (leadsToExport.length === 0) {
+      toast({ title: 'No leads to export', variant: 'destructive' });
+      return;
+    }
+
+    const headers = [
+      'Email', 'Source', 'First Seen', 'Last Interaction', 
+      'Demos Used', 'Converted', 'Referrer', 'Notes'
+    ];
+
+    const rows = leadsToExport.map(lead => [
+      lead.email,
+      lead.source,
+      format(new Date(lead.first_seen_at), 'yyyy-MM-dd HH:mm'),
+      format(new Date(lead.last_interaction_at), 'yyyy-MM-dd HH:mm'),
+      lead.total_demos_used.toString(),
+      lead.converted ? 'Yes' : 'No',
+      lead.referrer || '',
+      lead.notes || '',
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(',')),
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `leads-export-${format(new Date(), 'yyyy-MM-dd-HHmm')}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast({ title: `Exported ${leadsToExport.length} leads to CSV` });
   };
 
   const fetchMediaLibrary = async () => {
@@ -1693,28 +1872,31 @@ const InstagramSchedulerPage = () => {
 
           {/* Main Tabs */}
           <Tabs value={mainTab} onValueChange={(v) => setMainTab(v as any)} className="w-full">
-            <TabsList className="grid w-full grid-cols-5 mb-6">
+            <TabsList className="grid w-full grid-cols-6 mb-6">
               <TabsTrigger value="library" className="flex items-center gap-2">
                 <FolderOpen className="w-4 h-4" />
-                <span className="hidden sm:inline">Content Library</span>
-                <span className="sm:hidden">Library</span>
-                <Badge variant="secondary" className="ml-1">{mediaItems.length}</Badge>
+                <span className="hidden sm:inline">Library</span>
+                <Badge variant="secondary" className="ml-1 hidden md:inline-flex">{mediaItems.length}</Badge>
               </TabsTrigger>
               <TabsTrigger value="scheduler" className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
-                <span className="hidden sm:inline">Schedule Post</span>
-                <span className="sm:hidden">Schedule</span>
+                <span className="hidden sm:inline">Schedule</span>
               </TabsTrigger>
               <TabsTrigger value="posts" className="flex items-center gap-2">
                 <Clock className="w-4 h-4" />
-                <span className="hidden sm:inline">Scheduled</span>
-                <span className="sm:hidden">Posts</span>
-                <Badge variant="secondary" className="ml-1">{scheduledPosts.filter(p => p.status === 'pending').length}</Badge>
+                <span className="hidden sm:inline">Posts</span>
+                <Badge variant="secondary" className="ml-1 hidden md:inline-flex">{scheduledPosts.filter(p => p.status === 'pending').length}</Badge>
               </TabsTrigger>
+              {isAdmin && (
+                <TabsTrigger value="leads" className="flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  <span className="hidden sm:inline">Leads</span>
+                  <Badge variant="secondary" className="ml-1 hidden md:inline-flex">{leads.length}</Badge>
+                </TabsTrigger>
+              )}
               <TabsTrigger value="optimize" className="flex items-center gap-2">
                 <Zap className="w-4 h-4" />
                 <span className="hidden sm:inline">Optimize</span>
-                <span className="sm:hidden">Opt</span>
               </TabsTrigger>
               <TabsTrigger value="settings" className="flex items-center gap-2">
                 <Settings className="w-4 h-4" />
@@ -3000,6 +3182,194 @@ const InstagramSchedulerPage = () => {
                 </div>
               </div>
             </TabsContent>
+
+            {/* Leads Tab (Admin Only) */}
+            {isAdmin && (
+              <TabsContent value="leads">
+                <div className="bg-card rounded-2xl border p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                        <Users className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h2 className="text-xl font-bold">Marketing Leads</h2>
+                        <p className="text-sm text-muted-foreground">{leads.length} total leads from demo users</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button onClick={fetchLeads} variant="outline" size="sm" disabled={leadsLoading}>
+                        <RefreshCw className={`w-4 h-4 mr-2 ${leadsLoading ? 'animate-spin' : ''}`} />
+                        Refresh
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Leads Stats */}
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                    <div className="bg-muted/30 rounded-xl p-4 border">
+                      <p className="text-sm text-muted-foreground">Total</p>
+                      <p className="text-2xl font-bold">{leadsStats.total}</p>
+                    </div>
+                    <div className="bg-muted/30 rounded-xl p-4 border">
+                      <p className="text-sm text-muted-foreground">Converted</p>
+                      <p className="text-2xl font-bold text-primary">{leadsStats.converted}</p>
+                    </div>
+                    <div className="bg-muted/30 rounded-xl p-4 border">
+                      <p className="text-sm text-muted-foreground">Rate</p>
+                      <p className="text-2xl font-bold">{leadsStats.conversionRate}%</p>
+                    </div>
+                    <div className="bg-muted/30 rounded-xl p-4 border">
+                      <p className="text-sm text-muted-foreground">Sources</p>
+                      <p className="text-2xl font-bold">{leadsStats.uniqueSources}</p>
+                    </div>
+                    <div className="bg-muted/30 rounded-xl p-4 border">
+                      <p className="text-sm text-muted-foreground">Demos</p>
+                      <p className="text-2xl font-bold">{leadsStats.totalDemos}</p>
+                    </div>
+                  </div>
+
+                  {/* Filters & Export */}
+                  <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between mb-6">
+                    <div className="flex flex-col md:flex-row gap-3 flex-1">
+                      <div className="relative flex-1 max-w-md">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Search email, source, referrer..."
+                          value={leadsSearchQuery}
+                          onChange={(e) => setLeadsSearchQuery(e.target.value)}
+                          className="pl-10"
+                        />
+                      </div>
+                      <select 
+                        value={leadsSourceFilter} 
+                        onChange={(e) => setLeadsSourceFilter(e.target.value)}
+                        className="h-10 px-3 rounded-md border bg-background text-sm"
+                      >
+                        {EXPERIENCE_OPTIONS.map(opt => (
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                      </select>
+                      <select 
+                        value={leadsConvertedFilter} 
+                        onChange={(e) => setLeadsConvertedFilter(e.target.value as any)}
+                        className="h-10 px-3 rounded-md border bg-background text-sm"
+                      >
+                        <option value="all">All Leads</option>
+                        <option value="converted">Converted</option>
+                        <option value="not-converted">Not Converted</option>
+                      </select>
+                    </div>
+                    <div className="flex gap-2">
+                      {selectedLeadIds.size > 0 && (
+                        <Button 
+                          onClick={() => exportLeadsToCSV(filteredLeads.filter(l => selectedLeadIds.has(l.id)))} 
+                          variant="outline" 
+                          size="sm"
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          Export ({selectedLeadIds.size})
+                        </Button>
+                      )}
+                      <Button onClick={() => exportLeadsToCSV(filteredLeads)} size="sm">
+                        <Download className="w-4 h-4 mr-2" />
+                        Export All ({filteredLeads.length})
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Leads Table */}
+                  {leadsLoading && leads.length === 0 ? (
+                    <div className="py-12 text-center text-muted-foreground">
+                      <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
+                      Loading leads...
+                    </div>
+                  ) : filteredLeads.length === 0 ? (
+                    <div className="py-12 text-center text-muted-foreground">
+                      {leadsSearchQuery || leadsSourceFilter !== 'all' || leadsConvertedFilter !== 'all' 
+                        ? 'No leads match your filters' 
+                        : 'No leads captured yet'}
+                    </div>
+                  ) : (
+                    <div className="border rounded-xl overflow-hidden">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="w-[50px]">
+                              <Checkbox
+                                checked={selectedLeadIds.size === filteredLeads.length && filteredLeads.length > 0}
+                                onCheckedChange={handleSelectAllLeads}
+                              />
+                            </TableHead>
+                            <TableHead>Email</TableHead>
+                            <TableHead>Source</TableHead>
+                            <TableHead>Demos</TableHead>
+                            <TableHead>First Seen</TableHead>
+                            <TableHead>Last Activity</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead className="w-[80px]">Action</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {filteredLeads.slice(0, 50).map((lead) => (
+                            <TableRow key={lead.id}>
+                              <TableCell>
+                                <Checkbox
+                                  checked={selectedLeadIds.has(lead.id)}
+                                  onCheckedChange={() => handleSelectLead(lead.id)}
+                                />
+                              </TableCell>
+                              <TableCell className="font-medium">{lead.email}</TableCell>
+                              <TableCell>
+                                <Badge variant="secondary">{lead.source}</Badge>
+                              </TableCell>
+                              <TableCell>{lead.total_demos_used}</TableCell>
+                              <TableCell className="text-muted-foreground text-sm">
+                                {format(new Date(lead.first_seen_at), 'MMM d, yyyy')}
+                              </TableCell>
+                              <TableCell className="text-muted-foreground text-sm">
+                                {format(new Date(lead.last_interaction_at), 'MMM d, yyyy')}
+                              </TableCell>
+                              <TableCell>
+                                {lead.converted ? (
+                                  <Badge className="bg-primary/10 text-primary border-primary/20">
+                                    <CheckCircle2 className="w-3 h-3 mr-1" />
+                                    Converted
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="outline" className="text-muted-foreground">
+                                    <XCircle className="w-3 h-3 mr-1" />
+                                    Pending
+                                  </Badge>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleToggleLeadConverted(lead)}
+                                >
+                                  {lead.converted ? (
+                                    <XCircle className="w-4 h-4 text-muted-foreground" />
+                                  ) : (
+                                    <UserCheck className="w-4 h-4 text-primary" />
+                                  )}
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                      {filteredLeads.length > 50 && (
+                        <div className="p-4 text-center text-sm text-muted-foreground border-t">
+                          Showing 50 of {filteredLeads.length} leads. Export for full list.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+            )}
           </Tabs>
         </div>
       </main>
