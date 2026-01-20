@@ -50,6 +50,30 @@ export type Database = {
         }
         Relationships: []
       }
+      instagram_credentials: {
+        Row: {
+          access_token: string
+          business_account_id: string
+          id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          access_token: string
+          business_account_id: string
+          id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          access_token?: string
+          business_account_id?: string
+          id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       scheduled_posts: {
         Row: {
           caption: string
