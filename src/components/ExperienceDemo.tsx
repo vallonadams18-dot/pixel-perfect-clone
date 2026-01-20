@@ -19,6 +19,9 @@ import superheroMale from '@/assets/persona-pop-superhero-transformation-male.jp
 import vintage1920s from '@/assets/persona-pop-vintage-1920s-portrait.jpg';
 import cyberpunkNeon from '@/assets/persona-pop-cyberpunk-neon-portrait.jpg';
 import fantasyElf from '@/assets/persona-pop-fantasy-elf-warrior.jpg';
+import renaissancePainting from '@/assets/persona-pop-renaissance-painting-portrait.jpg';
+import popArtComic from '@/assets/persona-pop-pop-art-comic-style.jpg';
+import golferTransformation from '@/assets/persona-pop-golfer-transformation.jpg';
 import pixelwearNike from '@/assets/pixelwear-nike.jpg';
 import pixelwearGucci from '@/assets/pixelwear-gucci.jpg';
 import pixelwearCowboys from '@/assets/pixelwear-cowboys.jpg';
@@ -75,6 +78,9 @@ const DEFAULT_FILTERS: Record<string, FilterOption[]> = {
     { id: 'vintage', label: '1920s Vintage', thumbnail: vintage1920s, prompt: 'Transform this into a vintage 1920s portrait with art deco styling, gatsby era glamour, sepia tones, classic portrait lighting while maintaining likeness.' },
     { id: 'cyberpunk', label: 'Cyberpunk', thumbnail: cyberpunkNeon, prompt: 'Transform into cyberpunk style with neon lights, futuristic visor, tech implants, dystopian city backdrop while maintaining likeness.' },
     { id: 'fantasy', label: 'Fantasy Elf', thumbnail: fantasyElf, prompt: 'Transform into a fantasy elf warrior with pointed ears, Celtic armor, magical glowing eyes, ethereal forest backdrop while maintaining likeness.' },
+    { id: 'renaissance', label: 'Renaissance', thumbnail: renaissancePainting, prompt: 'Transform this into a Renaissance oil painting portrait with baroque dress, dramatic chiaroscuro lighting, classical composition, and museum-quality fine art aesthetic while maintaining likeness.' },
+    { id: 'popart', label: 'Pop Art', thumbnail: popArtComic, prompt: 'Transform into bold pop art comic book style with halftone dots, bright primary colors, speech bubbles, Ben-Day dots pattern, and Andy Warhol inspired aesthetic while maintaining likeness.' },
+    { id: 'golfer', label: 'Pro Golfer', thumbnail: golferTransformation, prompt: 'Transform this person into a professional golfer on a pristine golf course with country club attire, golf clubs, scenic fairway backdrop, and sports photography style while maintaining likeness.' },
   ],
   pixelwear: [
     { id: 'nike', label: 'Nike Athletics', thumbnail: pixelwearNike, prompt: 'Transform this person wearing premium Nike athletic apparel including a sleek Nike jacket/jersey. Keep the face and background intact but make it look like they are wearing high-end Nike sportswear.' },
