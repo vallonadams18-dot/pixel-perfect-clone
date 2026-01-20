@@ -30,6 +30,8 @@ interface ScheduledPost {
   published_at: string | null;
   error_message: string | null;
   created_at: string;
+  retry_count: number;
+  next_retry_at: string | null;
 }
 
 interface MediaItem {
@@ -637,11 +639,52 @@ const InstagramSchedulerPage = () => {
         return <Badge className="bg-green-500"><CheckCircle size={12} className="mr-1" /> Published</Badge>;
       case 'failed':
         return <Badge variant="destructive"><XCircle size={12} className="mr-1" /> Failed</Badge>;
+      case 'retrying':
+        return <Badge variant="outline" className="text-orange-600 border-orange-300"><RefreshCw size={12} className="mr-1 animate-spin" /> Retrying</Badge>;
       case 'cancelled':
         return <Badge variant="secondary"><AlertCircle size={12} className="mr-1" /> Cancelled</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
+  };
+
+  const formatTimeUntil = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = date.getTime() - now.getTime();
+    
+    if (diffMs < 0) return 'now';
+    if (diffMs < 60000) return 'less than a minute';
+    
+    const minutes = Math.floor(diffMs / 60000);
+    if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''}`;
+    
+    const hours = Math.floor(minutes / 60);
+    return `${hours} hour${hours > 1 ? 's' : ''}`;
+  };
+
+  const handleRetryPost = async (post: ScheduledPost) => {
+    // Reset the post to pending state
+    const { error } = await supabase
+      .from('scheduled_posts')
+      .update({
+        status: 'pending',
+        error_message: null,
+        retry_count: 0,
+        next_retry_at: null,
+      })
+      .eq('id', post.id);
+    
+    if (error) {
+      toast({ title: 'Failed to reset post', description: error.message, variant: 'destructive' });
+      return;
+    }
+    
+    toast({ title: 'Post reset', description: 'Attempting to publish...' });
+    await fetchScheduledPosts();
+    
+    // Immediately attempt to publish
+    handlePublishNow({ ...post, status: 'pending', error_message: null, retry_count: 0, next_retry_at: null });
   };
 
   const formatDate = (dateString: string) => {
@@ -1317,6 +1360,16 @@ const InstagramSchedulerPage = () => {
                             <p className="text-xs text-destructive mb-3">{post.error_message}</p>
                           )}
                           
+                          {/* Retry info for retrying posts */}
+                          {post.status === 'retrying' && (
+                            <div className="text-xs text-orange-600 mb-3 space-y-1 bg-orange-50 dark:bg-orange-950/30 p-2 rounded-lg">
+                              <p className="font-medium">Attempt {post.retry_count}/5</p>
+                              {post.next_retry_at && (
+                                <p className="text-muted-foreground">Next retry in {formatTimeUntil(post.next_retry_at)}</p>
+                              )}
+                            </div>
+                          )}
+                          
                           {post.status === 'pending' && (
                             <div className="flex gap-2">
                               <Button 
@@ -1337,7 +1390,44 @@ const InstagramSchedulerPage = () => {
                             </div>
                           )}
                           
-                          {(post.status === 'cancelled' || post.status === 'failed') && (
+                          {/* Actions for retrying posts */}
+                          {post.status === 'retrying' && (
+                            <div className="flex gap-2">
+                              <Button 
+                                size="sm" 
+                                className="flex-1"
+                                onClick={() => handlePublishNow(post)}
+                                disabled={publishing === post.id}
+                              >
+                                {publishing === post.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3 mr-1" />}
+                                Force Publish
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={() => handleCancelPost(post.id)}>
+                                Cancel
+                              </Button>
+                            </div>
+                          )}
+                          
+                          {/* Actions for failed posts - with Retry button */}
+                          {post.status === 'failed' && (
+                            <div className="flex gap-2">
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="flex-1"
+                                onClick={() => handleRetryPost(post)}
+                                disabled={publishing === post.id}
+                              >
+                                {publishing === post.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3 mr-1" />}
+                                Retry
+                              </Button>
+                              <Button size="sm" variant="destructive" onClick={() => handleDeletePost(post.id)}>
+                                <Trash2 className="w-3 h-3 mr-1" /> Delete
+                              </Button>
+                            </div>
+                          )}
+                          
+                          {post.status === 'cancelled' && (
                             <Button size="sm" variant="destructive" className="w-full" onClick={() => handleDeletePost(post.id)}>
                               <Trash2 className="w-3 h-3 mr-1" /> Delete
                             </Button>
