@@ -147,7 +147,33 @@ const InstagramSchedulerPage = () => {
   const [showDiagnostics, setShowDiagnostics] = useState(false);
   
   const { toast } = useToast();
-  
+
+  // Helper: convert blob/file URL to data URL (base64) so the edge function can read it
+  const toDataUrl = async (blobOrUrl: string | File): Promise<string> => {
+    if (blobOrUrl instanceof File) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blobOrUrl);
+      });
+    }
+    if (typeof blobOrUrl === 'string') {
+      if (blobOrUrl.startsWith('data:')) return blobOrUrl;
+      if (blobOrUrl.startsWith('blob:')) {
+        const resp = await fetch(blobOrUrl);
+        const blob = await resp.blob();
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      }
+    }
+    return blobOrUrl as string; // already https URL – return as-is
+  };
+
   // Content stats
   const contentStats = useMemo(() => {
     const totalPosts = scheduledPosts.length;
@@ -563,9 +589,10 @@ const InstagramSchedulerPage = () => {
 
   // AI Image Transformation
   const handleTransformImage = async () => {
-    const currentImageUrl = imageFile ? URL.createObjectURL(imageFile) : imageUrl;
-    
-    if (!currentImageUrl) {
+    // Use file if available, else fallback to stored URL
+    const rawSource = imageFile || imageUrl;
+
+    if (!rawSource) {
       toast({ title: 'No image selected', description: 'Select an image first to transform', variant: 'destructive' });
       return;
     }
@@ -591,10 +618,20 @@ const InstagramSchedulerPage = () => {
       toast({ title: 'Please log in', variant: 'destructive' });
       return;
     }
+
+    // Convert blob/file to data URL so edge function can read it
+    let imageUrlToSend: string;
+    try {
+      imageUrlToSend = await toDataUrl(rawSource);
+    } catch (e) {
+      console.error('Failed to convert image:', e);
+      toast({ title: 'Could not read image', variant: 'destructive' });
+      return;
+    }
     
     // Store original if not already stored
     if (!originalImageUrl) {
-      setOriginalImageUrl(currentImageUrl);
+      setOriginalImageUrl(typeof rawSource === 'string' ? rawSource : URL.createObjectURL(rawSource));
     }
     
     setTransformingImage(true);
@@ -606,7 +643,7 @@ const InstagramSchedulerPage = () => {
           Authorization: `Bearer ${session.access_token}`,
         },
         body: {
-          imageUrl: currentImageUrl,
+          imageUrl: imageUrlToSend,
           style: selectedTransformStyle,
           customPrompt: customStylePrompt.trim() || undefined,
           model: selectedModel,
@@ -663,9 +700,9 @@ const InstagramSchedulerPage = () => {
 
   // Compare both models side-by-side
   const handleCompareModels = async () => {
-    const currentImageUrl = imageFile ? URL.createObjectURL(imageFile) : imageUrl;
+    const rawSource = imageFile || imageUrl;
     
-    if (!currentImageUrl) {
+    if (!rawSource) {
       toast({ title: 'No image selected', description: 'Select an image first to compare', variant: 'destructive' });
       return;
     }
@@ -684,10 +721,20 @@ const InstagramSchedulerPage = () => {
       toast({ title: 'Please log in', variant: 'destructive' });
       return;
     }
+
+    // Convert blob/file to data URL
+    let imageUrlToSend: string;
+    try {
+      imageUrlToSend = await toDataUrl(rawSource);
+    } catch (e) {
+      console.error('Failed to convert image:', e);
+      toast({ title: 'Could not read image', variant: 'destructive' });
+      return;
+    }
     
     // Store original if not already stored
     if (!originalImageUrl) {
-      setOriginalImageUrl(currentImageUrl);
+      setOriginalImageUrl(typeof rawSource === 'string' ? rawSource : URL.createObjectURL(rawSource));
     }
     
     setComparing(true);
@@ -699,7 +746,7 @@ const InstagramSchedulerPage = () => {
       supabase.functions.invoke('transform-image-style', {
         headers: { Authorization: `Bearer ${session.access_token}` },
         body: {
-          imageUrl: currentImageUrl,
+          imageUrl: imageUrlToSend,
           style: selectedTransformStyle,
           customPrompt: customStylePrompt.trim() || undefined,
           model: 'gemini',
@@ -708,7 +755,7 @@ const InstagramSchedulerPage = () => {
       supabase.functions.invoke('transform-image-style', {
         headers: { Authorization: `Bearer ${session.access_token}` },
         body: {
-          imageUrl: currentImageUrl,
+          imageUrl: imageUrlToSend,
           style: selectedTransformStyle,
           customPrompt: customStylePrompt.trim() || undefined,
           model: 'chatgpt',

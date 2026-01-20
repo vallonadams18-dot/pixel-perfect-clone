@@ -28,6 +28,36 @@ const SERVICE_STYLES: Record<string, string> = {
   'fantasy': 'Transform this into a fantasy realm with magical elements, mystical lighting, elvish or wizard styling, enchanted forest or castle backdrop, and ethereal glow effects.',
 };
 
+function decodeDataUrl(dataUrl: string): { contentType: string; bytes: Uint8Array } {
+  const match = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
+  if (!match) throw new Error('Invalid data URL');
+  const contentType = match[1];
+  const b64 = match[2];
+  const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+  return { contentType, bytes };
+}
+
+function extractGeneratedImageUrl(data: any): string | null {
+  const direct = data?.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+  if (typeof direct === 'string' && direct.length > 0) return direct;
+
+  const content = data?.choices?.[0]?.message?.content;
+  if (Array.isArray(content)) {
+    const part = content.find((p: any) => p?.type === 'image_url' && p?.image_url?.url);
+    if (part?.image_url?.url) return part.image_url.url;
+  }
+
+  if (Array.isArray(data?.images) && data.images?.[0]?.url) return data.images[0].url;
+
+  if (Array.isArray(data?.data)) {
+    const first = data.data[0];
+    if (first?.url) return first.url;
+    if (first?.b64_json) return `data:image/jpeg;base64,${first.b64_json}`;
+  }
+
+  return null;
+}
+
 Deno.serve(async (req) => {
   console.log('Transform image request received');
   
@@ -78,29 +108,20 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Validate imageUrl - only allow HTTPS from Supabase storage
-    try {
-      const url = new URL(imageUrl);
-      if (url.protocol !== 'https:' && !imageUrl.startsWith('blob:') && !imageUrl.startsWith('data:')) {
-        return new Response(
-          JSON.stringify({ error: 'Image URL must use HTTPS' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      if (imageUrl.length > 4096) {
-        return new Response(
-          JSON.stringify({ error: 'URL too long' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-    } catch {
-      // Allow blob: and data: URLs for local previews
-      if (!imageUrl.startsWith('blob:') && !imageUrl.startsWith('data:')) {
-        return new Response(
-          JSON.stringify({ error: 'Invalid URL format' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
+    // Reject blob: URLs - frontend should convert them to data: URLs first
+    if (imageUrl.startsWith('blob:')) {
+      return new Response(
+        JSON.stringify({ error: 'Blob URLs cannot be processed. Please re-select the image.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate HTTPS or data: URL
+    if (!imageUrl.startsWith('data:') && !imageUrl.startsWith('https://')) {
+      return new Response(
+        JSON.stringify({ error: 'Image URL must use HTTPS or be a data URL' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Handle custom style
@@ -130,6 +151,33 @@ Deno.serve(async (req) => {
 
     console.log(`Transforming image for user ${user.id} with style: ${style}${isCustomStyle ? ' (custom)' : ''}, model: ${model}`);
 
+    // If the input is a data URL, upload it first so the AI can fetch it
+    let inputImageUrl = imageUrl;
+    if (imageUrl.startsWith('data:')) {
+      try {
+        const { contentType, bytes } = decodeDataUrl(imageUrl);
+        const timestamp = Date.now();
+        const ext = contentType.includes('png') ? 'png' : 'jpg';
+        const inputPath = `${user.id}/transform-input-${timestamp}.${ext}`;
+
+        const { error: inputUploadError } = await supabase.storage
+          .from('instagram-images')
+          .upload(inputPath, bytes, { contentType, upsert: true });
+
+        if (!inputUploadError) {
+          const { data: publicUrlData } = supabase.storage
+            .from('instagram-images')
+            .getPublicUrl(inputPath);
+          inputImageUrl = publicUrlData.publicUrl;
+          console.log('Input uploaded for AI access');
+        } else {
+          console.error('Input upload error:', inputUploadError);
+        }
+      } catch (e) {
+        console.error('Failed to decode/upload input image:', e);
+      }
+    }
+
     // Get the style prompt - prioritize custom prompt for custom style
     let stylePrompt: string;
     if (isCustomStyle && customPrompt) {
@@ -143,14 +191,14 @@ Deno.serve(async (req) => {
       stylePrompt = `Transform this image into ${style} style.`;
     }
     
-    const fullPrompt = `${stylePrompt} Maintain the person's likeness and identity. Create a high-quality, professional result suitable for social media posting.`;
+    const fullPrompt = `${stylePrompt} Maintain the person's likeness and identity. Create a high-quality, professional result suitable for social media posting. Output MUST include exactly one generated image. Do not ask questions.`;
 
     console.log('Calling AI gateway for image transformation...');
 
     // Determine the model to use
     const modelId = model === 'chatgpt' 
       ? 'openai/gpt-5' 
-      : 'google/gemini-2.5-flash-image-preview';
+      : 'google/gemini-2.5-flash-image';
 
     // Call Lovable AI for image editing
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -162,23 +210,19 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         model: modelId,
         messages: [
+          { role: 'system', content: 'You are an image generation + editing model. Always return an image output.' },
           {
             role: 'user',
             content: [
-              {
-                type: 'text',
-                text: fullPrompt
-              },
+              { type: 'text', text: fullPrompt },
               {
                 type: 'image_url',
-                image_url: {
-                  url: imageUrl
-                }
-              }
-            ]
-          }
+                image_url: { url: inputImageUrl },
+              },
+            ],
+          },
         ],
-        modalities: ['image', 'text']
+        modalities: ['image', 'text'],
       }),
     });
 
@@ -208,58 +252,49 @@ Deno.serve(async (req) => {
     const data = await response.json();
     console.log('AI response received');
 
-    // Extract the generated image
-    const generatedImage = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+    // Extract the generated image using helper
+    const generatedImage = extractGeneratedImageUrl(data);
     
     if (!generatedImage) {
       console.error('No image in response:', JSON.stringify(data));
       return new Response(
-        JSON.stringify({ error: 'No image was generated. The AI may not be able to transform this particular image.' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ success: false, error: 'No image was generated. Try a different photo or style.' }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Upload the transformed image to storage
-    const timestamp = Date.now();
-    const fileName = `transformed-${style}-${timestamp}.jpg`;
-    const filePath = `${user.id}/${fileName}`;
+    // If it's a data URL, upload to storage; if HTTPS already, use as-is
+    let imageUrlResult = generatedImage;
+    if (generatedImage.startsWith('data:')) {
+      const timestamp = Date.now();
+      const fileName = `transformed-${style}-${timestamp}.jpg`;
+      const filePath = `${user.id}/${fileName}`;
 
-    // Convert base64 to blob
-    const base64Data = generatedImage.split(',')[1];
-    const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+      try {
+        const { bytes } = decodeDataUrl(generatedImage);
 
-    const { error: uploadError } = await supabase.storage
-      .from('instagram-images')
-      .upload(filePath, binaryData, {
-        contentType: 'image/jpeg',
-        upsert: true
-      });
+        const { error: uploadError } = await supabase.storage
+          .from('instagram-images')
+          .upload(filePath, bytes, { contentType: 'image/jpeg', upsert: true });
 
-    if (uploadError) {
-      console.error('Upload error:', uploadError);
-      // Return base64 image directly if upload fails
-      return new Response(
-        JSON.stringify({ 
-          success: true, 
-          imageUrl: generatedImage,
-          style: style,
-          message: 'Image transformed (stored temporarily)'
-        }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+        if (!uploadError) {
+          const { data: publicUrlData } = supabase.storage
+            .from('instagram-images')
+            .getPublicUrl(filePath);
+          imageUrlResult = publicUrlData.publicUrl;
+          console.log('Transformed image uploaded successfully');
+        } else {
+          console.error('Upload error:', uploadError);
+        }
+      } catch (e) {
+        console.error('Failed to decode/upload output image:', e);
+      }
     }
-
-    // Get public URL
-    const { data: publicUrlData } = supabase.storage
-      .from('instagram-images')
-      .getPublicUrl(filePath);
-
-    console.log('Transformed image uploaded successfully');
 
     return new Response(
       JSON.stringify({
         success: true,
-        imageUrl: publicUrlData.publicUrl,
+        imageUrl: imageUrlResult,
         style: style,
         message: `Image transformed to ${style} style`
       }),
