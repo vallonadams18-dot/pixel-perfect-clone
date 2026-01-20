@@ -160,19 +160,72 @@ const ExperienceDemo = ({
 
   const startCamera = useCallback(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } } 
-      });
+      // Check if mediaDevices is available (HTTPS required on most browsers)
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        toast({ 
+          title: 'Camera not available', 
+          description: 'Your browser does not support camera access. Try uploading a photo instead.',
+          variant: 'destructive' 
+        });
+        return;
+      }
+
+      // Cross-platform camera constraints
+      // iOS Safari requires specific constraints; Android/Windows more flexible
+      const constraints: MediaStreamConstraints = {
+        video: {
+          facingMode: 'user',
+          width: { ideal: 1280, max: 1920 },
+          height: { ideal: 720, max: 1080 },
+        },
+        audio: false,
+      };
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       streamRef.current = stream;
+      
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        // Ensure video plays on iOS Safari (requires user interaction + playsinline)
+        await videoRef.current.play().catch(() => {
+          // Fallback: play will be triggered by user action
+        });
       }
       setIsCameraOpen(true);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Camera error:', error);
+      
+      // Provide specific error messages based on error type
+      let errorMessage = 'Please allow camera access to take a photo.';
+      
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        errorMessage = 'Camera permission was denied. Please allow camera access in your browser settings.';
+      } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+        errorMessage = 'No camera found. Please connect a camera or use the upload option.';
+      } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+        errorMessage = 'Camera is in use by another app. Please close other camera apps and try again.';
+      } else if (error.name === 'OverconstrainedError') {
+        // Try again with simpler constraints
+        try {
+          const fallbackStream = await navigator.mediaDevices.getUserMedia({ 
+            video: true, 
+            audio: false 
+          });
+          streamRef.current = fallbackStream;
+          if (videoRef.current) {
+            videoRef.current.srcObject = fallbackStream;
+            await videoRef.current.play().catch(() => {});
+          }
+          setIsCameraOpen(true);
+          return;
+        } catch {
+          errorMessage = 'Camera settings not supported. Try uploading a photo instead.';
+        }
+      }
+      
       toast({ 
-        title: 'Camera access denied', 
-        description: 'Please allow camera access to take a photo.',
+        title: 'Camera access failed', 
+        description: errorMessage,
         variant: 'destructive' 
       });
     }
