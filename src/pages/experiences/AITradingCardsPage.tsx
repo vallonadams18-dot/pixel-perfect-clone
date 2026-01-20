@@ -10,17 +10,13 @@ import DemoCTABanner from '@/components/DemoCTABanner';
 import { Link } from 'react-router-dom';
 import { Sparkles, Check, ArrowRight, Layers, Smartphone, Gem } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
-
-const tradingCardsFaqs = [
-  {
-    question: "What makes AI trading cards different from regular photo booth prints?",
-    answer: "AI trading cards transform guests into illustrated collectible art with custom stats, rarity tiers (Common, Rare, Legendary, Limited), holographic effects, and optional AR features that unlock digital experiences."
-  },
-  {
-    question: "Can we customize the trading card design for our brand?",
-    answer: "Yes! We create fully custom card templates matching your brand identity, including logos, colors, custom stat categories, and themed art styles for sports teams, gaming events, or corporate activations."
-  }
-];
+const tradingCardsFaqs = [{
+  question: "What makes AI trading cards different from regular photo booth prints?",
+  answer: "AI trading cards transform guests into illustrated collectible art with custom stats, rarity tiers (Common, Rare, Legendary, Limited), holographic effects, and optional AR features that unlock digital experiences."
+}, {
+  question: "Can we customize the trading card design for our brand?",
+  answer: "Yes! We create fully custom card templates matching your brand identity, including logos, colors, custom stat categories, and themed art styles for sports teams, gaming events, or corporate activations."
+}];
 
 // AI Trading Cards Gallery Images
 import tradingCardSportsDisplay from '@/assets/ai-trading-cards-sports-collectibles-display.jpg';
@@ -43,59 +39,76 @@ import tradeshowPixelaipro2 from '@/assets/tradeshow-pixelaipro-2.jpg';
 import tradeshowGrfuRugby from '@/assets/tradeshow-grfu-rugby.jpg';
 import tradeshowBasketball from '@/assets/tradeshow-trading-card-basketball.jpg';
 import tradeshowFootball from '@/assets/tradeshow-trading-card-football.jpg';
-
-const galleryImages = [
-  { src: tradeshowGiantsGold, alt: 'NY Giants Champions gold edition trading card with football player portrait' },
-  { src: tradeshowGiantsBlue, alt: 'NY Giants neon blue edition trading card with dynamic sports design' },
-  { src: tradeshowBrowns, alt: 'Cleveland Browns championship trading card with orange theme' },
-  { src: tradeshowCowboys, alt: 'Dallas Cowboys trading card featuring personalized player portrait' },
-  { src: tradeshowBleepshare, alt: 'Custom basketball trading card with ice blue holographic effects' },
-  { src: tradeshowBraves, alt: 'Atlanta Braves baseball trading card with stadium backdrop' },
-  { src: tradeshowPixelaipro1, alt: 'PixelAI Pro branded basketball card with diamond effects' },
-  { src: tradeshowPixelaipro2, alt: 'PixelAI Pro champion edition basketball trading card' },
-  { src: tradeshowGrfuRugby, alt: 'GRFU Rugby trading card featuring flanker player portrait' },
-  { src: tradeshowBasketball, alt: 'Buffalo basketball trading card with player stats display' },
-  { src: tradeshowFootball, alt: 'Miami Hurricanes football trading card with green theme' },
-  { src: tradingCardMultiSport, alt: 'AI trading cards collection featuring custom sports portraits with baseball, football, basketball and hockey player designs' },
-  { src: tradingCardCollection, alt: 'Premium AI-generated trading cards display showcasing collectible athlete portraits with holographic effects' },
-  { src: tradingCardSportsDisplay, alt: 'Person holding custom AI trading cards featuring personalized basketball and sports player portraits' },
-  { src: tradingCardBaseball, alt: 'Custom AI trading cards with baseball player portrait and personalized athlete card designs' },
-  { src: tradingCardAthlete, alt: 'AI-generated personalized trading cards featuring athletic portrait transformations and custom stats' },
-  { src: tradingCardPrinter, alt: 'AI trading card printer producing custom collectible cards with professional sports player designs' },
-];
-
-const features = [
-  {
-    icon: Sparkles,
-    title: 'Stylized AI Portraits',
-    description: 'Neural networks transform guest photos into stunning illustrated trading card art with unique aesthetics.'
-  },
-  {
-    icon: Layers,
-    title: 'Rarity Tier System',
-    description: 'Create collectible excitement with common, rare, legendary, and limited edition card tiers.'
-  },
-  {
-    icon: Gem,
-    title: 'Premium Print Quality',
-    description: 'Museum-grade card stock with holographic effects, foil stamping, and premium finishes.'
-  },
-  {
-    icon: Smartphone,
-    title: 'AR Integration',
-    description: 'Unlock augmented reality card features for an immersive digital experience.'
-  },
-];
-
-const benefits = [
-  'Collector-grade quality guests cherish',
-  'Multiple art styles and aesthetics',
-  'Gamification drives repeat engagement',
-  'Perfect for sports and entertainment',
-  'Digital twin for online collecting',
-  'Custom stat and lore generation',
-];
-
+const galleryImages = [{
+  src: tradeshowGiantsGold,
+  alt: 'NY Giants Champions gold edition trading card with football player portrait'
+}, {
+  src: tradeshowGiantsBlue,
+  alt: 'NY Giants neon blue edition trading card with dynamic sports design'
+}, {
+  src: tradeshowBrowns,
+  alt: 'Cleveland Browns championship trading card with orange theme'
+}, {
+  src: tradeshowCowboys,
+  alt: 'Dallas Cowboys trading card featuring personalized player portrait'
+}, {
+  src: tradeshowBleepshare,
+  alt: 'Custom basketball trading card with ice blue holographic effects'
+}, {
+  src: tradeshowBraves,
+  alt: 'Atlanta Braves baseball trading card with stadium backdrop'
+}, {
+  src: tradeshowPixelaipro1,
+  alt: 'PixelAI Pro branded basketball card with diamond effects'
+}, {
+  src: tradeshowPixelaipro2,
+  alt: 'PixelAI Pro champion edition basketball trading card'
+}, {
+  src: tradeshowGrfuRugby,
+  alt: 'GRFU Rugby trading card featuring flanker player portrait'
+}, {
+  src: tradeshowBasketball,
+  alt: 'Buffalo basketball trading card with player stats display'
+}, {
+  src: tradeshowFootball,
+  alt: 'Miami Hurricanes football trading card with green theme'
+}, {
+  src: tradingCardMultiSport,
+  alt: 'AI trading cards collection featuring custom sports portraits with baseball, football, basketball and hockey player designs'
+}, {
+  src: tradingCardCollection,
+  alt: 'Premium AI-generated trading cards display showcasing collectible athlete portraits with holographic effects'
+}, {
+  src: tradingCardSportsDisplay,
+  alt: 'Person holding custom AI trading cards featuring personalized basketball and sports player portraits'
+}, {
+  src: tradingCardBaseball,
+  alt: 'Custom AI trading cards with baseball player portrait and personalized athlete card designs'
+}, {
+  src: tradingCardAthlete,
+  alt: 'AI-generated personalized trading cards featuring athletic portrait transformations and custom stats'
+}, {
+  src: tradingCardPrinter,
+  alt: 'AI trading card printer producing custom collectible cards with professional sports player designs'
+}];
+const features = [{
+  icon: Sparkles,
+  title: 'Stylized AI Portraits',
+  description: 'Neural networks transform guest photos into stunning illustrated trading card art with unique aesthetics.'
+}, {
+  icon: Layers,
+  title: 'Rarity Tier System',
+  description: 'Create collectible excitement with common, rare, legendary, and limited edition card tiers.'
+}, {
+  icon: Gem,
+  title: 'Premium Print Quality',
+  description: 'Museum-grade card stock with holographic effects, foil stamping, and premium finishes.'
+}, {
+  icon: Smartphone,
+  title: 'AR Integration',
+  description: 'Unlock augmented reality card features for an immersive digital experience.'
+}];
+const benefits = ['Collector-grade quality guests cherish', 'Multiple art styles and aesthetics', 'Gamification drives repeat engagement', 'Perfect for sports and entertainment', 'Digital twin for online collecting', 'Custom stat and lore generation'];
 const AITradingCardsPage = () => {
   usePageMeta({
     title: 'AI Trading Cards Photo Booth NYC | Custom Collectible Cards | PixelAI Pro',
@@ -103,49 +116,41 @@ const AITradingCardsPage = () => {
     ogImage: '/og-ai-trading-cards.jpg',
     canonicalPath: '/experiences/ai-trading-cards',
     keywords: 'AI trading cards, custom trading card booth, sports trading cards event, collectible card photo booth NYC, branded trading cards, convention trading cards, AR trading cards',
-    schema: [
-      {
-        "@context": "https://schema.org",
-        "@type": "Service",
-        "name": "AI Trading Cards Photo Booth",
-        "serviceType": "Custom AI Trading Card Experience",
-        "description": "Premium AI-generated trading cards with stylized portraits, custom stats, rarity tiers, and optional AR integration for sports, gaming, and brand activations.",
-        "provider": {
-          "@type": "LocalBusiness",
-          "@id": "https://pixelaipro.lovable.app/#business"
-        },
-        "areaServed": {
-          "@type": "City",
-          "name": "New York City"
-        }
+    schema: [{
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "name": "AI Trading Cards Photo Booth",
+      "serviceType": "Custom AI Trading Card Experience",
+      "description": "Premium AI-generated trading cards with stylized portraits, custom stats, rarity tiers, and optional AR integration for sports, gaming, and brand activations.",
+      "provider": {
+        "@type": "LocalBusiness",
+        "@id": "https://pixelaipro.lovable.app/#business"
       },
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What makes AI trading cards different from regular photo booth prints?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "AI trading cards transform guests into illustrated collectible art with custom stats, rarity tiers (Common, Rare, Legendary, Limited), holographic effects, and optional AR features that unlock digital experiences."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Can we customize the trading card design for our brand?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes! We create fully custom card templates matching your brand identity, including logos, colors, custom stat categories, and themed art styles for sports teams, gaming events, or corporate activations."
-            }
-          }
-        ]
+      "areaServed": {
+        "@type": "City",
+        "name": "New York City"
       }
-    ]
+    }, {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "What makes AI trading cards different from regular photo booth prints?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "AI trading cards transform guests into illustrated collectible art with custom stats, rarity tiers (Common, Rare, Legendary, Limited), holographic effects, and optional AR features that unlock digital experiences."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Can we customize the trading card design for our brand?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! We create fully custom card templates matching your brand identity, including logos, colors, custom stat categories, and themed art styles for sports teams, gaming events, or corporate activations."
+        }
+      }]
+    }]
   });
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Header />
       <div className="pt-32 pb-20">
         {/* Hero Section */}
@@ -155,10 +160,12 @@ const AITradingCardsPage = () => {
           <div className="container-custom relative z-10">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div>
-                <Breadcrumbs items={[
-                  { label: 'AI Photo Booth Services', href: '/services' },
-                  { label: 'AI Trading Cards' }
-                ]} />
+                <Breadcrumbs items={[{
+                label: 'AI Photo Booth Services',
+                href: '/services'
+              }, {
+                label: 'AI Trading Cards'
+              }]} />
                 <div className="w-20 h-20 rounded-2xl bg-gradient-primary flex items-center justify-center mb-6">
                   <Sparkles size={40} className="text-white" />
                 </div>
@@ -185,11 +192,7 @@ const AITradingCardsPage = () => {
               </div>
               
               <div className="relative aspect-[4/3] rounded-3xl overflow-hidden glass glow">
-                <img 
-                  src={tradingCardHero} 
-                  alt="AI trading cards collection featuring custom sports portraits with baseball, football, basketball and hockey player designs"
-                  className="w-full h-full object-cover"
-                />
+                <img src={tradingCardHero} alt="AI trading cards collection featuring custom sports portraits with baseball, football, basketball and hockey player designs" className="w-full h-full object-cover" />
               </div>
             </div>
           </div>
@@ -205,17 +208,26 @@ const AITradingCardsPage = () => {
               Create collector excitement with tiered rarity systems that drive engagement.
             </p>
             <div className="grid md:grid-cols-4 gap-6">
-              {[
-                { tier: 'Common', color: 'from-gray-500/20 to-gray-600/20', desc: 'Standard edition cards' },
-                { tier: 'Rare', color: 'from-blue-500/20 to-blue-600/20', desc: 'Enhanced foil effects' },
-                { tier: 'Legendary', color: 'from-purple-500/20 to-purple-600/20', desc: 'Holographic finish' },
-                { tier: 'Limited', color: 'from-yellow-500/20 to-yellow-600/20', desc: 'Numbered editions' },
-              ].map((item) => (
-                <div key={item.tier} className={`glass rounded-xl p-6 text-center bg-gradient-to-br ${item.color}`}>
+              {[{
+              tier: 'Common',
+              color: 'from-gray-500/20 to-gray-600/20',
+              desc: 'Standard edition cards'
+            }, {
+              tier: 'Rare',
+              color: 'from-blue-500/20 to-blue-600/20',
+              desc: 'Enhanced foil effects'
+            }, {
+              tier: 'Legendary',
+              color: 'from-purple-500/20 to-purple-600/20',
+              desc: 'Holographic finish'
+            }, {
+              tier: 'Limited',
+              color: 'from-yellow-500/20 to-yellow-600/20',
+              desc: 'Numbered editions'
+            }].map(item => <div key={item.tier} className={`glass rounded-xl p-6 text-center bg-gradient-to-br ${item.color}`}>
                   <h3 className="font-display text-xl font-bold text-foreground mb-2">{item.tier}</h3>
                   <p className="text-sm text-muted-foreground">{item.desc}</p>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
         </section>
@@ -230,26 +242,29 @@ const AITradingCardsPage = () => {
               Premium collectibles created in minutes with neural portrait technology.
             </p>
             <div className="grid md:grid-cols-3 gap-8">
-              {[
-                { step: '01', title: 'Capture', desc: 'Portrait photo and optional personality quiz for stats.' },
-                { step: '02', title: 'Stylize', desc: 'AI transforms photo into stunning illustrated card art.' },
-                { step: '03', title: 'Collect', desc: 'Premium printed card with optional AR features.' },
-              ].map((item) => (
-                <div key={item.step} className="text-center">
+              {[{
+              step: '01',
+              title: 'Capture',
+              desc: 'Portrait photo and optional personality quiz for stats.'
+            }, {
+              step: '02',
+              title: 'Stylize',
+              desc: 'AI transforms photo into stunning illustrated card art.'
+            }, {
+              step: '03',
+              title: 'Collect',
+              desc: 'Premium printed card with optional AR features.'
+            }].map(item => <div key={item.step} className="text-center">
                   <div className="text-6xl font-display font-bold gradient-text mb-4">{item.step}</div>
                   <h3 className="text-xl font-bold text-foreground mb-2">{item.title}</h3>
                   <p className="text-muted-foreground">{item.desc}</p>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
         </section>
 
         {/* Demo CTA Banner */}
-        <DemoCTABanner 
-          experienceTitle="AI Trading Cards" 
-          subtitle="Transform into a collectible sports card star. 2 free tries!" 
-        />
+        <DemoCTABanner experienceTitle="AI Trading Cards" subtitle="Transform into a collectible sports card star. 2 free tries!" />
 
         {/* Features Section */}
         <section className="section-padding bg-card/50">
@@ -261,8 +276,7 @@ const AITradingCardsPage = () => {
               Premium collectible technology for unforgettable brand experiences.
             </p>
             <div className="grid md:grid-cols-2 gap-8">
-              {features.map((feature) => (
-                <div key={feature.title} className="glass rounded-xl p-8 flex items-start gap-6">
+              {features.map(feature => <div key={feature.title} className="glass rounded-xl p-8 flex items-start gap-6">
                   <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
                     <feature.icon size={28} className="text-primary" />
                   </div>
@@ -270,8 +284,7 @@ const AITradingCardsPage = () => {
                     <h3 className="text-xl font-bold text-foreground mb-2">{feature.title}</h3>
                     <p className="text-muted-foreground">{feature.description}</p>
                   </div>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
         </section>
@@ -283,14 +296,12 @@ const AITradingCardsPage = () => {
               Why Brands Choose <span className="gradient-text">AI Trading Cards</span>
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {benefits.map((benefit) => (
-                <div key={benefit} className="glass rounded-xl p-6 flex items-start gap-4">
+              {benefits.map(benefit => <div key={benefit} className="glass rounded-xl p-6 flex items-start gap-4">
                   <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
                     <Check size={16} className="text-primary" />
                   </div>
                   <span className="text-foreground">{benefit}</span>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
         </section>
@@ -305,18 +316,10 @@ const AITradingCardsPage = () => {
               Explore our collection of AI-generated trading cards featuring custom sports portraits and collectible designs.
             </p>
             <GalleryGrid columns={4} gap="lg">
-              {galleryImages.map((image, index) => (
-                <div key={index} className="group relative overflow-hidden rounded-2xl glass">
-                  <ImageWithSkeleton
-                    src={image.src}
-                    alt={image.alt}
-                    aspectRatio="3/4"
-                    priority={index < 4}
-                    className="transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
-              ))}
+              {galleryImages.map((image, index) => <div key={index} className="group relative overflow-hidden rounded-2xl glass">
+                  <ImageWithSkeleton src={image.src} alt={image.alt} aspectRatio="3/4" priority={index < 4} className="transition-transform duration-500 group-hover:scale-110" />
+                  
+                </div>)}
             </GalleryGrid>
           </div>
         </section>
@@ -328,11 +331,9 @@ const AITradingCardsPage = () => {
               Popular <span className="gradient-text">Use Cases</span>
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {['Sports Teams & Leagues', 'Gaming & Esports', 'Comic-Con & Conventions', 'Entertainment Marketing'].map((useCase) => (
-                <div key={useCase} className="glass rounded-xl p-6 text-center">
+              {['Sports Teams & Leagues', 'Gaming & Esports', 'Comic-Con & Conventions', 'Entertainment Marketing'].map(useCase => <div key={useCase} className="glass rounded-xl p-6 text-center">
                   <h3 className="font-bold text-foreground">{useCase}</h3>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
         </section>
@@ -340,21 +341,12 @@ const AITradingCardsPage = () => {
         {/* Interactive Demo Section */}
         <section className="section-padding" id="try-demo">
           <div className="container-custom max-w-4xl">
-            <ExperienceDemo
-              experience="trading-cards"
-              experienceTitle="AI Trading Cards"
-              experienceDescription="Transform yourself into a collectible sports card legend!"
-            />
+            <ExperienceDemo experience="trading-cards" experienceTitle="AI Trading Cards" experienceDescription="Transform yourself into a collectible sports card legend!" />
           </div>
         </section>
 
         {/* FAQ Section */}
-        <FAQSection 
-          title="Frequently Asked Questions"
-          subtitle="Learn more about AI-powered trading card experiences."
-          faqs={tradingCardsFaqs}
-          gradientWord="Questions"
-        />
+        <FAQSection title="Frequently Asked Questions" subtitle="Learn more about AI-powered trading card experiences." faqs={tradingCardsFaqs} gradientWord="Questions" />
 
         {/* CTA Section */}
         <section className="section-padding">
@@ -378,8 +370,6 @@ const AITradingCardsPage = () => {
         <RelatedServices currentSlug="ai-trading-cards" />
       </div>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default AITradingCardsPage;
