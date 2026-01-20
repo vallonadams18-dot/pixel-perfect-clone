@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
+import { format, subDays, startOfDay, endOfDay } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useAdminRole } from '@/hooks/useAdminRole';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
 import { 
   BarChart3, 
   TrendingUp, 
@@ -11,6 +15,7 @@ import {
   MousePointerClick, 
   FileImage, 
   Calendar,
+  CalendarIcon,
   ArrowUpRight,
   ArrowDownRight,
   Activity,
@@ -19,7 +24,8 @@ import {
   LogIn,
   LogOut,
   Eye as EyeIcon,
-  EyeOff
+  EyeOff,
+  ChevronDown
 } from 'lucide-react';
 import {
   AreaChart,
@@ -35,6 +41,19 @@ import {
   Pie,
   Cell,
 } from 'recharts';
+
+type DateRange = {
+  from: Date;
+  to: Date;
+};
+
+type PresetKey = '7d' | '30d' | '90d' | 'custom';
+
+const datePresets: { key: PresetKey; label: string; getDates: () => DateRange }[] = [
+  { key: '7d', label: 'Last 7 days', getDates: () => ({ from: subDays(new Date(), 7), to: new Date() }) },
+  { key: '30d', label: 'Last 30 days', getDates: () => ({ from: subDays(new Date(), 30), to: new Date() }) },
+  { key: '90d', label: 'Last 90 days', getDates: () => ({ from: subDays(new Date(), 90), to: new Date() }) },
+];
 
 // Mock data for demonstration - in production, this would come from GA4 API
 const weeklyPageViews = [
@@ -70,6 +89,11 @@ const AnalyticsDashboardPage = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
+  
+  // Date range state
+  const [selectedPreset, setSelectedPreset] = useState<PresetKey>('30d');
+  const [dateRange, setDateRange] = useState<DateRange>(() => datePresets[1].getDates());
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   
   // Database metrics
   const [mediaCount, setMediaCount] = useState(0);
@@ -216,11 +240,32 @@ const AnalyticsDashboardPage = () => {
     );
   }
 
+  const handlePresetSelect = (preset: typeof datePresets[0]) => {
+    setSelectedPreset(preset.key);
+    setDateRange(preset.getDates());
+  };
+
+  const handleCustomDateSelect = (range: { from?: Date; to?: Date } | undefined) => {
+    if (range?.from && range?.to) {
+      setDateRange({ from: range.from, to: range.to });
+      setSelectedPreset('custom');
+    } else if (range?.from) {
+      setDateRange({ from: range.from, to: range.from });
+    }
+  };
+
+  const getDateRangeLabel = () => {
+    if (selectedPreset !== 'custom') {
+      return datePresets.find(p => p.key === selectedPreset)?.label || 'Select range';
+    }
+    return `${format(dateRange.from, 'MMM d, yyyy')} - ${format(dateRange.to, 'MMM d, yyyy')}`;
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <BarChart3 className="w-8 h-8 text-primary" />
             <div>
@@ -228,14 +273,97 @@ const AnalyticsDashboardPage = () => {
               <p className="text-sm text-muted-foreground">PixelAI Pro Performance Metrics</p>
             </div>
           </div>
-          <Button onClick={handleSignOut} variant="outline" size="sm">
-            <LogOut className="w-4 h-4 mr-2" />
-            Sign Out
-          </Button>
+          
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            {/* Date Range Filter */}
+            <div className="flex items-center gap-2 flex-1 sm:flex-initial">
+              {/* Preset Buttons */}
+              <div className="hidden md:flex items-center gap-1 bg-muted rounded-lg p-1">
+                {datePresets.map((preset) => (
+                  <Button
+                    key={preset.key}
+                    variant={selectedPreset === preset.key ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => handlePresetSelect(preset)}
+                    className="text-xs px-3"
+                  >
+                    {preset.label}
+                  </Button>
+                ))}
+              </div>
+              
+              {/* Custom Date Picker */}
+              <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={cn(
+                      "justify-start text-left font-normal min-w-[200px]",
+                      selectedPreset === 'custom' && "border-primary"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    <span className="truncate">{getDateRangeLabel()}</span>
+                    <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="end">
+                  <div className="p-3 border-b md:hidden">
+                    <div className="flex flex-wrap gap-1">
+                      {datePresets.map((preset) => (
+                        <Button
+                          key={preset.key}
+                          variant={selectedPreset === preset.key ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => {
+                            handlePresetSelect(preset);
+                            setIsDatePickerOpen(false);
+                          }}
+                          className="text-xs"
+                        >
+                          {preset.label}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  <CalendarComponent
+                    mode="range"
+                    selected={{ from: dateRange.from, to: dateRange.to }}
+                    onSelect={handleCustomDateSelect}
+                    numberOfMonths={2}
+                    disabled={(date) => date > new Date()}
+                    className="p-3 pointer-events-auto"
+                  />
+                  <div className="p-3 border-t flex justify-end">
+                    <Button
+                      size="sm"
+                      onClick={() => setIsDatePickerOpen(false)}
+                    >
+                      Apply
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+            
+            <Button onClick={handleSignOut} variant="outline" size="sm">
+              <LogOut className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Sign Out</span>
+            </Button>
+          </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+        {/* Date Range Display */}
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Calendar className="w-4 h-4" />
+          <span>
+            Showing data from <strong className="text-foreground">{format(dateRange.from, 'MMM d, yyyy')}</strong> to <strong className="text-foreground">{format(dateRange.to, 'MMM d, yyyy')}</strong>
+          </span>
+        </div>
+
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <MetricCard
@@ -243,14 +371,14 @@ const AnalyticsDashboardPage = () => {
             value="12,456"
             change={12.5}
             icon={Eye}
-            description="Last 30 days"
+            description={getDateRangeLabel()}
           />
           <MetricCard
             title="Unique Visitors"
             value="3,892"
             change={8.2}
             icon={Users}
-            description="Last 30 days"
+            description={getDateRangeLabel()}
           />
           <MetricCard
             title="CTA Click Rate"
@@ -264,7 +392,7 @@ const AnalyticsDashboardPage = () => {
             value="156"
             change={23.4}
             icon={Send}
-            description="Last 30 days"
+            description={getDateRangeLabel()}
           />
         </div>
 
