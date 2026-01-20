@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Trash2, Image, LogIn, LogOut, Eye, EyeOff } from 'lucide-react';
+import { Upload, Trash2, Image, LogIn, LogOut, Eye, EyeOff, Zap, Loader2 } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 import uploadHero from '@/assets/upload-hero.jpg';
 
 interface MediaItem {
@@ -33,7 +34,78 @@ const MediaUploadPage = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
+  const [autoOptimize, setAutoOptimize] = useState(true);
+  const [optimizingFile, setOptimizingFile] = useState<string | null>(null);
   const { toast } = useToast();
+
+  // Helper to convert base64 data URL to Blob
+  const dataUrlToBlob = (dataUrl: string): Blob => {
+    const arr = dataUrl.split(',');
+    const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/webp';
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+  };
+
+  // Optimize image using the convert-image edge function
+  const optimizeImage = async (file: File): Promise<{ blob: Blob; fileName: string } | null> => {
+    try {
+      // First upload original temporarily to get a URL
+      const tempFileName = `temp-${Date.now()}-${Math.random().toString(36).substring(7)}.${file.name.split('.').pop()}`;
+      const tempPath = `temp/${tempFileName}`;
+      
+      const { error: tempUploadError } = await supabase.storage
+        .from('event-media')
+        .upload(tempPath, file);
+      
+      if (tempUploadError) {
+        console.error('Temp upload failed:', tempUploadError);
+        return null;
+      }
+
+      // Get signed URL for the temp file
+      const { data: urlData } = await supabase.storage
+        .from('event-media')
+        .createSignedUrl(tempPath, 300); // 5 min expiry
+
+      if (!urlData?.signedUrl) {
+        console.error('Failed to get signed URL');
+        return null;
+      }
+
+      // Call the convert-image function
+      const { data, error } = await supabase.functions.invoke('convert-image', {
+        body: { 
+          imageUrl: urlData.signedUrl, 
+          quality: 85, 
+          maxWidth: 1920, 
+          format: 'webp' 
+        }
+      });
+
+      // Delete temp file
+      await supabase.storage.from('event-media').remove([tempPath]);
+
+      if (error || !data?.success || !data?.optimizedImageUrl) {
+        console.error('Optimization failed:', error || data?.error);
+        return null;
+      }
+
+      // Convert base64 to blob
+      const blob = dataUrlToBlob(data.optimizedImageUrl);
+      const originalName = file.name.replace(/\.[^/.]+$/, '');
+      const newFileName = `${originalName}.webp`;
+      
+      return { blob, fileName: newFileName };
+    } catch (err) {
+      console.error('Optimization error:', err);
+      return null;
+    }
+  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -127,6 +199,7 @@ const MediaUploadPage = () => {
     const tagArray = tags.split(',').map(t => t.trim()).filter(t => t);
     const userId = session.user.id;
     let uploadedCount = 0;
+    let optimizedCount = 0;
 
     for (const file of files) {
       // Client-side validation for better UX
@@ -139,14 +212,32 @@ const MediaUploadPage = () => {
         continue;
       }
 
-      const fileExt = file.name.split('.').pop();
+      const isImage = file.type.startsWith('image/') && file.type !== 'image/gif';
+      let fileToUpload: Blob | File = file;
+      let finalFileName = file.name;
+      let finalFileType = file.type;
+
+      // Auto-optimize images (skip GIFs and videos)
+      if (autoOptimize && isImage) {
+        setOptimizingFile(file.name);
+        const optimized = await optimizeImage(file);
+        if (optimized) {
+          fileToUpload = optimized.blob;
+          finalFileName = optimized.fileName;
+          finalFileType = 'image/webp';
+          optimizedCount++;
+        }
+        setOptimizingFile(null);
+      }
+
+      const fileExt = finalFileName.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
       // Store in user-specific folder for RLS security
       const filePath = `${userId}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('event-media')
-        .upload(filePath, file);
+        .upload(filePath, fileToUpload, { contentType: finalFileType });
 
       if (uploadError) {
         toast({ title: `Failed to upload ${file.name}`, description: uploadError.message, variant: 'destructive' });
@@ -154,9 +245,9 @@ const MediaUploadPage = () => {
       }
 
       const { error: dbError } = await supabase.from('event_media').insert({
-        file_name: file.name,
+        file_name: finalFileName,
         file_path: filePath,
-        file_type: file.type,
+        file_type: finalFileType,
         event_name: eventName || null,
         description: description || null,
         tags: tagArray.length > 0 ? tagArray : null,
@@ -171,7 +262,8 @@ const MediaUploadPage = () => {
     }
 
     if (uploadedCount > 0) {
-      toast({ title: `${uploadedCount} file(s) uploaded successfully!` });
+      const optimizeMsg = optimizedCount > 0 ? ` (${optimizedCount} optimized to WebP)` : '';
+      toast({ title: `${uploadedCount} file(s) uploaded successfully!${optimizeMsg}` });
     }
     setFiles([]);
     setEventName('');
@@ -334,14 +426,47 @@ const MediaUploadPage = () => {
             </div>
           </div>
           
-          <Button 
-            onClick={handleUpload} 
-            disabled={uploading || files.length === 0}
-            className="mt-4"
-          >
-            <Upload className="w-4 h-4 mr-2" />
-            {uploading ? 'Uploading...' : `Upload ${files.length} File(s)`}
-          </Button>
+          {/* Auto-optimize toggle */}
+          <div className="mt-4 flex items-center justify-between p-4 rounded-xl bg-muted/30 border">
+            <div className="flex items-center gap-3">
+              <Zap className="w-5 h-5 text-primary" />
+              <div>
+                <p className="font-medium text-sm">Auto-optimize to WebP</p>
+                <p className="text-xs text-muted-foreground">
+                  Compress images for faster loading (up to 30% smaller)
+                </p>
+              </div>
+            </div>
+            <Switch
+              checked={autoOptimize}
+              onCheckedChange={setAutoOptimize}
+            />
+          </div>
+          
+          <div className="mt-4 flex items-center gap-4">
+            <Button 
+              onClick={handleUpload} 
+              disabled={uploading || files.length === 0}
+            >
+              {uploading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  {optimizingFile ? `Optimizing ${optimizingFile}...` : 'Uploading...'}
+                </>
+              ) : (
+                <>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload {files.length} File(s)
+                </>
+              )}
+            </Button>
+            {autoOptimize && files.length > 0 && files.some(f => f.type.startsWith('image/') && f.type !== 'image/gif') && (
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <Zap className="w-3 h-3 text-primary" />
+                Images will be optimized to WebP
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Media Gallery */}
