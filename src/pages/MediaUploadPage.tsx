@@ -4,9 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Trash2, Image, LogIn, LogOut, Eye, EyeOff, Zap, Loader2 } from 'lucide-react';
+import { Upload, Trash2, Image, LogIn, LogOut, Eye, EyeOff, Zap, Loader2, Settings2, ChevronDown, ChevronUp
+
+ } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import uploadHero from '@/assets/upload-hero.jpg';
 
 interface MediaItem {
@@ -19,6 +23,14 @@ interface MediaItem {
   tags: string[] | null;
   created_at: string;
   url?: string;
+}
+
+interface OptimizationResult {
+  originalUrl: string;
+  optimizedUrl: string;
+  originalSize: number;
+  optimizedSize: number;
+  fileName: string;
 }
 
 const MediaUploadPage = () => {
@@ -36,6 +48,11 @@ const MediaUploadPage = () => {
   const [authLoading, setAuthLoading] = useState(false);
   const [autoOptimize, setAutoOptimize] = useState(true);
   const [optimizingFile, setOptimizingFile] = useState<string | null>(null);
+  const [optimizeQuality, setOptimizeQuality] = useState(85);
+  const [optimizeMaxWidth, setOptimizeMaxWidth] = useState(1920);
+  const [showOptimizeSettings, setShowOptimizeSettings] = useState(false);
+  const [optimizationResults, setOptimizationResults] = useState<OptimizationResult[]>([]);
+  const [showResults, setShowResults] = useState(false);
   const { toast } = useToast();
 
   // Helper to convert base64 data URL to Blob
@@ -52,8 +69,12 @@ const MediaUploadPage = () => {
   };
 
   // Optimize image using the convert-image edge function
-  const optimizeImage = async (file: File): Promise<{ blob: Blob; fileName: string } | null> => {
+  const optimizeImage = async (file: File): Promise<{ blob: Blob; fileName: string; result: OptimizationResult } | null> => {
     try {
+      // Create original preview URL
+      const originalUrl = URL.createObjectURL(file);
+      const originalSize = file.size;
+
       // First upload original temporarily to get a URL
       const tempFileName = `temp-${Date.now()}-${Math.random().toString(36).substring(7)}.${file.name.split('.').pop()}`;
       const tempPath = `temp/${tempFileName}`;
@@ -64,6 +85,7 @@ const MediaUploadPage = () => {
       
       if (tempUploadError) {
         console.error('Temp upload failed:', tempUploadError);
+        URL.revokeObjectURL(originalUrl);
         return null;
       }
 
@@ -74,15 +96,16 @@ const MediaUploadPage = () => {
 
       if (!urlData?.signedUrl) {
         console.error('Failed to get signed URL');
+        URL.revokeObjectURL(originalUrl);
         return null;
       }
 
-      // Call the convert-image function
+      // Call the convert-image function with user settings
       const { data, error } = await supabase.functions.invoke('convert-image', {
         body: { 
           imageUrl: urlData.signedUrl, 
-          quality: 85, 
-          maxWidth: 1920, 
+          quality: optimizeQuality, 
+          maxWidth: optimizeMaxWidth, 
           format: 'webp' 
         }
       });
@@ -92,6 +115,7 @@ const MediaUploadPage = () => {
 
       if (error || !data?.success || !data?.optimizedImageUrl) {
         console.error('Optimization failed:', error || data?.error);
+        URL.revokeObjectURL(originalUrl);
         return null;
       }
 
@@ -100,7 +124,15 @@ const MediaUploadPage = () => {
       const originalName = file.name.replace(/\.[^/.]+$/, '');
       const newFileName = `${originalName}.webp`;
       
-      return { blob, fileName: newFileName };
+      const result: OptimizationResult = {
+        originalUrl,
+        optimizedUrl: data.optimizedImageUrl,
+        originalSize,
+        optimizedSize: blob.size,
+        fileName: file.name
+      };
+      
+      return { blob, fileName: newFileName, result };
     } catch (err) {
       console.error('Optimization error:', err);
       return null;
@@ -226,6 +258,8 @@ const MediaUploadPage = () => {
           finalFileName = optimized.fileName;
           finalFileType = 'image/webp';
           optimizedCount++;
+          // Store result for before/after preview
+          setOptimizationResults(prev => [...prev, optimized.result]);
         }
         setOptimizingFile(null);
       }
@@ -264,6 +298,9 @@ const MediaUploadPage = () => {
     if (uploadedCount > 0) {
       const optimizeMsg = optimizedCount > 0 ? ` (${optimizedCount} optimized to WebP)` : '';
       toast({ title: `${uploadedCount} file(s) uploaded successfully!${optimizeMsg}` });
+      if (optimizedCount > 0) {
+        setShowResults(true);
+      }
     }
     setFiles([]);
     setEventName('');
@@ -271,6 +308,18 @@ const MediaUploadPage = () => {
     setTags('');
     fetchMedia();
     setUploading(false);
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+  };
+
+  const clearResults = () => {
+    optimizationResults.forEach(r => URL.revokeObjectURL(r.originalUrl));
+    setOptimizationResults([]);
+    setShowResults(false);
   };
 
   const handleDelete = async (item: MediaItem) => {
@@ -426,22 +475,112 @@ const MediaUploadPage = () => {
             </div>
           </div>
           
-          {/* Auto-optimize toggle */}
-          <div className="mt-4 flex items-center justify-between p-4 rounded-xl bg-muted/30 border">
-            <div className="flex items-center gap-3">
-              <Zap className="w-5 h-5 text-primary" />
-              <div>
-                <p className="font-medium text-sm">Auto-optimize to WebP</p>
-                <p className="text-xs text-muted-foreground">
-                  Compress images for faster loading (up to 30% smaller)
-                </p>
+          {/* Auto-optimize toggle with settings */}
+          <Collapsible open={showOptimizeSettings} onOpenChange={setShowOptimizeSettings}>
+            <div className="mt-4 rounded-xl bg-muted/30 border overflow-hidden">
+              <div className="flex items-center justify-between p-4">
+                <div className="flex items-center gap-3">
+                  <Zap className="w-5 h-5 text-primary" />
+                  <div>
+                    <p className="font-medium text-sm">Auto-optimize to WebP</p>
+                    <p className="text-xs text-muted-foreground">
+                      Compress images for faster loading
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Switch
+                    checked={autoOptimize}
+                    onCheckedChange={setAutoOptimize}
+                  />
+                  {autoOptimize && (
+                    <CollapsibleTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 px-2">
+                        <Settings2 className="w-4 h-4 mr-1" />
+                        Settings
+                        {showOptimizeSettings ? <ChevronUp className="w-3 h-3 ml-1" /> : <ChevronDown className="w-3 h-3 ml-1" />}
+                      </Button>
+                    </CollapsibleTrigger>
+                  )}
+                </div>
               </div>
+              
+              <CollapsibleContent>
+                <div className="px-4 pb-4 pt-2 border-t bg-background/50 space-y-5">
+                  {/* Quality Slider */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-medium">Quality</Label>
+                      <span className="text-sm font-mono bg-muted px-2 py-0.5 rounded">{optimizeQuality}%</span>
+                    </div>
+                    <Slider
+                      value={[optimizeQuality]}
+                      onValueChange={(v) => setOptimizeQuality(v[0])}
+                      min={50}
+                      max={100}
+                      step={5}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Smaller file</span>
+                      <span>Higher quality</span>
+                    </div>
+                  </div>
+                  
+                  {/* Max Width Slider */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-medium">Max Width</Label>
+                      <span className="text-sm font-mono bg-muted px-2 py-0.5 rounded">{optimizeMaxWidth}px</span>
+                    </div>
+                    <Slider
+                      value={[optimizeMaxWidth]}
+                      onValueChange={(v) => setOptimizeMaxWidth(v[0])}
+                      min={800}
+                      max={3840}
+                      step={160}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>800px (Mobile)</span>
+                      <span>3840px (4K)</span>
+                    </div>
+                  </div>
+                  
+                  {/* Quick Presets */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Quick Presets</Label>
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => { setOptimizeQuality(75); setOptimizeMaxWidth(1280); }}
+                        className="text-xs"
+                      >
+                        📱 Mobile (1280px, 75%)
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => { setOptimizeQuality(85); setOptimizeMaxWidth(1920); }}
+                        className="text-xs"
+                      >
+                        🖥️ Web (1920px, 85%)
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => { setOptimizeQuality(95); setOptimizeMaxWidth(3840); }}
+                        className="text-xs"
+                      >
+                        🎨 High Quality (4K, 95%)
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CollapsibleContent>
             </div>
-            <Switch
-              checked={autoOptimize}
-              onCheckedChange={setAutoOptimize}
-            />
-          </div>
+          </Collapsible>
           
           <div className="mt-4 flex items-center gap-4">
             <Button 
@@ -463,11 +602,67 @@ const MediaUploadPage = () => {
             {autoOptimize && files.length > 0 && files.some(f => f.type.startsWith('image/') && f.type !== 'image/gif') && (
               <p className="text-xs text-muted-foreground flex items-center gap-1">
                 <Zap className="w-3 h-3 text-primary" />
-                Images will be optimized to WebP
+                WebP @ {optimizeQuality}% quality, max {optimizeMaxWidth}px
               </p>
             )}
           </div>
         </div>
+
+        {/* Optimization Results - Before/After Preview */}
+        {showResults && optimizationResults.length > 0 && (
+          <div className="bg-card rounded-2xl p-6 shadow-lg border mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold flex items-center gap-2">
+                <Zap className="w-5 h-5 text-primary" />
+                Optimization Results ({optimizationResults.length} images)
+              </h2>
+              <Button variant="outline" size="sm" onClick={clearResults}>
+                Clear Results
+              </Button>
+            </div>
+            
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {optimizationResults.map((result, index) => {
+                const savings = ((result.originalSize - result.optimizedSize) / result.originalSize * 100).toFixed(1);
+                return (
+                  <div key={index} className="rounded-xl border bg-muted/20 overflow-hidden">
+                    <div className="p-3 border-b bg-background/50">
+                      <p className="font-medium text-sm truncate">{result.fileName}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatFileSize(result.originalSize)} → {formatFileSize(result.optimizedSize)}
+                        <span className="text-primary ml-2 font-medium">-{savings}%</span>
+                      </p>
+                    </div>
+                    
+                    {/* Before/After Grid */}
+                    <div className="grid grid-cols-2 gap-1 p-2">
+                      <div className="space-y-1">
+                        <p className="text-xs text-center text-muted-foreground">Before</p>
+                        <div className="aspect-square rounded-lg overflow-hidden bg-muted border">
+                          <img
+                            src={result.originalUrl}
+                            alt="Original"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-xs text-center text-muted-foreground">After (WebP)</p>
+                        <div className="aspect-square rounded-lg overflow-hidden bg-muted border">
+                          <img
+                            src={result.optimizedUrl}
+                            alt="Optimized"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Media Gallery */}
         <div className="bg-card rounded-2xl p-6 shadow-lg border">
