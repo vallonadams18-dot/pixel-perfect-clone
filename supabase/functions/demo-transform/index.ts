@@ -96,12 +96,68 @@ async function recordUsage(supabase: any, email: string, experience: string): Pr
   }
 }
 
+async function upsertLead(
+  supabase: any, 
+  email: string, 
+  experience: string,
+  userAgent?: string,
+  referrer?: string
+): Promise<void> {
+  const normalizedEmail = email.toLowerCase().trim();
+  
+  // Check if lead already exists
+  const { data: existing } = await supabase
+    .from('leads')
+    .select('id, total_demos_used')
+    .eq('email', normalizedEmail)
+    .maybeSingle();
+  
+  if (existing) {
+    // Update existing lead
+    const { error } = await supabase
+      .from('leads')
+      .update({
+        last_interaction_at: new Date().toISOString(),
+        total_demos_used: (existing.total_demos_used || 0) + 1,
+      })
+      .eq('id', existing.id);
+    
+    if (error) {
+      console.error('Lead update error:', error);
+    } else {
+      console.log('Lead updated:', normalizedEmail);
+    }
+  } else {
+    // Insert new lead
+    const { error } = await supabase
+      .from('leads')
+      .insert({
+        email: normalizedEmail,
+        source: experience.toLowerCase(),
+        experience_type: experience.toLowerCase(),
+        user_agent: userAgent || null,
+        referrer: referrer || null,
+        total_demos_used: 1,
+      });
+    
+    if (error) {
+      console.error('Lead insert error:', error);
+    } else {
+      console.log('New lead created:', normalizedEmail, 'source:', experience);
+    }
+  }
+}
+
 Deno.serve(async (req) => {
   console.log('Demo transform request received');
   
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+  // Extract headers for lead tracking
+  const userAgent = req.headers.get('user-agent') || undefined;
+  const referrer = req.headers.get('referer') || req.headers.get('referrer') || undefined;
 
   try {
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
@@ -355,8 +411,9 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Record usage BEFORE returning success
+    // Record usage and upsert lead BEFORE returning success
     await recordUsage(supabase, email, experience);
+    await upsertLead(supabase, email, experience, userAgent, referrer);
     const newUsageCount = usageCount + 1;
     const remainingTries = Math.max(0, MAX_TRIES_PER_EMAIL - newUsageCount);
 
