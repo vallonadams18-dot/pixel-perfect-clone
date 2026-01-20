@@ -19,6 +19,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import StylePreviewThumbnails, { styleOptions } from '@/components/StylePreviewThumbnails';
+import PromptHistory, { addPromptToHistory } from '@/components/PromptHistory';
 
 interface ScheduledPost {
   id: string;
@@ -607,6 +609,11 @@ const InstagramSchedulerPage = () => {
         
         // Also set the service for caption generation
         setSelectedService(selectedTransformStyle.replace('-', ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '));
+      }
+
+      // Save prompt to history if custom
+      if (customStylePrompt.trim()) {
+        addPromptToHistory(customStylePrompt.trim(), selectedTransformStyle === 'custom' ? 'custom' : selectedTransformStyle);
       }
 
       setLastApiCall({ function: 'transform-image-style', status: 'success', message: `Transformed to ${selectedTransformStyle}`, timestamp: new Date() });
@@ -1362,33 +1369,6 @@ const InstagramSchedulerPage = () => {
                             <Badge variant="secondary">{selectedBatchItems.size} selected</Badge>
                           </div>
                           
-                          <div className="flex-1">
-                            <select
-                              value={batchTransformStyle}
-                              onChange={(e) => setBatchTransformStyle(e.target.value)}
-                              className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
-                            >
-                              <option value="">Choose transformation style...</option>
-                              <optgroup label="Event Services">
-                                <option value="pixelwear">PixelWear</option>
-                                <option value="trading-cards">Trading Cards</option>
-                                <option value="headshots">Headshots</option>
-                                <option value="persona-pop">Persona Pop</option>
-                                <option value="co-star">Co-Star</option>
-                                <option value="sketch">Sketch</option>
-                              </optgroup>
-                              <optgroup label="Creative">
-                                <option value="superhero">Superhero</option>
-                                <option value="vintage">Vintage</option>
-                                <option value="cyberpunk">Cyberpunk</option>
-                                <option value="anime">Anime</option>
-                              </optgroup>
-                              <optgroup label="Custom">
-                                <option value="custom">✨ Custom Style</option>
-                              </optgroup>
-                            </select>
-                          </div>
-                          
                           <Button
                             onClick={handleBatchTransform}
                             disabled={batchTransforming || selectedBatchItems.size === 0 || !batchTransformStyle || (batchTransformStyle === 'custom' && !batchCustomPrompt.trim())}
@@ -1407,10 +1387,20 @@ const InstagramSchedulerPage = () => {
                           </Button>
                         </div>
 
+                        {/* Compact Style Thumbnails for Batch */}
+                        <div>
+                          <Label className="text-xs mb-2 block">Select Style for Batch</Label>
+                          <StylePreviewThumbnails
+                            selectedStyle={batchTransformStyle}
+                            onSelectStyle={setBatchTransformStyle}
+                            compact={true}
+                          />
+                        </div>
+
                         {/* Custom Prompt for Batch */}
                         {batchTransformStyle === 'custom' && (
-                          <div>
-                            <Label className="text-xs mb-2 block">Describe Your Custom Style *</Label>
+                          <div className="space-y-2">
+                            <Label className="text-xs block">Describe Your Custom Style *</Label>
                             <Textarea
                               value={batchCustomPrompt}
                               onChange={(e) => setBatchCustomPrompt(e.target.value)}
@@ -1419,7 +1409,14 @@ const InstagramSchedulerPage = () => {
                               maxLength={1000}
                               className="text-sm"
                             />
-                            <p className="text-xs text-muted-foreground mt-1 text-right">{batchCustomPrompt.length}/1000</p>
+                            <div className="flex items-center justify-between">
+                              <p className="text-xs text-muted-foreground">{batchCustomPrompt.length}/1000</p>
+                            </div>
+                            <PromptHistory
+                              onSelectPrompt={setBatchCustomPrompt}
+                              currentPrompt={batchCustomPrompt}
+                              storageKey="batch_custom_style"
+                            />
                           </div>
                         )}
                       </div>
@@ -1720,41 +1717,19 @@ const InstagramSchedulerPage = () => {
                         Transform your image into one of our signature event service styles before posting
                       </p>
                       
-                      <div className="mb-3">
+                      {/* Style Preview Thumbnails */}
+                      <div className="mb-4">
                         <Label className="text-xs mb-2 block">Select Style</Label>
-                        <select
-                          value={selectedTransformStyle}
-                          onChange={(e) => setSelectedTransformStyle(e.target.value)}
-                          className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
-                        >
-                          <option value="">Choose a transformation style...</option>
-                          <optgroup label="Event Services">
-                            <option value="pixelwear">PixelWear - Branded Apparel</option>
-                            <option value="trading-cards">Trading Cards - Sports Collectibles</option>
-                            <option value="headshots">Headshots - Professional Portraits</option>
-                            <option value="persona-pop">Persona Pop - 3D Character Style</option>
-                            <option value="co-star">Co-Star - Celebrity Compositing</option>
-                            <option value="video-booths">Video Booths - Motion Effects</option>
-                            <option value="axon-ai">Axon AI - Robot Companion</option>
-                            <option value="sketch">Sketch - Artistic Illustration</option>
-                          </optgroup>
-                          <optgroup label="Creative Styles">
-                            <option value="superhero">Superhero - Comic Book Hero</option>
-                            <option value="vintage">Vintage - Retro Glamour</option>
-                            <option value="cyberpunk">Cyberpunk - Neon Future</option>
-                            <option value="anime">Anime - Japanese Animation</option>
-                            <option value="fantasy">Fantasy - Magical Realm</option>
-                          </optgroup>
-                          <optgroup label="Custom">
-                            <option value="custom">✨ Custom Style - Describe Your Own</option>
-                          </optgroup>
-                        </select>
+                        <StylePreviewThumbnails
+                          selectedStyle={selectedTransformStyle}
+                          onSelectStyle={setSelectedTransformStyle}
+                        />
                       </div>
 
                       {/* Custom Style Prompt */}
                       {selectedTransformStyle === 'custom' && (
-                        <div className="mb-3">
-                          <Label className="text-xs mb-2 block">Describe Your Custom Style *</Label>
+                        <div className="mb-3 space-y-2">
+                          <Label className="text-xs block">Describe Your Custom Style *</Label>
                           <Textarea
                             value={customStylePrompt}
                             onChange={(e) => setCustomStylePrompt(e.target.value)}
@@ -1763,14 +1738,22 @@ const InstagramSchedulerPage = () => {
                             maxLength={1000}
                             className="text-sm"
                           />
-                          <p className="text-xs text-muted-foreground mt-1 text-right">{customStylePrompt.length}/1000</p>
+                          <div className="flex items-center justify-between">
+                            <p className="text-xs text-muted-foreground">{customStylePrompt.length}/1000</p>
+                          </div>
+                          {/* Prompt History */}
+                          <PromptHistory
+                            onSelectPrompt={setCustomStylePrompt}
+                            currentPrompt={customStylePrompt}
+                            storageKey="custom_style"
+                          />
                         </div>
                       )}
 
                       {/* Optional enhancement for preset styles */}
                       {selectedTransformStyle && selectedTransformStyle !== 'custom' && (
-                        <div className="mb-3">
-                          <Label className="text-xs mb-2 block text-muted-foreground">Optional: Add Custom Details</Label>
+                        <div className="mb-3 space-y-2">
+                          <Label className="text-xs block text-muted-foreground">Optional: Add Custom Details</Label>
                           <Textarea
                             value={customStylePrompt}
                             onChange={(e) => setCustomStylePrompt(e.target.value)}
@@ -1778,6 +1761,12 @@ const InstagramSchedulerPage = () => {
                             rows={2}
                             maxLength={500}
                             className="text-sm"
+                          />
+                          {/* Prompt History for preset enhancements */}
+                          <PromptHistory
+                            onSelectPrompt={setCustomStylePrompt}
+                            currentPrompt={customStylePrompt}
+                            storageKey="preset_enhancements"
                           />
                         </div>
                       )}
@@ -1824,16 +1813,16 @@ const InstagramSchedulerPage = () => {
                       
                       {transformedPreview && (
                         <div className="mt-3 p-2 bg-background rounded-lg border flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
+                          <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
                           <span className="text-xs text-muted-foreground flex-1">
-                            Transformed to <strong>{selectedTransformStyle === 'custom' ? 'custom style' : selectedTransformStyle}</strong> - ready to post!
+                            Transformed to <strong>{selectedTransformStyle === 'custom' ? 'custom style' : styleOptions.find(s => s.id === selectedTransformStyle)?.name || selectedTransformStyle}</strong> - ready to post!
                           </span>
                         </div>
                       )}
                       
                       {!selectedTransformStyle && (
                         <p className="text-xs text-muted-foreground text-center mt-2">
-                          Select a style above or create your own custom transformation
+                          Click a style thumbnail above or choose custom to describe your own
                         </p>
                       )}
                     </div>
