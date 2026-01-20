@@ -2,8 +2,6 @@ import { cn } from '@/lib/utils';
 
 // Import preview images for each style
 import highlightPixelwear from '@/assets/highlights/highlight-pixelwear.jpg';
-import highlightTradingCards from '@/assets/highlights/highlight-trading-cards.jpg';
-import highlightHeadshots from '@/assets/highlights/highlight-headshots.jpg';
 import highlightPersonaPop from '@/assets/highlights/highlight-persona-pop.jpg';
 import highlightCoStar from '@/assets/highlights/highlight-co-star.jpg';
 import highlightVideoBooths from '@/assets/highlights/highlight-video-booths.jpg';
@@ -14,6 +12,9 @@ import portfolioVintage from '@/assets/portfolio-vintage.jpg';
 import portfolioCyberpunk from '@/assets/portfolio-cyberpunk.jpg';
 import portfolioAnime from '@/assets/portfolio-anime.jpg';
 import portfolioFantasy from '@/assets/portfolio-fantasy.jpg';
+// Single-person images for headshots and trading cards
+import headshot1 from '@/assets/headshot-1.jpg';
+import tradingCardPortrait from '@/assets/ai-trading-cards-baseball-custom-portrait.jpg';
 
 export interface StyleOption {
   id: string;
@@ -25,8 +26,8 @@ export interface StyleOption {
 export const styleOptions: StyleOption[] = [
   // Event Services
   { id: 'pixelwear', name: 'PixelWear', thumbnail: highlightPixelwear, category: 'event' },
-  { id: 'trading-cards', name: 'Trading Cards', thumbnail: highlightTradingCards, category: 'event' },
-  { id: 'headshots', name: 'Headshots', thumbnail: highlightHeadshots, category: 'event' },
+  { id: 'trading-cards', name: 'Trading Cards', thumbnail: tradingCardPortrait, category: 'event' },
+  { id: 'headshots', name: 'Headshots', thumbnail: headshot1, category: 'event' },
   { id: 'persona-pop', name: 'Persona Pop', thumbnail: highlightPersonaPop, category: 'event' },
   { id: 'co-star', name: 'Co-Star', thumbnail: highlightCoStar, category: 'event' },
   { id: 'video-booths', name: 'Video Booths', thumbnail: highlightVideoBooths, category: 'event' },

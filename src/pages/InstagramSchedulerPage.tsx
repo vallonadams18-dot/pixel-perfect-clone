@@ -97,6 +97,8 @@ const InstagramSchedulerPage = () => {
   const [transformedPreview, setTransformedPreview] = useState<string>('');
   const [showBeforeAfter, setShowBeforeAfter] = useState(false);
   const [savingToLibrary, setSavingToLibrary] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<'gemini' | 'chatgpt'>('gemini');
+  const [batchSelectedModel, setBatchSelectedModel] = useState<'gemini' | 'chatgpt'>('gemini');
   
   // Batch transformation state
   const [batchMode, setBatchMode] = useState(false);
@@ -594,6 +596,7 @@ const InstagramSchedulerPage = () => {
           imageUrl: currentImageUrl,
           style: selectedTransformStyle,
           customPrompt: customStylePrompt.trim() || undefined,
+          model: selectedModel,
         },
       });
 
@@ -743,6 +746,7 @@ const InstagramSchedulerPage = () => {
             imageUrl: item.url, 
             style: batchTransformStyle,
             customPrompt: batchTransformStyle === 'custom' ? batchCustomPrompt.trim() : undefined,
+            model: batchSelectedModel,
           },
         });
 
@@ -1403,6 +1407,33 @@ const InstagramSchedulerPage = () => {
                           />
                         </div>
 
+                        {/* Model Selector for Batch */}
+                        <div>
+                          <Label className="text-xs mb-2 block">AI Model</Label>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => setBatchSelectedModel('gemini')}
+                              className={`flex-1 px-2 py-1.5 rounded-lg border text-xs font-medium transition-all ${
+                                batchSelectedModel === 'gemini'
+                                  ? 'bg-primary text-primary-foreground border-primary'
+                                  : 'bg-muted/50 text-muted-foreground hover:bg-muted border-border'
+                              }`}
+                            >
+                              🍌 Nano Banana
+                            </button>
+                            <button
+                              onClick={() => setBatchSelectedModel('chatgpt')}
+                              className={`flex-1 px-2 py-1.5 rounded-lg border text-xs font-medium transition-all ${
+                                batchSelectedModel === 'chatgpt'
+                                  ? 'bg-primary text-primary-foreground border-primary'
+                                  : 'bg-muted/50 text-muted-foreground hover:bg-muted border-border'
+                              }`}
+                            >
+                              🤖 ChatGPT
+                            </button>
+                          </div>
+                        </div>
+
                         {/* Custom Prompt for Batch */}
                         {batchTransformStyle === 'custom' && (
                           <div className="space-y-2">
@@ -1776,6 +1807,36 @@ const InstagramSchedulerPage = () => {
                           />
                         </div>
                       )}
+                      
+                      {/* Model Selector */}
+                      <div className="mb-4">
+                        <Label className="text-xs mb-2 block">AI Model</Label>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => setSelectedModel('gemini')}
+                            className={`flex-1 px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
+                              selectedModel === 'gemini'
+                                ? 'bg-primary text-primary-foreground border-primary'
+                                : 'bg-muted/50 text-muted-foreground hover:bg-muted border-border'
+                            }`}
+                          >
+                            🍌 Nano Banana
+                          </button>
+                          <button
+                            onClick={() => setSelectedModel('chatgpt')}
+                            className={`flex-1 px-3 py-2 rounded-lg border text-sm font-medium transition-all ${
+                              selectedModel === 'chatgpt'
+                                ? 'bg-primary text-primary-foreground border-primary'
+                                : 'bg-muted/50 text-muted-foreground hover:bg-muted border-border'
+                            }`}
+                          >
+                            🤖 ChatGPT
+                          </button>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {selectedModel === 'gemini' ? 'Fast image generation (Gemini)' : 'Advanced reasoning (GPT-5)'}
+                        </p>
+                      </div>
                       
                       <div className="flex gap-2 flex-wrap">
                         <Button 
