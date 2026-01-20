@@ -49,6 +49,7 @@ import CorporateHeadshotTrendsPage from "./pages/blog/CorporateHeadshotTrendsPag
 import PhotoBoothRentalGuidePage from "./pages/blog/PhotoBoothRentalGuidePage";
 import CorporatePhotoBoothRentalPage from "./pages/blog/CorporatePhotoBoothRentalPage";
 import PhotoBoothRentalNYCPage from "./pages/blog/PhotoBoothRentalNYCPage";
+import AIPhotoBoothCorporateEventsPage from "./pages/blog/AIPhotoBoothCorporateEventsPage";
 // Proposals Page
 import ProposalsPage from "./pages/ProposalsPage";
 import CaseStudiesPage from "./pages/CaseStudiesPage";
@@ -136,6 +137,7 @@ const App = () => (
           <Route path="/blog/photo-booth-rental-guide" element={<PhotoBoothRentalGuidePage />} />
           <Route path="/blog/corporate-photo-booth-rental" element={<CorporatePhotoBoothRentalPage />} />
           <Route path="/blog/photo-booth-rental-nyc" element={<PhotoBoothRentalNYCPage />} />
+          <Route path="/blog/ai-photo-booth-rental-corporate-events" element={<AIPhotoBoothCorporateEventsPage />} />
           {/* Proposals Page */}
           <Route path="/proposals" element={<ProposalsPage />} />
           <Route path="/case-studies" element={<CaseStudiesPage />} />

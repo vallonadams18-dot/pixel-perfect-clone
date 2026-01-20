@@ -30,12 +30,13 @@ const locationLinks = [
 ];
 
 const blogLinks = [
-  { slug: '/blog/photo-booth-rental-guide', name: 'Photo Booth Rental Guide', description: 'Complete 2024 guide' },
+  { slug: '/blog/ai-photo-booth-rental-corporate-events', name: 'AI Photo Booth for Corporate Events', description: 'Complete 2026 guide' },
+  { slug: '/blog/photo-booth-rental-guide', name: 'Photo Booth Rental Guide', description: 'Complete guide' },
   { slug: '/blog/corporate-photo-booth-rental', name: 'Corporate Photo Booth', description: 'Business event planning' },
   { slug: '/blog/photo-booth-rental-nyc', name: 'NYC Photo Booth Rental', description: 'NYC specific tips' },
-  { slug: '/blog/ai-photo-booth-vs-traditional', name: 'AI vs Traditional Booths', description: 'Technology comparison' },
-  { slug: '/blog/corporate-headshot-trends', name: 'Headshot Trends 2024', description: 'Latest professional trends' },
-  { slug: '/blog/trade-show-booth-ideas', name: 'Trade Show Ideas', description: 'Booth engagement tips' },
+  { slug: '/blog/ai-photo-booth-vs-traditional-photo-booth', name: 'AI vs Traditional Booths', description: 'Technology comparison' },
+  { slug: '/blog/corporate-headshot-trends', name: 'Headshot Trends', description: 'Latest professional trends' },
+  { slug: '/blog/trade-show-booth-ideas-that-drive-leads', name: 'Trade Show Ideas', description: 'Booth engagement tips' },
 ];
 
 const InternalLinks = ({ category, excludeSlug, maxItems = 6, title }: InternalLinksProps) => {
