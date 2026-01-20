@@ -5,6 +5,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import FAQSection from '@/components/FAQSection';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import { GalleryGrid } from '@/components/GalleryGrid';
+import ExperienceDemo from '@/components/ExperienceDemo';
 import { Link } from 'react-router-dom';
 import { Sparkles, Check, ArrowRight, Layers, Smartphone, Gem } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -320,6 +321,17 @@ const AITradingCardsPage = () => {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* Interactive Demo Section */}
+        <section className="section-padding" id="try-demo">
+          <div className="container-custom max-w-4xl">
+            <ExperienceDemo
+              experience="trading-cards"
+              experienceTitle="AI Trading Cards"
+              experienceDescription="Transform yourself into a collectible sports card legend!"
+            />
           </div>
         </section>
 

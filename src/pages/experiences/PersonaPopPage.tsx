@@ -5,6 +5,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import FAQSection from '@/components/FAQSection';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import { GalleryGrid } from '@/components/GalleryGrid';
+import ExperienceDemo from '@/components/ExperienceDemo';
 import { Link } from 'react-router-dom';
 import { Sparkles, Check, ArrowRight, Zap, Target, Image, Clock, Calendar } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -391,6 +392,17 @@ const PersonaPopPage = () => {
                   <p className="text-sm text-muted-foreground">{useCase.desc}</p>
                 </div>)}
             </div>
+          </div>
+        </section>
+
+        {/* Interactive Demo Section */}
+        <section className="section-padding bg-card/50" id="try-demo">
+          <div className="container-custom max-w-4xl">
+            <ExperienceDemo
+              experience="persona-pop"
+              experienceTitle="Persona Pop"
+              experienceDescription="Transform yourself into a superhero, anime character, or vintage icon!"
+            />
           </div>
         </section>
 

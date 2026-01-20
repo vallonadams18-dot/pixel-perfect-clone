@@ -4,6 +4,7 @@ import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import FAQSection from '@/components/FAQSection';
+import ExperienceDemo from '@/components/ExperienceDemo';
 import { Link } from 'react-router-dom';
 import { Shirt, Check, ArrowRight, Zap, Share2, Palette } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -296,6 +297,17 @@ const PixelWearPage = () => {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* Interactive Demo Section */}
+        <section className="section-padding bg-card/50" id="try-demo">
+          <div className="container-custom max-w-4xl">
+            <ExperienceDemo
+              experience="pixelwear"
+              experienceTitle="PixelWear"
+              experienceDescription="Upload your photo and see yourself in premium branded apparel instantly!"
+            />
           </div>
         </section>
 

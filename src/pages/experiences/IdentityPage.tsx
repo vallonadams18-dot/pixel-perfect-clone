@@ -4,6 +4,7 @@ import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import FAQSection from '@/components/FAQSection';
+import ExperienceDemo from '@/components/ExperienceDemo';
 import { Link } from 'react-router-dom';
 import { Pencil, Check, ArrowRight, Palette, Clock, Sparkles } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -342,6 +343,17 @@ const IdentityPage = () => {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* Interactive Demo Section */}
+        <section className="section-padding bg-card/50" id="try-demo">
+          <div className="container-custom max-w-4xl">
+            <ExperienceDemo
+              experience="identity"
+              experienceTitle="AI Sketch-a-Guest"
+              experienceDescription="Get a beautiful AI-generated sketch portrait in seconds!"
+            />
           </div>
         </section>
 
