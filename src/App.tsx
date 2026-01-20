@@ -61,6 +61,7 @@ import PixelAISocialPage from "./pages/PixelAISocialPage";
 import InstagramSchedulerPage from "./pages/InstagramSchedulerPage";
 import AnalyticsDashboardPage from "./pages/AnalyticsDashboardPage";
 import UserManagementPage from "./pages/UserManagementPage";
+import LeadsDashboardPage from "./pages/LeadsDashboardPage";
 
 const queryClient = new QueryClient();
 
@@ -152,6 +153,8 @@ const App = () => (
           <Route path="/analytics-d4shb0ard" element={<AnalyticsDashboardPage />} />
           {/* User Management */}
           <Route path="/user-m4nagement" element={<UserManagementPage />} />
+          {/* Leads Dashboard */}
+          <Route path="/leads-d4shb0ard" element={<LeadsDashboardPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
           </Routes>
