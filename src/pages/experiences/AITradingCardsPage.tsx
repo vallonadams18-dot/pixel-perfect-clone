@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
@@ -8,8 +9,9 @@ import { GalleryGrid } from '@/components/GalleryGrid';
 import ExperienceDemo from '@/components/ExperienceDemo';
 import DemoCTABanner from '@/components/DemoCTABanner';
 import { Link } from 'react-router-dom';
-import { Sparkles, Check, ArrowRight, Layers, Smartphone, Gem } from 'lucide-react';
+import { Sparkles, Check, ArrowRight, Layers, Smartphone, Gem, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 const tradingCardsFaqs = [
   {
@@ -97,6 +99,22 @@ const benefits = [
 ];
 
 const AITradingCardsPage = () => {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const openLightbox = (index: number) => {
+    setCurrentImageIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const navigateImage = (direction: 'prev' | 'next') => {
+    if (direction === 'prev') {
+      setCurrentImageIndex((prev) => (prev === 0 ? galleryImages.length - 1 : prev - 1));
+    } else {
+      setCurrentImageIndex((prev) => (prev === galleryImages.length - 1 ? 0 : prev + 1));
+    }
+  };
+
   usePageMeta({
     title: 'AI Trading Cards Photo Booth NYC | Custom Collectible Cards | PixelAI Pro',
     description: 'Create branded AI trading cards with custom stats & rarity tiers for sports events, conventions & brand activations in NYC. AR integration. Premium on-site printing. Book your demo!',
@@ -306,7 +324,11 @@ const AITradingCardsPage = () => {
             </p>
             <GalleryGrid columns={4} gap="lg">
               {galleryImages.map((image, index) => (
-                <div key={index} className="group relative overflow-hidden rounded-2xl glass">
+                <div 
+                  key={index} 
+                  className="group relative overflow-hidden rounded-2xl glass cursor-pointer"
+                  onClick={() => openLightbox(index)}
+                >
                   <ImageWithSkeleton
                     src={image.src}
                     alt={image.alt}
@@ -314,10 +336,58 @@ const AITradingCardsPage = () => {
                     priority={index < 4}
                     className="transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
+                    <span className="text-sm text-foreground/80 font-medium">Click to enlarge</span>
+                  </div>
                 </div>
               ))}
             </GalleryGrid>
+
+            {/* Lightbox Modal */}
+            <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+              <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 bg-background/95 backdrop-blur-xl border-0">
+                <div className="relative flex items-center justify-center min-h-[80vh]">
+                  {/* Close button */}
+                  <button
+                    onClick={() => setLightboxOpen(false)}
+                    className="absolute top-4 right-4 z-50 w-10 h-10 rounded-full bg-background/80 flex items-center justify-center hover:bg-background transition-colors"
+                  >
+                    <X size={20} className="text-foreground" />
+                  </button>
+
+                  {/* Previous button */}
+                  <button
+                    onClick={() => navigateImage('prev')}
+                    className="absolute left-4 z-50 w-12 h-12 rounded-full bg-background/80 flex items-center justify-center hover:bg-background transition-colors"
+                  >
+                    <ChevronLeft size={24} className="text-foreground" />
+                  </button>
+
+                  {/* Image */}
+                  <div className="max-w-4xl max-h-[85vh] p-4">
+                    <img
+                      src={galleryImages[currentImageIndex]?.src}
+                      alt={galleryImages[currentImageIndex]?.alt}
+                      className="max-w-full max-h-[80vh] object-contain rounded-lg"
+                    />
+                    <p className="text-center text-muted-foreground text-sm mt-4">
+                      {galleryImages[currentImageIndex]?.alt}
+                    </p>
+                    <p className="text-center text-muted-foreground/60 text-xs mt-2">
+                      {currentImageIndex + 1} / {galleryImages.length}
+                    </p>
+                  </div>
+
+                  {/* Next button */}
+                  <button
+                    onClick={() => navigateImage('next')}
+                    className="absolute right-4 z-50 w-12 h-12 rounded-full bg-background/80 flex items-center justify-center hover:bg-background transition-colors"
+                  >
+                    <ChevronRight size={24} className="text-foreground" />
+                  </button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </section>
 
