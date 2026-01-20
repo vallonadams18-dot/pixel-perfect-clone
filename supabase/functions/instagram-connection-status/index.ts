@@ -13,8 +13,11 @@ Deno.serve(async (req) => {
 
   try {
     // Check required environment variables
-    const instagramAccessToken = Deno.env.get('INSTAGRAM_ACCESS_TOKEN');
-    const businessAccountId = Deno.env.get('INSTAGRAM_BUSINESS_ACCOUNT_ID');
+    const rawAccessToken = Deno.env.get('INSTAGRAM_ACCESS_TOKEN');
+    const instagramAccessToken = rawAccessToken
+      ? rawAccessToken.replace(/^Bearer\s+/i, '').replace(/\s+/g, '').trim()
+      : null;
+    const businessAccountId = Deno.env.get('INSTAGRAM_BUSINESS_ACCOUNT_ID')?.trim();
 
     if (!instagramAccessToken || !businessAccountId) {
       console.error('Missing Instagram credentials');

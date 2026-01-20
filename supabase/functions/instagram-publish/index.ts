@@ -18,8 +18,11 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const accessToken = Deno.env.get('INSTAGRAM_ACCESS_TOKEN');
-    const businessAccountId = Deno.env.get('INSTAGRAM_BUSINESS_ACCOUNT_ID');
+    const rawAccessToken = Deno.env.get('INSTAGRAM_ACCESS_TOKEN');
+    const accessToken = rawAccessToken
+      ? rawAccessToken.replace(/^Bearer\s+/i, '').replace(/\s+/g, '').trim()
+      : null;
+    const businessAccountId = Deno.env.get('INSTAGRAM_BUSINESS_ACCOUNT_ID')?.trim();
 
     if (!accessToken || !businessAccountId) {
       console.error('Missing Instagram credentials');
@@ -122,8 +125,15 @@ Deno.serve(async (req) => {
 
     if (containerData.error) {
       console.error('Container creation error:', containerData.error);
+      const msg = containerData.error.message || 'Failed to create media container';
+      const isTokenError = containerData.error.code === 190 || /oauth access token/i.test(msg);
+
       return new Response(
-        JSON.stringify({ error: containerData.error.message || 'Failed to create media container' }),
+        JSON.stringify({
+          error: isTokenError
+            ? 'Instagram token is invalid/expired. Please update the Instagram access token and try again.'
+            : msg,
+        }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

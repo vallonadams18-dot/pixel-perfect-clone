@@ -41,8 +41,11 @@ Deno.serve(async (req) => {
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-  const accessToken = Deno.env.get('INSTAGRAM_ACCESS_TOKEN');
-  const businessAccountId = Deno.env.get('INSTAGRAM_BUSINESS_ACCOUNT_ID');
+  const rawAccessToken = Deno.env.get('INSTAGRAM_ACCESS_TOKEN');
+  const accessToken = rawAccessToken
+    ? rawAccessToken.replace(/^Bearer\s+/i, '').replace(/\s+/g, '').trim()
+    : null;
+  const businessAccountId = Deno.env.get('INSTAGRAM_BUSINESS_ACCOUNT_ID')?.trim();
 
   if (!accessToken || !businessAccountId) {
     console.error('Missing Instagram credentials');
