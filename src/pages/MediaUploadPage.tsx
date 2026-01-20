@@ -6,11 +6,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Trash2, Image, LogIn, LogOut, Eye, EyeOff, Zap, Loader2, Settings2, ChevronDown, ChevronUp
-
- } from 'lucide-react';
+import { Upload, Trash2, Image, LogIn, LogOut, Eye, EyeOff, Zap, Loader2, Settings2, ChevronDown, ChevronUp } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import ImageWithSkeleton from '@/components/ImageWithSkeleton';
+import { GalleryGrid, GallerySkeleton } from '@/components/GalleryGrid';
 import uploadHero from '@/assets/upload-hero.jpg';
 
 interface MediaItem {
@@ -672,20 +672,21 @@ const MediaUploadPage = () => {
           </h2>
           
           {loading ? (
-            <div className="text-center py-12 text-muted-foreground">Loading...</div>
+            <GallerySkeleton count={8} columns={4} aspectRatio="square" gap="md" />
           ) : mediaItems.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               No media uploaded yet. Start by uploading some photos!
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {mediaItems.map((item) => (
+            <GalleryGrid columns={4} gap="md">
+              {mediaItems.map((item, index) => (
                 <div key={item.id} className="relative group rounded-lg overflow-hidden border bg-muted">
                   {item.url && item.file_type?.startsWith('image') ? (
-                    <img
+                    <ImageWithSkeleton
                       src={item.url}
                       alt={item.file_name}
-                      className="w-full aspect-square object-cover"
+                      aspectRatio="square"
+                      priority={index < 8}
                     />
                   ) : item.url && item.file_type?.startsWith('video') ? (
                     <video
@@ -715,7 +716,7 @@ const MediaUploadPage = () => {
                   </div>
                 </div>
               ))}
-            </div>
+            </GalleryGrid>
           )}
         </div>
       </div>

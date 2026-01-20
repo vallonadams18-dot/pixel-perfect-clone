@@ -3,6 +3,8 @@ import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import FAQSection from '@/components/FAQSection';
+import ImageWithSkeleton from '@/components/ImageWithSkeleton';
+import { GalleryGrid } from '@/components/GalleryGrid';
 import { Link } from 'react-router-dom';
 import { Users, Check, ArrowRight, Star, Camera, Award } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -184,22 +186,22 @@ const CoStarPage = () => {
             <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
               See how our AI technology creates unforgettable celebrity moments for event guests.
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+            <GalleryGrid columns={3} gap="md" className="md:gap-6">
               {galleryImages.map((image, index) => (
-                <figure key={index} className="relative aspect-[3/4] rounded-2xl overflow-hidden group">
-                  <img 
+                <figure key={index} className="relative rounded-2xl overflow-hidden group">
+                  <ImageWithSkeleton
                     src={image.src}
                     alt={image.alt}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                    decoding="async"
+                    aspectRatio="3/4"
+                    priority={index < 3}
+                    className="transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                     <span className="text-white font-semibold text-sm md:text-base">{image.label}</span>
                   </div>
                 </figure>
               ))}
-            </div>
+            </GalleryGrid>
           </div>
         </section>
 

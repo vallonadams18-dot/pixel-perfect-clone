@@ -3,6 +3,8 @@ import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import FAQSection from '@/components/FAQSection';
+import ImageWithSkeleton from '@/components/ImageWithSkeleton';
+import { GalleryGrid } from '@/components/GalleryGrid';
 import { Link } from 'react-router-dom';
 import { Sparkles, Check, ArrowRight, Zap, Target, Image, Clock, Calendar } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -236,20 +238,21 @@ const PersonaPopPage = () => {
             <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
               See the magic of Persona Pop in action—from caricatures to superheroes, every transformation is unique.
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <GalleryGrid columns={4} gap="md">
               {galleryImages.map((image, index) => (
-                <figure key={index} className="relative aspect-square rounded-xl overflow-hidden glass group cursor-pointer">
-                  <img 
-                    src={image.src} 
-                    alt={image.alt} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    loading={index < 4 ? "eager" : "lazy"}
+                <figure key={index} className="relative rounded-xl overflow-hidden glass group cursor-pointer">
+                  <ImageWithSkeleton
+                    src={image.src}
+                    alt={image.alt}
+                    aspectRatio="square"
+                    priority={index < 4}
+                    className="transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <figcaption className="sr-only">{image.alt}</figcaption>
                 </figure>
               ))}
-            </div>
+            </GalleryGrid>
           </div>
         </section>
 

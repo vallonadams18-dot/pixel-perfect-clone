@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useAdminRole } from '@/hooks/useAdminRole';
 import { Progress } from '@/components/ui/progress';
+import ImageWithSkeleton from '@/components/ImageWithSkeleton';
+import { GalleryGrid, GallerySkeleton } from '@/components/GalleryGrid';
 import JSZip from 'jszip';
 import { 
   Upload, 
@@ -828,7 +830,7 @@ const PixelAISocialPage = () => {
           </h2>
           
           {loading ? (
-            <div className="text-center py-12 text-muted-foreground">Loading...</div>
+            <GallerySkeleton count={8} columns={4} aspectRatio="square" gap="md" />
           ) : filteredMedia.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               {searchQuery || filterType !== 'all' 
@@ -836,8 +838,8 @@ const PixelAISocialPage = () => {
                 : 'No media uploaded yet. Start by uploading some photos!'}
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {filteredMedia.map((item) => (
+            <GalleryGrid columns={4} gap="md">
+              {filteredMedia.map((item, index) => (
                 <div 
                   key={item.id} 
                   className={`relative group rounded-lg overflow-hidden border bg-muted cursor-pointer ${
@@ -855,11 +857,11 @@ const PixelAISocialPage = () => {
                   </div>
 
                   {item.url && item.file_type?.startsWith('image') ? (
-                    <img
+                    <ImageWithSkeleton
                       src={item.url}
                       alt={item.file_name}
-                      className="w-full aspect-square object-cover"
-                      loading="lazy"
+                      aspectRatio="square"
+                      priority={index < 8}
                     />
                   ) : item.url && item.file_type?.startsWith('video') ? (
                     <video
@@ -921,7 +923,7 @@ const PixelAISocialPage = () => {
                   </div>
                 </div>
               ))}
-            </div>
+            </GalleryGrid>
           )}
         </div>
 

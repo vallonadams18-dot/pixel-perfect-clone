@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
+import ImageWithSkeleton from '@/components/ImageWithSkeleton';
+import { GalleryGrid } from '@/components/GalleryGrid';
 
 // Import portfolio images - SEO optimized file names (user uploaded)
 import pirateCosplayImage from '@/assets/ai-photo-booth-pirate-cosplay-transformation.jpg';
@@ -54,23 +56,21 @@ const Portfolio = () => {
         </div>
 
         {/* Masonry Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {portfolioImages.map((image) => (
+        <GalleryGrid columns={4} gap="md">
+          {portfolioImages.map((image, index) => (
             <div
               key={image.id}
               className="group relative overflow-hidden rounded-2xl cursor-pointer card-hover"
               onClick={() => setSelectedImage(image)}
             >
-              {/* Portfolio Image */}
-              <div className="aspect-[3/4] overflow-hidden">
-                <img 
-                  src={image.src} 
-                  alt={image.alt}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-              </div>
+              {/* Portfolio Image with Skeleton */}
+              <ImageWithSkeleton
+                src={image.src}
+                alt={image.alt}
+                aspectRatio="3/4"
+                priority={index < 4}
+                className="transition-transform duration-500 group-hover:scale-110"
+              />
 
               {/* Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
@@ -84,7 +84,7 @@ const Portfolio = () => {
               </div>
             </div>
           ))}
-        </div>
+        </GalleryGrid>
 
         {/* View More Button */}
         <div className="text-center mt-12">
