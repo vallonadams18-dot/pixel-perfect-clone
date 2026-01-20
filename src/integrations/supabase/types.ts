@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      demo_usage: {
+        Row: {
+          created_at: string
+          email: string
+          experience_type: string
+          id: string
+          ip_address: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          experience_type: string
+          id?: string
+          ip_address?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          experience_type?: string
+          id?: string
+          ip_address?: string | null
+        }
+        Relationships: []
+      }
       event_media: {
         Row: {
           created_at: string
