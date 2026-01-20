@@ -81,6 +81,7 @@ export type Database = {
           file_type: string | null
           id: string
           tags: string[] | null
+          thumbnail_path: string | null
           user_id: string | null
         }
         Insert: {
@@ -92,6 +93,7 @@ export type Database = {
           file_type?: string | null
           id?: string
           tags?: string[] | null
+          thumbnail_path?: string | null
           user_id?: string | null
         }
         Update: {
@@ -103,6 +105,7 @@ export type Database = {
           file_type?: string | null
           id?: string
           tags?: string[] | null
+          thumbnail_path?: string | null
           user_id?: string | null
         }
         Relationships: []

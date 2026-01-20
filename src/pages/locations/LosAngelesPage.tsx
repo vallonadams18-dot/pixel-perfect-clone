@@ -1,6 +1,7 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import LocationDemoCTA from '@/components/LocationDemoCTA';
 import { Link } from 'react-router-dom';
 import { ArrowRight, MapPin, Star, Check, Building2, Calendar, Users, Trophy } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -293,6 +294,9 @@ const LosAngelesPage = () => {
           </div>
         </div>
       </section>
+
+      {/* Demo CTA */}
+      <LocationDemoCTA location="Los Angeles" />
 
       {/* Testimonials */}
       <section className="section-padding">

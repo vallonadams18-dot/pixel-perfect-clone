@@ -4,6 +4,7 @@ import BrandTicker from '@/components/BrandTicker';
 import About from '@/components/About';
 import Services from '@/components/Services';
 import HowItWorks from '@/components/HowItWorks';
+import HomeDemoCTA from '@/components/HomeDemoCTA';
 import Portfolio from '@/components/Portfolio';
 import Testimonials, { generateReviewSchema } from '@/components/Testimonials';
 import FAQ from '@/components/FAQ';
@@ -109,6 +110,7 @@ const Index = () => {
       <About />
       <Services />
       <HowItWorks />
+      <HomeDemoCTA />
       <Portfolio />
       <Testimonials />
       <FAQ />

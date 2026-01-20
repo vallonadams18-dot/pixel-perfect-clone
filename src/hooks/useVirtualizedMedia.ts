@@ -11,6 +11,7 @@ interface MediaItem {
   tags: string[] | null;
   created_at: string;
   user_id: string | null;
+  thumbnail_path: string | null;
   url?: string;
   thumbnailUrl?: string;
   isLoading?: boolean;
@@ -75,8 +76,9 @@ export function useVirtualizedMedia({ bucketName, pageSize = 20 }: UseVirtualize
   }, [bucketName]);
 
   // Batch load URLs for visible items with proper error handling
+  // Prioritize thumbnails for faster grid loading
   const loadUrlsForItems = useCallback(async (itemsToLoad: MediaItem[]): Promise<MediaItem[]> => {
-    const BATCH_SIZE = 5; // Smaller batches for reliability
+    const BATCH_SIZE = 8; // Larger batches OK since thumbnails are small
     const results: MediaItem[] = [];
     
     for (let i = 0; i < itemsToLoad.length; i += BATCH_SIZE) {
@@ -85,12 +87,18 @@ export function useVirtualizedMedia({ bucketName, pageSize = 20 }: UseVirtualize
       const batch = itemsToLoad.slice(i, i + BATCH_SIZE);
       const batchResults = await Promise.all(
         batch.map(async (item) => {
+          // Use thumbnail URL for grid display if available (faster loading)
+          const thumbnailUrl = item.thumbnail_path 
+            ? await getSignedUrl(item.thumbnail_path)
+            : null;
+          // Also get full URL for downloads/actions
           const url = await getSignedUrl(item.file_path);
           return { 
             ...item, 
-            url: url || undefined, 
+            url: url || undefined,
+            thumbnailUrl: thumbnailUrl || undefined,
             isLoading: false,
-            error: !url
+            error: !url && !thumbnailUrl
           };
         })
       );
