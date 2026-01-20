@@ -5,10 +5,14 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const MAX_TRIES_PER_EMAIL = 2;
+
 interface DemoTransformRequest {
-  imageBase64: string;
+  imageBase64?: string;
   experience: string;
   customPrompt?: string;
+  email?: string;
+  checkUsage?: boolean;
 }
 
 const EXPERIENCE_STYLES: Record<string, string> = {
@@ -16,7 +20,6 @@ const EXPERIENCE_STYLES: Record<string, string> = {
   'trading-cards': 'Transform this image into a professional sports trading card style. Add dramatic lighting, stadium backdrop, player stats overlay frame, glossy card finish effect, and make it look like an official collectible trading card with bold typography.',
   'headshots': 'Transform this into a professional corporate headshot. Clean studio lighting, neutral gradient background, professional color grading, subtle skin retouching, and executive portrait style.',
   'persona-pop': 'Transform this person into a fun Pixar/Disney 3D animated character style. Exaggerated features, colorful cartoon aesthetic, soft lighting, playful expression while maintaining likeness.',
-  // Note: Avoid asking follow-up questions in a one-shot demo. Keep it generic but cinematic.
   'co-star': 'Transform this image to place the person co-starring in a blockbuster movie scene with an A‑list actor (generic, non-identifiable). Add cinematic lighting, film grain, professional compositing, and a movie-poster vibe.',
   'video-booths': 'Transform this into a dynamic action shot with motion blur effects, neon lights, cyberpunk aesthetic, futuristic overlays, and dramatic visual effects that suggest movement and energy.',
   'axon-ai': 'Transform this to include an AI robot companion or futuristic tech elements. Add holographic displays, neural network visualizations, sleek robotic elements, and sci-fi technology aesthetic.',
@@ -24,7 +27,6 @@ const EXPERIENCE_STYLES: Record<string, string> = {
 };
 
 function extractGeneratedImageUrl(data: any): string | null {
-  // Common formats across OpenAI-compatible image models
   const direct = data?.choices?.[0]?.message?.images?.[0]?.image_url?.url;
   if (typeof direct === 'string' && direct.length > 0) return direct;
 
@@ -34,10 +36,8 @@ function extractGeneratedImageUrl(data: any): string | null {
     if (part?.image_url?.url) return part.image_url.url;
   }
 
-  // Some providers return images at the top level
   if (Array.isArray(data?.images) && data.images?.[0]?.url) return data.images[0].url;
 
-  // Older OpenAI-style image outputs
   if (Array.isArray(data?.data)) {
     const first = data.data[0];
     if (first?.url) return first.url;
@@ -57,7 +57,6 @@ function decodeDataUrl(dataUrl: string): { contentType: string; bytes: Uint8Arra
 }
 
 async function waitForPublicImage(url: string): Promise<void> {
-  // Storage uploads can be briefly eventual-consistent; give the provider a moment to fetch.
   for (let i = 0; i < 6; i++) {
     try {
       const res = await fetch(url, { method: 'HEAD' });
@@ -66,6 +65,34 @@ async function waitForPublicImage(url: string): Promise<void> {
       // ignore
     }
     await new Promise((r) => setTimeout(r, 250));
+  }
+}
+
+async function getUsageCount(supabase: any, email: string, experience: string): Promise<number> {
+  const { count, error } = await supabase
+    .from('demo_usage')
+    .select('*', { count: 'exact', head: true })
+    .eq('email', email.toLowerCase().trim())
+    .eq('experience_type', experience.toLowerCase());
+  
+  if (error) {
+    console.error('Usage count error:', error);
+    return 0;
+  }
+  
+  return count || 0;
+}
+
+async function recordUsage(supabase: any, email: string, experience: string): Promise<void> {
+  const { error } = await supabase
+    .from('demo_usage')
+    .insert({
+      email: email.toLowerCase().trim(),
+      experience_type: experience.toLowerCase(),
+    });
+  
+  if (error) {
+    console.error('Record usage error:', error);
   }
 }
 
@@ -90,8 +117,26 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { imageBase64, experience, customPrompt } = await req.json() as DemoTransformRequest;
-    
+    const body = await req.json() as DemoTransformRequest;
+    const { imageBase64, experience, customPrompt, email, checkUsage } = body;
+
+    // Handle usage check request
+    if (checkUsage && email && experience) {
+      const usageCount = await getUsageCount(supabase, email, experience);
+      const remainingTries = Math.max(0, MAX_TRIES_PER_EMAIL - usageCount);
+      
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          usageCount, 
+          remainingTries,
+          maxTries: MAX_TRIES_PER_EMAIL 
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Validate required fields for transformation
     if (!imageBase64) {
       return new Response(
         JSON.stringify({ error: 'Image is required' }),
@@ -106,6 +151,27 @@ Deno.serve(async (req) => {
       );
     }
 
+    if (!email) {
+      return new Response(
+        JSON.stringify({ error: 'Email is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Check usage limit
+    const usageCount = await getUsageCount(supabase, email, experience);
+    if (usageCount >= MAX_TRIES_PER_EMAIL) {
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          limitReached: true, 
+          error: 'You have used all your free tries for this experience.',
+          remainingTries: 0 
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Validate base64 size (limit to ~10MB)
     if (imageBase64.length > 15000000) {
       return new Response(
@@ -114,7 +180,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`Processing demo for experience: ${experience}`);
+    console.log(`Processing demo for experience: ${experience}, email: ${email}`);
 
     // Get the style prompt
     const stylePrompt = EXPERIENCE_STYLES[experience.toLowerCase()] ||
@@ -129,8 +195,7 @@ Deno.serve(async (req) => {
 
     const promptForModel = `${fullPrompt}\n\n${outputInstruction}`;
 
-    // IMPORTANT: The image model needs a URL it can fetch. Data URLs can be flaky, so we upload
-    // the input to the public demo-images bucket and pass the public URL to the AI.
+    // Upload input image to storage for AI access
     let inputImageUrl = imageBase64;
     if (imageBase64.startsWith('data:')) {
       try {
@@ -167,7 +232,7 @@ Deno.serve(async (req) => {
       model: 'google/gemini-2.5-flash-image',
     });
 
-    // Call Lovable AI for image editing using Nano Banana (image generation model)
+    // Call Lovable AI for image editing
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -197,7 +262,6 @@ Deno.serve(async (req) => {
       const errorText = await response.text();
       console.error('AI gateway error:', response.status, errorText);
 
-      // Surface common gateway billing/rate errors
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ success: false, error: 'High demand! Please try again in a moment.' }),
@@ -211,7 +275,6 @@ Deno.serve(async (req) => {
         );
       }
 
-      // Try to extract the provider error message for better UX
       let providerMessage: string | null = null;
       try {
         const parsed = JSON.parse(errorText);
@@ -243,14 +306,13 @@ Deno.serve(async (req) => {
     const data = await response.json();
     console.log('AI response received');
 
-    // Extract the generated image (supports multiple gateway response formats)
     let generatedImage = extractGeneratedImageUrl(data);
 
     if (!generatedImage) {
       const assistantText = data?.choices?.[0]?.message?.content;
       console.error('No image in response:', JSON.stringify(data));
 
-      // One-shot retry with a stronger image model + stricter instruction.
+      // One-shot retry with a stronger image model
       console.log('Retrying with google/gemini-3-pro-image-preview...');
       const retryResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
         method: 'POST',
@@ -293,7 +355,12 @@ Deno.serve(async (req) => {
       }
     }
 
-    // If the model returns a data URL, persist it to storage. If it returns an https URL, return it directly.
+    // Record usage BEFORE returning success
+    await recordUsage(supabase, email, experience);
+    const newUsageCount = usageCount + 1;
+    const remainingTries = Math.max(0, MAX_TRIES_PER_EMAIL - newUsageCount);
+
+    // If the model returns a data URL, persist it to storage
     let imageUrl = generatedImage;
 
     if (generatedImage.startsWith('data:')) {
@@ -331,6 +398,7 @@ Deno.serve(async (req) => {
         imageUrl,
         experience,
         message: `Your ${experience} transformation is ready!`,
+        remainingTries,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

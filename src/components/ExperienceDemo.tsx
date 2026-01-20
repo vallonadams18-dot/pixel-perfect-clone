@@ -1,9 +1,12 @@
 import { useState, useRef, useCallback } from 'react';
-import { Camera, Upload, Download, Save, Loader2, RefreshCw, X, Sparkles } from 'lucide-react';
+import { Camera, Upload, Download, Save, Loader2, RefreshCw, X, Sparkles, Mail, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { z } from 'zod';
 
 interface ExperienceDemoProps {
   experience: string;
@@ -12,12 +15,21 @@ interface ExperienceDemoProps {
   accentColor?: string;
 }
 
+const emailSchema = z.string().trim().email({ message: "Please enter a valid email address" });
+
 const ExperienceDemo = ({ 
   experience, 
   experienceTitle, 
   experienceDescription,
   accentColor = 'primary'
 }: ExperienceDemoProps) => {
+  // Email gate state
+  const [email, setEmail] = useState('');
+  const [emailSubmitted, setEmailSubmitted] = useState(false);
+  const [emailError, setEmailError] = useState('');
+  const [remainingTries, setRemainingTries] = useState<number | null>(null);
+  const [checkingEmail, setCheckingEmail] = useState(false);
+  
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [transformedImage, setTransformedImage] = useState<string | null>(null);
   const [isTransforming, setIsTransforming] = useState(false);
@@ -30,6 +42,53 @@ const ExperienceDemo = ({
   const streamRef = useRef<MediaStream | null>(null);
   
   const { toast } = useToast();
+
+  const handleEmailSubmit = useCallback(async () => {
+    setEmailError('');
+    
+    // Validate email
+    const result = emailSchema.safeParse(email);
+    if (!result.success) {
+      setEmailError(result.error.errors[0].message);
+      return;
+    }
+    
+    setCheckingEmail(true);
+    
+    try {
+      // Check remaining tries via edge function
+      const { data, error } = await supabase.functions.invoke('demo-transform', {
+        body: {
+          checkUsage: true,
+          email: email.trim().toLowerCase(),
+          experience: experience,
+        },
+      });
+      
+      if (error) throw error;
+      
+      if (data?.remainingTries !== undefined) {
+        if (data.remainingTries <= 0) {
+          setEmailError('You have used all your free tries for this experience. Contact us for more!');
+          setRemainingTries(0);
+        } else {
+          setRemainingTries(data.remainingTries);
+          setEmailSubmitted(true);
+        }
+      } else {
+        // Fallback if no usage check response
+        setRemainingTries(2);
+        setEmailSubmitted(true);
+      }
+    } catch (error) {
+      console.error('Email check error:', error);
+      // Allow through on error, we'll check again on transform
+      setRemainingTries(2);
+      setEmailSubmitted(true);
+    } finally {
+      setCheckingEmail(false);
+    }
+  }, [email, experience]);
 
   const normalizeToJpeg = useCallback(async (dataUrl: string) => {
     // Downscale + convert to JPEG to avoid unsupported formats (e.g., HEIC) and huge images.
@@ -60,6 +119,7 @@ const ExperienceDemo = ({
       img.src = dataUrl;
     });
   }, []);
+
   const handleFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -151,7 +211,17 @@ const ExperienceDemo = ({
   }, [stopCamera]);
 
   const transformImage = useCallback(async () => {
-    if (!originalImage) return;
+    if (!originalImage || !email) return;
+
+    // Check if any tries remaining
+    if (remainingTries !== null && remainingTries <= 0) {
+      toast({
+        title: 'No tries remaining',
+        description: 'You have used all your free tries for this experience.',
+        variant: 'destructive',
+      });
+      return;
+    }
 
     setIsTransforming(true);
     try {
@@ -159,6 +229,7 @@ const ExperienceDemo = ({
         body: {
           imageBase64: originalImage,
           experience: experience,
+          email: email.trim().toLowerCase(),
         },
       });
 
@@ -178,8 +249,24 @@ const ExperienceDemo = ({
         throw new Error(message);
       }
 
+      if (data?.limitReached) {
+        setRemainingTries(0);
+        toast({
+          title: 'Limit reached',
+          description: 'You have used all your free tries. Contact us for more!',
+          variant: 'destructive',
+        });
+        return;
+      }
+
       if (data?.success && data?.imageUrl) {
         setTransformedImage(data.imageUrl);
+        // Update remaining tries
+        if (data.remainingTries !== undefined) {
+          setRemainingTries(data.remainingTries);
+        } else if (remainingTries !== null) {
+          setRemainingTries(Math.max(0, remainingTries - 1));
+        }
         toast({ title: '✨ Transformation complete!' });
       } else {
         throw new Error(data?.error || 'No image returned');
@@ -194,7 +281,7 @@ const ExperienceDemo = ({
     } finally {
       setIsTransforming(false);
     }
-  }, [originalImage, experience, toast]);
+  }, [originalImage, experience, email, remainingTries, toast]);
 
   const downloadImage = useCallback(() => {
     if (!transformedImage) return;
@@ -263,132 +350,227 @@ const ExperienceDemo = ({
         <p className="text-muted-foreground">{experienceDescription}</p>
       </div>
 
-      {/* Camera View */}
-      {isCameraOpen && (
-        <div className="relative mb-6">
-          <video 
-            ref={videoRef} 
-            autoPlay 
-            playsInline 
-            muted 
-            className="w-full max-w-md mx-auto rounded-xl aspect-[3/4] object-cover bg-black"
-          />
-          <canvas ref={canvasRef} className="hidden" />
-          <div className="flex justify-center gap-4 mt-4">
-            <Button onClick={capturePhoto} className="btn-primary">
-              <Camera size={20} className="mr-2" /> Capture Photo
-            </Button>
-            <Button variant="outline" onClick={stopCamera}>
-              <X size={20} className="mr-2" /> Cancel
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Upload/Camera Options */}
-      {!isCameraOpen && !originalImage && (
-        <div className="grid md:grid-cols-2 gap-4 max-w-lg mx-auto">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFileUpload}
-            className="hidden"
-          />
-          <Button 
-            variant="outline" 
-            className="h-32 flex-col gap-2 border-dashed border-2"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <Upload size={32} className="text-primary" />
-            <span>Upload Photo</span>
-          </Button>
-          <Button 
-            variant="outline" 
-            className="h-32 flex-col gap-2 border-dashed border-2"
-            onClick={startCamera}
-          >
-            <Camera size={32} className="text-primary" />
-            <span>Take Photo</span>
-          </Button>
-        </div>
-      )}
-
-      {/* Image Display */}
-      {originalImage && !isCameraOpen && (
-        <div className="space-y-6">
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Original */}
-            <div className="text-center">
-              <p className="text-sm font-medium text-muted-foreground mb-2">Original</p>
-              <div className="aspect-[3/4] rounded-xl overflow-hidden bg-muted">
-                <img 
-                  src={originalImage} 
-                  alt="Original photo" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
+      {/* Email Gate */}
+      {!emailSubmitted && (
+        <div className="max-w-md mx-auto space-y-4">
+          <div className="text-center mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+              <Mail className="w-8 h-8 text-primary" />
             </div>
-
-            {/* Transformed */}
-            <div className="text-center">
-              <p className="text-sm font-medium text-muted-foreground mb-2">
-                {isTransforming ? 'Transforming...' : transformedImage ? experienceTitle : 'Result'}
-              </p>
-              <div className="aspect-[3/4] rounded-xl overflow-hidden bg-muted relative">
-                {isTransforming ? (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80">
-                    <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
-                    <p className="text-foreground font-medium">AI is working its magic...</p>
-                    <p className="text-sm text-muted-foreground">This usually takes 10-20 seconds</p>
-                  </div>
-                ) : transformedImage ? (
-                  <img 
-                    src={transformedImage} 
-                    alt={`${experienceTitle} transformation`} 
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <p className="text-muted-foreground">Click Transform to see the magic!</p>
-                  </div>
-                )}
-              </div>
-            </div>
+            <p className="text-sm text-muted-foreground">
+              Enter your email to unlock <strong>2 free transformations</strong>
+            </p>
           </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-wrap justify-center gap-3">
-            {!transformedImage && !isTransforming && (
-              <Button onClick={transformImage} className="btn-primary">
-                <Sparkles size={18} className="mr-2" /> Transform Now
-              </Button>
+          
+          <div className="space-y-2">
+            <Label htmlFor="demo-email">Email Address</Label>
+            <Input
+              id="demo-email"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setEmailError('');
+              }}
+              onKeyDown={(e) => e.key === 'Enter' && handleEmailSubmit()}
+              className={emailError ? 'border-destructive' : ''}
+            />
+            {emailError && (
+              <div className="flex items-center gap-2 text-destructive text-sm">
+                <AlertCircle className="w-4 h-4" />
+                {emailError}
+              </div>
             )}
-            
-            {transformedImage && (
+          </div>
+          
+          <Button 
+            onClick={handleEmailSubmit} 
+            className="w-full btn-primary"
+            disabled={!email.trim() || checkingEmail}
+          >
+            {checkingEmail ? (
               <>
-                <Button onClick={downloadImage} variant="outline">
-                  <Download size={18} className="mr-2" /> Download
-                </Button>
-                <Button onClick={saveToGallery} disabled={isSaving} className="btn-primary">
-                  {isSaving ? (
-                    <Loader2 size={18} className="mr-2 animate-spin" />
-                  ) : (
-                    <Save size={18} className="mr-2" />
-                  )}
-                  Save to Gallery
-                </Button>
-                <Button onClick={transformImage} variant="outline" disabled={isTransforming}>
-                  <RefreshCw size={18} className="mr-2" /> Try Again
-                </Button>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Checking...
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4 mr-2" />
+                Unlock Free Demo
               </>
             )}
-            
-            <Button variant="ghost" onClick={reset}>
-              <X size={18} className="mr-2" /> Start Over
-            </Button>
-          </div>
+          </Button>
+          
+          <p className="text-xs text-muted-foreground text-center">
+            By continuing, you agree to receive occasional updates about our services.
+          </p>
         </div>
+      )}
+
+      {/* Demo Content (after email submitted) */}
+      {emailSubmitted && (
+        <>
+          {/* Remaining Tries Badge */}
+          {remainingTries !== null && (
+            <div className="flex justify-center mb-4">
+              <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
+                remainingTries > 0 
+                  ? 'bg-primary/10 text-primary' 
+                  : 'bg-destructive/10 text-destructive'
+              }`}>
+                <Sparkles className="w-4 h-4" />
+                {remainingTries > 0 
+                  ? `${remainingTries} free ${remainingTries === 1 ? 'try' : 'tries'} remaining`
+                  : 'No tries remaining'
+                }
+              </div>
+            </div>
+          )}
+
+          {/* Camera View */}
+          {isCameraOpen && (
+            <div className="relative mb-6">
+              <video 
+                ref={videoRef} 
+                autoPlay 
+                playsInline 
+                muted 
+                className="w-full max-w-md mx-auto rounded-xl aspect-[3/4] object-cover bg-black"
+              />
+              <canvas ref={canvasRef} className="hidden" />
+              <div className="flex justify-center gap-4 mt-4">
+                <Button onClick={capturePhoto} className="btn-primary">
+                  <Camera size={20} className="mr-2" /> Capture Photo
+                </Button>
+                <Button variant="outline" onClick={stopCamera}>
+                  <X size={20} className="mr-2" /> Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Upload/Camera Options */}
+          {!isCameraOpen && !originalImage && remainingTries !== null && remainingTries > 0 && (
+            <div className="grid md:grid-cols-2 gap-4 max-w-lg mx-auto">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+              <Button 
+                variant="outline" 
+                className="h-32 flex-col gap-2 border-dashed border-2"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Upload size={32} className="text-primary" />
+                <span>Upload Photo</span>
+              </Button>
+              <Button 
+                variant="outline" 
+                className="h-32 flex-col gap-2 border-dashed border-2"
+                onClick={startCamera}
+              >
+                <Camera size={32} className="text-primary" />
+                <span>Take Photo</span>
+              </Button>
+            </div>
+          )}
+
+          {/* No tries remaining message */}
+          {remainingTries !== null && remainingTries <= 0 && !originalImage && (
+            <div className="text-center py-8">
+              <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground mb-4">
+                You've used all your free tries for this experience.
+              </p>
+              <Button variant="outline" asChild>
+                <a href="/contact">Contact Us for More</a>
+              </Button>
+            </div>
+          )}
+
+          {/* Image Display */}
+          {originalImage && !isCameraOpen && (
+            <div className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Original */}
+                <div className="text-center">
+                  <p className="text-sm font-medium text-muted-foreground mb-2">Original</p>
+                  <div className="aspect-[3/4] rounded-xl overflow-hidden bg-muted">
+                    <img 
+                      src={originalImage} 
+                      alt="Original photo" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+
+                {/* Transformed */}
+                <div className="text-center">
+                  <p className="text-sm font-medium text-muted-foreground mb-2">
+                    {isTransforming ? 'Transforming...' : transformedImage ? experienceTitle : 'Result'}
+                  </p>
+                  <div className="aspect-[3/4] rounded-xl overflow-hidden bg-muted relative">
+                    {isTransforming ? (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80">
+                        <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+                        <p className="text-foreground font-medium">AI is working its magic...</p>
+                        <p className="text-sm text-muted-foreground">This usually takes 10-20 seconds</p>
+                      </div>
+                    ) : transformedImage ? (
+                      <img 
+                        src={transformedImage} 
+                        alt={`${experienceTitle} transformation`} 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <p className="text-muted-foreground">Click Transform to see the magic!</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap justify-center gap-3">
+                {!transformedImage && !isTransforming && remainingTries !== null && remainingTries > 0 && (
+                  <Button onClick={transformImage} className="btn-primary">
+                    <Sparkles size={18} className="mr-2" /> Transform Now
+                  </Button>
+                )}
+                
+                {transformedImage && (
+                  <>
+                    <Button onClick={downloadImage} variant="outline">
+                      <Download size={18} className="mr-2" /> Download
+                    </Button>
+                    <Button onClick={saveToGallery} disabled={isSaving} className="btn-primary">
+                      {isSaving ? (
+                        <Loader2 size={18} className="mr-2 animate-spin" />
+                      ) : (
+                        <Save size={18} className="mr-2" />
+                      )}
+                      Save to Gallery
+                    </Button>
+                    {remainingTries !== null && remainingTries > 0 && (
+                      <Button onClick={transformImage} variant="outline" disabled={isTransforming}>
+                        <RefreshCw size={18} className="mr-2" /> Try Again
+                      </Button>
+                    )}
+                  </>
+                )}
+                
+                <Button variant="ghost" onClick={reset}>
+                  <X size={18} className="mr-2" /> Start Over
+                </Button>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </Card>
   );
