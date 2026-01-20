@@ -38,12 +38,24 @@ const ContentHubPage = () => {
     loadingMore,
     hasMore,
     totalCount,
+    error: mediaError,
     loadMore,
     refresh: fetchUploaderMedia 
   } = useVirtualizedMedia({ 
     bucketName: 'event-media',
     pageSize: 20 
   });
+  
+  // Show media loading errors
+  useEffect(() => {
+    if (mediaError) {
+      toast({
+        title: "Error loading media",
+        description: mediaError,
+        variant: "destructive"
+      });
+    }
+  }, [mediaError, toast]);
 
   // Fetch auth session on mount
   useEffect(() => {
