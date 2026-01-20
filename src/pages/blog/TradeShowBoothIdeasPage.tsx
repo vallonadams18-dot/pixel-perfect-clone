@@ -7,6 +7,11 @@ import { ArrowRight, Calendar, Clock, User, Lightbulb, TrendingUp, Users, Zap } 
 import usePageMeta from '@/hooks/usePageMeta';
 import RelatedServices from '@/components/RelatedServices';
 
+// Trade Show Gallery Images
+import tradeshowBasketball from '@/assets/tradeshow-trading-card-basketball.jpg';
+import tradeshowFootball from '@/assets/tradeshow-trading-card-football.jpg';
+import tradeshowBoothFemale from '@/assets/tradeshow-booth-football-female.jpg';
+
 const TradeShowBoothIdeasPage = () => {
   usePageMeta({
     title: 'Trade Show Booth Ideas That Actually Drive Leads in 2026 | PixelAI Pro',
@@ -176,6 +181,54 @@ const TradeShowBoothIdeasPage = () => {
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Trade Show Gallery */}
+            <div className="my-12">
+              <h2 className="font-display text-2xl font-bold text-foreground mb-6">
+                Real AI Booth Activations in Action
+              </h2>
+              <div className="grid md:grid-cols-3 gap-4">
+                <div className="relative group overflow-hidden rounded-xl">
+                  <img 
+                    src={tradeshowBasketball} 
+                    alt="AI-generated basketball trading card at trade show booth"
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                    <span className="text-white text-sm font-medium">Custom Basketball Trading Card</span>
+                  </div>
+                </div>
+                <div className="relative group overflow-hidden rounded-xl">
+                  <img 
+                    src={tradeshowFootball} 
+                    alt="AI-generated football trading card at corporate event"
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                    <span className="text-white text-sm font-medium">Custom Football Trading Card</span>
+                  </div>
+                </div>
+                <div className="relative group overflow-hidden rounded-xl">
+                  <img 
+                    src={tradeshowBoothFemale} 
+                    alt="AI photo booth interface showing effect selection"
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                    <span className="text-white text-sm font-medium">Interactive Booth Experience</span>
+                  </div>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground mt-4 text-center">
+                Examples of AI-powered activations that drive engagement at trade shows
+              </p>
             </div>
 
             <article className="prose prose-lg prose-invert max-w-none">
