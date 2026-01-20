@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Trash2, Image, LogIn, LogOut, Eye, EyeOff, Zap, Loader2, Settings2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Upload, Trash2, Image as ImageIcon, LogIn, LogOut, Eye, EyeOff, Zap, Loader2, Settings2, ChevronDown, ChevronUp } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
@@ -66,6 +66,65 @@ const MediaUploadPage = () => {
       u8arr[n] = bstr.charCodeAt(n);
     }
     return new Blob([u8arr], { type: mime });
+  };
+
+  // Generate 200px thumbnail client-side using canvas
+  const generateThumbnail = (file: File | Blob): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Could not get canvas context'));
+          return;
+        }
+        
+        // Calculate dimensions maintaining aspect ratio
+        const maxSize = 200;
+        let width = img.width;
+        let height = img.height;
+        
+        if (width > height) {
+          if (width > maxSize) {
+            height = (height * maxSize) / width;
+            width = maxSize;
+          }
+        } else {
+          if (height > maxSize) {
+            width = (width * maxSize) / height;
+            height = maxSize;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error('Failed to generate thumbnail'));
+            }
+          },
+          'image/webp',
+          0.8 // 80% quality for thumbnails
+        );
+      };
+      
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error('Failed to load image'));
+      };
+      
+      img.src = url;
+    });
   };
 
   // Optimize image using the convert-image edge function
@@ -278,6 +337,27 @@ const MediaUploadPage = () => {
         continue;
       }
 
+      // Generate and upload 200px thumbnail for faster grid loading
+      let thumbnailPath: string | null = null;
+      if (isImage) {
+        try {
+          const thumbnailBlob = await generateThumbnail(fileToUpload);
+          const thumbFileName = `thumb-${fileName.replace(/\.[^/.]+$/, '.webp')}`;
+          thumbnailPath = `${userId}/thumbnails/${thumbFileName}`;
+          
+          const { error: thumbError } = await supabase.storage
+            .from('event-media')
+            .upload(thumbnailPath, thumbnailBlob, { contentType: 'image/webp' });
+          
+          if (thumbError) {
+            console.error('Thumbnail upload failed:', thumbError);
+            thumbnailPath = null;
+          }
+        } catch (thumbErr) {
+          console.error('Thumbnail generation failed:', thumbErr);
+        }
+      }
+
       const { error: dbError } = await supabase.from('event_media').insert({
         file_name: finalFileName,
         file_path: filePath,
@@ -286,6 +366,7 @@ const MediaUploadPage = () => {
         description: description || null,
         tags: tagArray.length > 0 ? tagArray : null,
         user_id: userId,
+        thumbnail_path: thumbnailPath,
       });
 
       if (dbError) {
@@ -667,7 +748,7 @@ const MediaUploadPage = () => {
         {/* Media Gallery */}
         <div className="bg-card rounded-2xl p-6 shadow-lg border">
           <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            <Image className="w-5 h-5" />
+            <ImageIcon className="w-5 h-5" />
             Uploaded Media ({mediaItems.length})
           </h2>
           
@@ -696,7 +777,7 @@ const MediaUploadPage = () => {
                     />
                   ) : (
                     <div className="w-full aspect-square flex items-center justify-center">
-                      <Image className="w-8 h-8 text-muted-foreground" />
+                      <ImageIcon className="w-8 h-8 text-muted-foreground" />
                     </div>
                   )}
                   

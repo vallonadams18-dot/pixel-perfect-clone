@@ -15,7 +15,9 @@ interface MediaItem {
   tags: string[] | null;
   created_at: string;
   user_id: string | null;
+  thumbnail_path?: string | null;
   url?: string;
+  thumbnailUrl?: string;
   isLoading?: boolean;
   error?: boolean;
 }
@@ -78,7 +80,7 @@ const MediaCard = memo(({
   }
 
   // Error state - no URL or failed to generate
-  if (item.error || !item.url) {
+  if (item.error || (!item.url && !item.thumbnailUrl)) {
     return (
       <div className="glass rounded-2xl overflow-hidden">
         <div className="aspect-square w-full bg-muted/30 flex flex-col items-center justify-center gap-2">
@@ -94,6 +96,9 @@ const MediaCard = memo(({
       </div>
     );
   }
+
+  // Use thumbnail for display if available, fall back to full URL
+  const displayUrl = item.thumbnailUrl || item.url;
 
   return (
     <div className="glass rounded-2xl overflow-hidden group">
@@ -112,7 +117,7 @@ const MediaCard = memo(({
         )}
         
         <img 
-          src={item.url} 
+          src={displayUrl} 
           alt={item.file_name}
           loading="lazy"
           decoding="async"
