@@ -16,7 +16,8 @@ const EXPERIENCE_STYLES: Record<string, string> = {
   'trading-cards': 'Transform this image into a professional sports trading card style. Add dramatic lighting, stadium backdrop, player stats overlay frame, glossy card finish effect, and make it look like an official collectible trading card with bold typography.',
   'headshots': 'Transform this into a professional corporate headshot. Clean studio lighting, neutral gradient background, professional color grading, subtle skin retouching, and executive portrait style.',
   'persona-pop': 'Transform this person into a fun Pixar/Disney 3D animated character style. Exaggerated features, colorful cartoon aesthetic, soft lighting, playful expression while maintaining likeness.',
-  'co-star': 'Transform this image to place the person alongside a celebrity or in a movie scene. Add cinematic lighting, film grain, professional compositing that makes it look like they are co-starring in a blockbuster movie.',
+  // Note: Avoid asking follow-up questions in a one-shot demo. Keep it generic but cinematic.
+  'co-star': 'Transform this image to place the person co-starring in a blockbuster movie scene with an A‑list actor (generic, non-identifiable). Add cinematic lighting, film grain, professional compositing, and a movie-poster vibe.',
   'video-booths': 'Transform this into a dynamic action shot with motion blur effects, neon lights, cyberpunk aesthetic, futuristic overlays, and dramatic visual effects that suggest movement and energy.',
   'axon-ai': 'Transform this to include an AI robot companion or futuristic tech elements. Add holographic displays, neural network visualizations, sleek robotic elements, and sci-fi technology aesthetic.',
   'identity': 'Create a stylized artistic portrait that captures the essence and identity of this person. Use creative lighting, artistic filters, and portrait techniques that highlight their unique features and personality.',
@@ -123,6 +124,11 @@ Deno.serve(async (req) => {
       ? `${customPrompt}. Maintain the person's likeness and identity.`
       : `${stylePrompt} Maintain the person's likeness and identity. Create a high-quality, professional result suitable for social media posting.`;
 
+    const outputInstruction =
+      'Output MUST include exactly one generated image. Do not ask questions. Do not return explanations.';
+
+    const promptForModel = `${fullPrompt}\n\n${outputInstruction}`;
+
     // IMPORTANT: The image model needs a URL it can fetch. Data URLs can be flaky, so we upload
     // the input to the public demo-images bucket and pass the public URL to the AI.
     let inputImageUrl = imageBase64;
@@ -171,10 +177,11 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash-image',
         messages: [
+          { role: 'system', content: 'You are an image generation + editing model. Always return an image output.' },
           {
             role: 'user',
             content: [
-              { type: 'text', text: fullPrompt },
+              { type: 'text', text: promptForModel },
               {
                 type: 'image_url',
                 image_url: { url: inputImageUrl },
@@ -193,14 +200,14 @@ Deno.serve(async (req) => {
       // Surface common gateway billing/rate errors
       if (response.status === 429) {
         return new Response(
-          JSON.stringify({ error: 'High demand! Please try again in a moment.' }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          JSON.stringify({ success: false, error: 'High demand! Please try again in a moment.' }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
       if (response.status === 402) {
         return new Response(
-          JSON.stringify({ error: 'Demo temporarily unavailable. Please try again later.' }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          JSON.stringify({ success: false, error: 'Demo temporarily unavailable. Please try again later.' }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -220,15 +227,16 @@ Deno.serve(async (req) => {
       if (providerMessage && /unable to process input image/i.test(providerMessage)) {
         return new Response(
           JSON.stringify({
-            error: 'We could not read this photo. Please try a JPG/PNG photo with good lighting (and avoid screenshots/very large images).',
+            success: false,
+            error: 'We could not read this photo. Please try a JPG/PNG selfie with good lighting (avoid screenshots).',
           }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
       return new Response(
-        JSON.stringify({ error: 'Transformation failed. Please try a different photo.' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ success: false, error: 'Transformation failed. Please try a different photo.' }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -236,14 +244,53 @@ Deno.serve(async (req) => {
     console.log('AI response received');
 
     // Extract the generated image (supports multiple gateway response formats)
-    const generatedImage = extractGeneratedImageUrl(data);
+    let generatedImage = extractGeneratedImageUrl(data);
 
     if (!generatedImage) {
+      const assistantText = data?.choices?.[0]?.message?.content;
       console.error('No image in response:', JSON.stringify(data));
-      return new Response(
-        JSON.stringify({ error: 'Unable to transform this image. Try a clearer photo with good lighting.' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+
+      // One-shot retry with a stronger image model + stricter instruction.
+      console.log('Retrying with google/gemini-3-pro-image-preview...');
+      const retryResp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-3-pro-image-preview',
+          messages: [
+            { role: 'system', content: 'You are an image model. You must output an image, not text.' },
+            {
+              role: 'user',
+              content: [
+                { type: 'text', text: promptForModel },
+                { type: 'image_url', image_url: { url: inputImageUrl } },
+              ],
+            },
+          ],
+          modalities: ['image', 'text'],
+        }),
+      });
+
+      if (retryResp.ok) {
+        const retryData = await retryResp.json();
+        generatedImage = extractGeneratedImageUrl(retryData);
+      }
+
+      if (!generatedImage) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error:
+              typeof assistantText === 'string' && assistantText.length > 0
+                ? assistantText
+                : 'The AI did not return an image for this photo. Please try a different photo.',
+          }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     // If the model returns a data URL, persist it to storage. If it returns an https URL, return it directly.
