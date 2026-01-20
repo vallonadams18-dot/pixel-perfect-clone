@@ -6,6 +6,7 @@ import FAQSection from '@/components/FAQSection';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import { GalleryGrid } from '@/components/GalleryGrid';
 import ExperienceDemo from '@/components/ExperienceDemo';
+import DemoCTABanner from '@/components/DemoCTABanner';
 import { Link } from 'react-router-dom';
 import { Users, Check, ArrowRight, Star, Camera, Award } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -230,6 +231,12 @@ const CoStarPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Demo CTA Banner */}
+        <DemoCTABanner 
+          experienceTitle="Co-Star" 
+          subtitle="Pose with your favorite celebrity in a blockbuster scene!" 
+        />
 
         {/* Features Section */}
         <section className="section-padding">

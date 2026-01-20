@@ -5,6 +5,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import FAQSection from '@/components/FAQSection';
 import ExperienceDemo from '@/components/ExperienceDemo';
+import DemoCTABanner from '@/components/DemoCTABanner';
 import { Link } from 'react-router-dom';
 import { Shirt, Check, ArrowRight, Zap, Share2, Palette } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -239,6 +240,12 @@ const PixelWearPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Demo CTA Banner */}
+        <DemoCTABanner 
+          experienceTitle="PixelWear" 
+          subtitle="See yourself in premium branded apparel instantly. 2 free tries!" 
+        />
 
         {/* Features Section */}
         <section className="section-padding">

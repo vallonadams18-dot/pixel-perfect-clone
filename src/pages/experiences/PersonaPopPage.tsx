@@ -6,6 +6,7 @@ import FAQSection from '@/components/FAQSection';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import { GalleryGrid } from '@/components/GalleryGrid';
 import ExperienceDemo from '@/components/ExperienceDemo';
+import DemoCTABanner from '@/components/DemoCTABanner';
 import { Link } from 'react-router-dom';
 import { Sparkles, Check, ArrowRight, Zap, Target, Image, Clock, Calendar } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -309,6 +310,12 @@ const PersonaPopPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Demo CTA Banner */}
+        <DemoCTABanner 
+          experienceTitle="Persona Pop" 
+          subtitle="Become a cartoon, superhero, or any character you imagine!" 
+        />
 
         {/* Features Section */}
         <section className="section-padding bg-card/50">

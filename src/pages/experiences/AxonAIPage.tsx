@@ -4,6 +4,7 @@ import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import FAQSection from '@/components/FAQSection';
 import ExperienceDemo from '@/components/ExperienceDemo';
+import DemoCTABanner from '@/components/DemoCTABanner';
 import { Link } from 'react-router-dom';
 import { Bot, Check, ArrowRight, Navigation, Eye, Cpu } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -228,6 +229,12 @@ const AxonAIPage = () => {
               </div>
             </div>
           </section>
+
+          {/* Demo CTA Banner */}
+          <DemoCTABanner 
+            experienceTitle="AXON AI" 
+            subtitle="See yourself captured by our autonomous AI robot!" 
+          />
 
           {/* Features Section */}
           <section className="section-padding" aria-labelledby="features">

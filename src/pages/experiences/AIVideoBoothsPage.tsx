@@ -4,6 +4,7 @@ import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import FAQSection from '@/components/FAQSection';
 import ExperienceDemo from '@/components/ExperienceDemo';
+import DemoCTABanner from '@/components/DemoCTABanner';
 import { Link } from 'react-router-dom';
 import { Video, Check, ArrowRight, Film, Palette, Share2 } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -175,6 +176,12 @@ const AIVideoBoothsPage = () => {
             </div>
           </div>
         </section>
+
+        {/* Demo CTA Banner */}
+        <DemoCTABanner 
+          experienceTitle="AI Video Booths" 
+          subtitle="Transform your video into stunning artistic styles!" 
+        />
 
         {/* Features Section */}
         <section className="section-padding">
