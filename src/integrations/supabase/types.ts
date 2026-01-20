@@ -98,6 +98,57 @@ export type Database = {
         }
         Relationships: []
       }
+      leads: {
+        Row: {
+          converted: boolean
+          created_at: string
+          email: string
+          experience_type: string | null
+          first_seen_at: string
+          id: string
+          ip_address: string | null
+          last_interaction_at: string
+          notes: string | null
+          referrer: string | null
+          source: string
+          total_demos_used: number
+          updated_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          converted?: boolean
+          created_at?: string
+          email: string
+          experience_type?: string | null
+          first_seen_at?: string
+          id?: string
+          ip_address?: string | null
+          last_interaction_at?: string
+          notes?: string | null
+          referrer?: string | null
+          source: string
+          total_demos_used?: number
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          converted?: boolean
+          created_at?: string
+          email?: string
+          experience_type?: string | null
+          first_seen_at?: string
+          id?: string
+          ip_address?: string | null
+          last_interaction_at?: string
+          notes?: string | null
+          referrer?: string | null
+          source?: string
+          total_demos_used?: number
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       scheduled_posts: {
         Row: {
           caption: string
