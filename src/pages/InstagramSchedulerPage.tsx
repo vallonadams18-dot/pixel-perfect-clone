@@ -86,6 +86,12 @@ const InstagramSchedulerPage = () => {
   const [selectedService, setSelectedService] = useState<string>('');
   const [captionTone, setCaptionTone] = useState<'professional' | 'playful' | 'engaging' | 'luxurious'>('engaging');
   
+  // AI image transformation state
+  const [transformingImage, setTransformingImage] = useState(false);
+  const [selectedTransformStyle, setSelectedTransformStyle] = useState<string>('');
+  const [originalImageUrl, setOriginalImageUrl] = useState<string>('');
+  const [transformedPreview, setTransformedPreview] = useState<string>('');
+  
   // Main panel tab
   const [mainTab, setMainTab] = useState<'library' | 'scheduler' | 'posts' | 'settings'>('library');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -522,6 +528,85 @@ const InstagramSchedulerPage = () => {
       });
     } finally {
       setGeneratingCaption(false);
+    }
+  };
+
+  // AI Image Transformation
+  const handleTransformImage = async () => {
+    const currentImageUrl = imageFile ? URL.createObjectURL(imageFile) : imageUrl;
+    
+    if (!currentImageUrl) {
+      toast({ title: 'No image selected', description: 'Select an image first to transform', variant: 'destructive' });
+      return;
+    }
+    
+    if (!selectedTransformStyle) {
+      toast({ title: 'Select a style', description: 'Choose a transformation style', variant: 'destructive' });
+      return;
+    }
+    
+    if (!session?.access_token) {
+      toast({ title: 'Please log in', variant: 'destructive' });
+      return;
+    }
+    
+    // Store original if not already stored
+    if (!originalImageUrl) {
+      setOriginalImageUrl(currentImageUrl);
+    }
+    
+    setTransformingImage(true);
+    setLastApiCall({ function: 'transform-image-style', status: 'pending', message: 'Transforming...', timestamp: new Date() });
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('transform-image-style', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: {
+          imageUrl: currentImageUrl,
+          style: selectedTransformStyle,
+        },
+      });
+
+      if (error) throw error;
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      if (data?.imageUrl) {
+        setTransformedPreview(data.imageUrl);
+        setImageUrl(data.imageUrl);
+        setImageFile(null);
+        
+        // Also set the service for caption generation
+        setSelectedService(selectedTransformStyle.replace('-', ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '));
+      }
+
+      setLastApiCall({ function: 'transform-image-style', status: 'success', message: `Transformed to ${selectedTransformStyle}`, timestamp: new Date() });
+      toast({ 
+        title: 'Image transformed!', 
+        description: `Applied ${selectedTransformStyle} style` 
+      });
+    } catch (error: any) {
+      console.error('Transform error:', error);
+      setLastApiCall({ function: 'transform-image-style', status: 'error', message: error.message || 'Transform failed', timestamp: new Date() });
+      toast({ 
+        title: 'Transform failed', 
+        description: error.message || 'Could not transform image', 
+        variant: 'destructive' 
+      });
+    } finally {
+      setTransformingImage(false);
+    }
+  };
+
+  const handleRevertTransform = () => {
+    if (originalImageUrl) {
+      setImageUrl(originalImageUrl);
+      setTransformedPreview('');
+      toast({ title: 'Reverted to original' });
     }
   };
 
@@ -1263,6 +1348,89 @@ const InstagramSchedulerPage = () => {
                       >
                         <X className="w-4 h-4" />
                       </Button>
+                    </div>
+                  )}
+
+                  {/* AI Image Transformer */}
+                  {(imageUrl || imageFile) && (
+                    <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-4 border border-primary/20">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Wand2 className="w-5 h-5 text-primary" />
+                        <h3 className="font-semibold">AI Style Transformer</h3>
+                        <Badge className="text-xs bg-primary/20 text-primary border-0">NEW</Badge>
+                      </div>
+                      
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Transform your image into one of our signature event service styles before posting
+                      </p>
+                      
+                      <div className="mb-3">
+                        <Label className="text-xs mb-2 block">Select Style</Label>
+                        <select
+                          value={selectedTransformStyle}
+                          onChange={(e) => setSelectedTransformStyle(e.target.value)}
+                          className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+                        >
+                          <option value="">Choose a transformation style...</option>
+                          <optgroup label="Event Services">
+                            <option value="pixelwear">PixelWear - Branded Apparel</option>
+                            <option value="trading-cards">Trading Cards - Sports Collectibles</option>
+                            <option value="headshots">Headshots - Professional Portraits</option>
+                            <option value="persona-pop">Persona Pop - 3D Character Style</option>
+                            <option value="co-star">Co-Star - Celebrity Compositing</option>
+                            <option value="video-booths">Video Booths - Motion Effects</option>
+                            <option value="axon-ai">Axon AI - Robot Companion</option>
+                            <option value="sketch">Sketch - Artistic Illustration</option>
+                          </optgroup>
+                          <optgroup label="Creative Styles">
+                            <option value="superhero">Superhero - Comic Book Hero</option>
+                            <option value="vintage">Vintage - Retro Glamour</option>
+                            <option value="cyberpunk">Cyberpunk - Neon Future</option>
+                            <option value="anime">Anime - Japanese Animation</option>
+                            <option value="fantasy">Fantasy - Magical Realm</option>
+                          </optgroup>
+                        </select>
+                      </div>
+                      
+                      <div className="flex gap-2">
+                        <Button 
+                          onClick={handleTransformImage} 
+                          disabled={transformingImage || !selectedTransformStyle}
+                          className="flex-1"
+                        >
+                          {transformingImage ? (
+                            <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Transforming...</>
+                          ) : (
+                            <><Wand2 className="w-4 h-4 mr-2" /> Transform Image</>
+                          )}
+                        </Button>
+                        
+                        {transformedPreview && originalImageUrl && (
+                          <Button 
+                            variant="outline" 
+                            onClick={handleRevertTransform}
+                            disabled={transformingImage}
+                          >
+                            <RefreshCw className="w-4 h-4 mr-2" />
+                            Revert
+                          </Button>
+                        )}
+                      </div>
+                      
+                      {transformedPreview && (
+                        <div className="mt-3 p-2 bg-background rounded-lg border flex items-center gap-2">
+                          <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
+                          <span className="text-xs text-muted-foreground">
+                            Transformed to <strong>{selectedTransformStyle}</strong> style - ready to post!
+                          </span>
+                        </div>
+                      )}
+                      
+                      {!selectedTransformStyle && (
+                        <p className="text-xs text-muted-foreground text-center mt-2">
+                          Select a style above to transform your image
+                        </p>
+                      )}
                     </div>
                   )}
 
