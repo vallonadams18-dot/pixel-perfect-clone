@@ -31,31 +31,37 @@ import tradingCardCollection from '@/assets/ai-trading-cards-collection-sports-s
 import tradingCardMultiSport from '@/assets/ai-trading-cards-multi-sport-collection.jpg';
 import tradingCardHero from '@/assets/ai-trading-cards-hero-collection.jpg';
 
+// Trade Show Trading Cards
+import tradeshowGiantsGold from '@/assets/tradeshow-giants-gold.jpg';
+import tradeshowGiantsBlue from '@/assets/tradeshow-giants-blue.jpg';
+import tradeshowBrowns from '@/assets/tradeshow-browns.jpg';
+import tradeshowCowboys from '@/assets/tradeshow-cowboys.jpg';
+import tradeshowBleepshare from '@/assets/tradeshow-bleepshare.jpg';
+import tradeshowBraves from '@/assets/tradeshow-braves.jpg';
+import tradeshowPixelaipro1 from '@/assets/tradeshow-pixelaipro-1.jpg';
+import tradeshowPixelaipro2 from '@/assets/tradeshow-pixelaipro-2.jpg';
+import tradeshowGrfuRugby from '@/assets/tradeshow-grfu-rugby.jpg';
+import tradeshowBasketball from '@/assets/tradeshow-trading-card-basketball.jpg';
+import tradeshowFootball from '@/assets/tradeshow-trading-card-football.jpg';
+
 const galleryImages = [
-  {
-    src: tradingCardMultiSport,
-    alt: 'AI trading cards collection featuring custom sports portraits with baseball, football, basketball and hockey player designs'
-  },
-  {
-    src: tradingCardCollection,
-    alt: 'Premium AI-generated trading cards display showcasing collectible athlete portraits with holographic effects'
-  },
-  {
-    src: tradingCardSportsDisplay,
-    alt: 'Person holding custom AI trading cards featuring personalized basketball and sports player portraits'
-  },
-  {
-    src: tradingCardBaseball,
-    alt: 'Custom AI trading cards with baseball player portrait and personalized athlete card designs'
-  },
-  {
-    src: tradingCardAthlete,
-    alt: 'AI-generated personalized trading cards featuring athletic portrait transformations and custom stats'
-  },
-  {
-    src: tradingCardPrinter,
-    alt: 'AI trading card printer producing custom collectible cards with professional sports player designs'
-  },
+  { src: tradeshowGiantsGold, alt: 'NY Giants Champions gold edition trading card with football player portrait' },
+  { src: tradeshowGiantsBlue, alt: 'NY Giants neon blue edition trading card with dynamic sports design' },
+  { src: tradeshowBrowns, alt: 'Cleveland Browns championship trading card with orange theme' },
+  { src: tradeshowCowboys, alt: 'Dallas Cowboys trading card featuring personalized player portrait' },
+  { src: tradeshowBleepshare, alt: 'Custom basketball trading card with ice blue holographic effects' },
+  { src: tradeshowBraves, alt: 'Atlanta Braves baseball trading card with stadium backdrop' },
+  { src: tradeshowPixelaipro1, alt: 'PixelAI Pro branded basketball card with diamond effects' },
+  { src: tradeshowPixelaipro2, alt: 'PixelAI Pro champion edition basketball trading card' },
+  { src: tradeshowGrfuRugby, alt: 'GRFU Rugby trading card featuring flanker player portrait' },
+  { src: tradeshowBasketball, alt: 'Buffalo basketball trading card with player stats display' },
+  { src: tradeshowFootball, alt: 'Miami Hurricanes football trading card with green theme' },
+  { src: tradingCardMultiSport, alt: 'AI trading cards collection featuring custom sports portraits with baseball, football, basketball and hockey player designs' },
+  { src: tradingCardCollection, alt: 'Premium AI-generated trading cards display showcasing collectible athlete portraits with holographic effects' },
+  { src: tradingCardSportsDisplay, alt: 'Person holding custom AI trading cards featuring personalized basketball and sports player portraits' },
+  { src: tradingCardBaseball, alt: 'Custom AI trading cards with baseball player portrait and personalized athlete card designs' },
+  { src: tradingCardAthlete, alt: 'AI-generated personalized trading cards featuring athletic portrait transformations and custom stats' },
+  { src: tradingCardPrinter, alt: 'AI trading card printer producing custom collectible cards with professional sports player designs' },
 ];
 
 const features = [
@@ -298,14 +304,14 @@ const AITradingCardsPage = () => {
             <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
               Explore our collection of AI-generated trading cards featuring custom sports portraits and collectible designs.
             </p>
-            <GalleryGrid columns={3} gap="lg">
+            <GalleryGrid columns={4} gap="lg">
               {galleryImages.map((image, index) => (
                 <div key={index} className="group relative overflow-hidden rounded-2xl glass">
                   <ImageWithSkeleton
                     src={image.src}
                     alt={image.alt}
-                    aspectRatio="4/3"
-                    priority={index < 3}
+                    aspectRatio="3/4"
+                    priority={index < 4}
                     className="transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
