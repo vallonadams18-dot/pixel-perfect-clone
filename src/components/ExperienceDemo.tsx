@@ -104,29 +104,41 @@ const ExperienceDemo = ({
 
     setIsTransforming(true);
     try {
-      const response = await supabase.functions.invoke('demo-transform', {
+      const { data, error } = await supabase.functions.invoke('demo-transform', {
         body: {
           imageBase64: originalImage,
-          experience: experience
-        }
+          experience: experience,
+        },
       });
 
-      if (response.error) {
-        throw new Error(response.error.message || 'Transformation failed');
+      if (error) {
+        // Try to surface the edge function's JSON error message (Supabase wraps non-2xx responses)
+        let message = error.message || 'Transformation failed';
+        const anyErr = error as any;
+        try {
+          const ctx = anyErr?.context;
+          if (ctx && typeof ctx.json === 'function') {
+            const body = await ctx.json();
+            if (body?.error) message = body.error;
+          }
+        } catch {
+          // ignore
+        }
+        throw new Error(message);
       }
 
-      if (response.data?.success && response.data?.imageUrl) {
-        setTransformedImage(response.data.imageUrl);
+      if (data?.success && data?.imageUrl) {
+        setTransformedImage(data.imageUrl);
         toast({ title: '✨ Transformation complete!' });
       } else {
-        throw new Error(response.data?.error || 'No image returned');
+        throw new Error(data?.error || 'No image returned');
       }
     } catch (error) {
       console.error('Transform error:', error);
-      toast({ 
-        title: 'Transformation failed', 
+      toast({
+        title: 'Transformation failed',
         description: error instanceof Error ? error.message : 'Please try again',
-        variant: 'destructive' 
+        variant: 'destructive',
       });
     } finally {
       setIsTransforming(false);
