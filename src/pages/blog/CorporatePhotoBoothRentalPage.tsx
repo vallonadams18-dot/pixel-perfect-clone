@@ -24,6 +24,14 @@ const CorporatePhotoBoothRentalPage = () => {
         "author": {
           "@type": "Organization",
           "name": "PixelAI Pro"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "PixelAI Pro",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://pixelaipro.lovable.app/favicon.png"
+          }
         }
       },
       {

@@ -30,7 +30,7 @@ const AIPhotoBoothVsTraditionalPage = () => {
           "name": "PixelAI Pro",
           "logo": {
             "@type": "ImageObject",
-            "url": "https://pixelaipro.lovable.app/og-image.jpg"
+            "url": "https://pixelaipro.lovable.app/favicon.png"
           }
         },
         "datePublished": "2026-01-10",
