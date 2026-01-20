@@ -5,6 +5,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const jsonHeaders = { ...corsHeaders, 'Content-Type': 'application/json' };
+const ok = (payload: unknown) => new Response(JSON.stringify(payload), { status: 200, headers: jsonHeaders });
+
 interface TransformRequest {
   imageUrl: string;
   style: string;
@@ -28,15 +31,6 @@ const SERVICE_STYLES: Record<string, string> = {
   'fantasy': 'Transform this into a fantasy realm with magical elements, mystical lighting, elvish or wizard styling, enchanted forest or castle backdrop, and ethereal glow effects.',
 };
 
-function decodeDataUrl(dataUrl: string): { contentType: string; bytes: Uint8Array } {
-  const match = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
-  if (!match) throw new Error('Invalid data URL');
-  const contentType = match[1];
-  const b64 = match[2];
-  const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
-  return { contentType, bytes };
-}
-
 function extractGeneratedImageUrl(data: any): string | null {
   const direct = data?.choices?.[0]?.message?.images?.[0]?.image_url?.url;
   if (typeof direct === 'string' && direct.length > 0) return direct;
@@ -58,9 +52,22 @@ function extractGeneratedImageUrl(data: any): string | null {
   return null;
 }
 
+function friendlyAiError(status: number, rawBodyText: string): string {
+  if (status === 429) return 'Rate limit exceeded. Please try again in a moment.';
+  if (status === 402) return 'AI credits exhausted. Please add funds to continue.';
+
+  // Common provider message from Gemini
+  if (rawBodyText?.toLowerCase?.().includes('unable to process input image')) {
+    return 'We could not read this photo. Please try a clear JPG/PNG photo (good lighting; avoid screenshots).';
+  }
+
+  return 'AI transformation failed. Please try again.';
+}
+
 Deno.serve(async (req) => {
   console.log('Transform image request received');
-  
+
+  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -69,138 +76,90 @@ Deno.serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
       console.error('LOVABLE_API_KEY not configured');
-      return new Response(
-        JSON.stringify({ error: 'AI service not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      // IMPORTANT: always return 200 so the client does not throw a non-2xx invoke error
+      return ok({ success: false, error: 'AI service not configured' });
     }
 
-    // Validate auth
+    // Validate auth header (function is user-scoped)
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: 'Missing authorization header' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return ok({ success: false, error: 'Missing authorization header' });
     }
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') ?? Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('Missing backend env vars', { hasUrl: !!supabaseUrl, hasKey: !!supabaseKey });
+      return ok({ success: false, error: 'Backend not configured' });
+    }
+
     const supabase = createClient(supabaseUrl, supabaseKey, {
-      global: { headers: { Authorization: authHeader } }
+      global: { headers: { Authorization: authHeader } },
     });
 
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       console.error('Auth error:', authError?.message);
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return ok({ success: false, error: 'Unauthorized' });
     }
 
-    const { imageUrl, style, customPrompt, model = 'gemini' } = await req.json() as TransformRequest;
-    
-    if (!imageUrl) {
-      return new Response(
-        JSON.stringify({ error: 'Image URL is required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    let body: TransformRequest;
+    try {
+      body = (await req.json()) as TransformRequest;
+    } catch (e) {
+      console.error('Invalid JSON body', e);
+      return ok({ success: false, error: 'Invalid request body' });
     }
 
-    // Reject blob: URLs - frontend should convert them to data: URLs first
+    const { imageUrl, style, customPrompt, model = 'gemini' } = body;
+
+    if (!style) return ok({ success: false, error: 'Style is required' });
+    if (!imageUrl) return ok({ success: false, error: 'Image URL is required' });
+
+    // Reject blob: URLs - the frontend should convert to a data: URL
     if (imageUrl.startsWith('blob:')) {
-      return new Response(
-        JSON.stringify({ error: 'Blob URLs cannot be processed. Please re-select the image.' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return ok({ success: false, error: 'Blob URLs cannot be processed. Please re-select the image.' });
     }
 
-    // Validate HTTPS or data: URL
+    // Validate URL format
     if (!imageUrl.startsWith('data:') && !imageUrl.startsWith('https://')) {
-      return new Response(
-        JSON.stringify({ error: 'Image URL must use HTTPS or be a data URL' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return ok({ success: false, error: 'Image URL must use HTTPS or be a data URL' });
     }
 
-    // Handle custom style
     const isCustomStyle = style === 'custom';
-    
-    if (!style) {
-      return new Response(
-        JSON.stringify({ error: 'Style is required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
 
     if (isCustomStyle && !customPrompt) {
-      return new Response(
-        JSON.stringify({ error: 'Custom prompt is required when using custom style' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return ok({ success: false, error: 'Custom prompt is required when using custom style' });
     }
 
-    // Validate custom prompt length
     if (customPrompt && customPrompt.length > 1000) {
-      return new Response(
-        JSON.stringify({ error: 'Custom prompt too long (max 1000 characters)' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return ok({ success: false, error: 'Custom prompt too long (max 1000 characters)' });
     }
 
     console.log(`Transforming image for user ${user.id} with style: ${style}${isCustomStyle ? ' (custom)' : ''}, model: ${model}`);
 
-    // If the input is a data URL, upload it first so the AI can fetch it
-    let inputImageUrl = imageUrl;
-    if (imageUrl.startsWith('data:')) {
-      try {
-        const { contentType, bytes } = decodeDataUrl(imageUrl);
-        const timestamp = Date.now();
-        const ext = contentType.includes('png') ? 'png' : 'jpg';
-        const inputPath = `${user.id}/transform-input-${timestamp}.${ext}`;
-
-        const { error: inputUploadError } = await supabase.storage
-          .from('instagram-images')
-          .upload(inputPath, bytes, { contentType, upsert: true });
-
-        if (!inputUploadError) {
-          const { data: publicUrlData } = supabase.storage
-            .from('instagram-images')
-            .getPublicUrl(inputPath);
-          inputImageUrl = publicUrlData.publicUrl;
-          console.log('Input uploaded for AI access');
-        } else {
-          console.error('Input upload error:', inputUploadError);
-        }
-      } catch (e) {
-        console.error('Failed to decode/upload input image:', e);
-      }
-    }
-
-    // Get the style prompt - prioritize custom prompt for custom style
+    // Style prompt
     let stylePrompt: string;
     if (isCustomStyle && customPrompt) {
       stylePrompt = customPrompt;
     } else if (SERVICE_STYLES[style.toLowerCase()]) {
       stylePrompt = SERVICE_STYLES[style.toLowerCase()];
     } else if (customPrompt) {
-      // Use custom prompt as enhancement for predefined style
       stylePrompt = customPrompt;
     } else {
       stylePrompt = `Transform this image into ${style} style.`;
     }
-    
+
     const fullPrompt = `${stylePrompt} Maintain the person's likeness and identity. Create a high-quality, professional result suitable for social media posting. Output MUST include exactly one generated image. Do not ask questions.`;
 
-    console.log('Calling AI gateway for image transformation...');
-
-    // Determine the model to use
-    const modelId = model === 'chatgpt' 
-      ? 'openai/gpt-5' 
+    const modelId = model === 'chatgpt'
+      ? 'openai/gpt-5'
       : 'google/gemini-2.5-flash-image';
 
-    // Call Lovable AI for image editing
+    console.log('Calling AI gateway for image transformation...', { modelId });
+
+    // NOTE: Do NOT upload inputs to storage here; pass data: URLs directly to the model to avoid storage bucket/config issues.
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -215,10 +174,7 @@ Deno.serve(async (req) => {
             role: 'user',
             content: [
               { type: 'text', text: fullPrompt },
-              {
-                type: 'image_url',
-                image_url: { url: inputImageUrl },
-              },
+              { type: 'image_url', image_url: { url: imageUrl } },
             ],
           },
         ],
@@ -229,83 +185,32 @@ Deno.serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('AI gateway error:', response.status, errorText);
-      
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: 'Rate limit exceeded. Please try again in a moment.' }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: 'AI credits exhausted. Please add funds to continue.' }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      return new Response(
-        JSON.stringify({ error: 'AI transformation failed' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return ok({
+        success: false,
+        error: friendlyAiError(response.status, errorText),
+        providerStatus: response.status,
+      });
     }
 
     const data = await response.json();
     console.log('AI response received');
 
-    // Extract the generated image using helper
     const generatedImage = extractGeneratedImageUrl(data);
-    
+
     if (!generatedImage) {
       console.error('No image in response:', JSON.stringify(data));
-      return new Response(
-        JSON.stringify({ success: false, error: 'No image was generated. Try a different photo or style.' }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return ok({ success: false, error: 'No image was generated. Try a different photo or style.' });
     }
 
-    // If it's a data URL, upload to storage; if HTTPS already, use as-is
-    let imageUrlResult = generatedImage;
-    if (generatedImage.startsWith('data:')) {
-      const timestamp = Date.now();
-      const fileName = `transformed-${style}-${timestamp}.jpg`;
-      const filePath = `${user.id}/${fileName}`;
-
-      try {
-        const { bytes } = decodeDataUrl(generatedImage);
-
-        const { error: uploadError } = await supabase.storage
-          .from('instagram-images')
-          .upload(filePath, bytes, { contentType: 'image/jpeg', upsert: true });
-
-        if (!uploadError) {
-          const { data: publicUrlData } = supabase.storage
-            .from('instagram-images')
-            .getPublicUrl(filePath);
-          imageUrlResult = publicUrlData.publicUrl;
-          console.log('Transformed image uploaded successfully');
-        } else {
-          console.error('Upload error:', uploadError);
-        }
-      } catch (e) {
-        console.error('Failed to decode/upload output image:', e);
-      }
-    }
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        imageUrl: imageUrlResult,
-        style: style,
-        message: `Image transformed to ${style} style`
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
-
+    // Return the generated image URL as-is (can be https: or data:)
+    return ok({
+      success: true,
+      imageUrl: generatedImage,
+      style,
+      message: `Image transformed to ${style} style`,
+    });
   } catch (error) {
     console.error('Transform error:', error);
-    return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return ok({ success: false, error: error instanceof Error ? error.message : 'Unknown error' });
   }
 });
