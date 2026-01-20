@@ -1,6 +1,6 @@
-import { useRef, useEffect, memo } from 'react';
+import { useRef, useEffect, memo, useState } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { Instagram, Download, Loader2 } from 'lucide-react';
+import { Instagram, Download, Loader2, ImageOff, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -17,6 +17,7 @@ interface MediaItem {
   user_id: string | null;
   url?: string;
   isLoading?: boolean;
+  error?: boolean;
 }
 
 interface VirtualizedMediaGridProps {
@@ -52,7 +53,19 @@ const MediaCard = memo(({
   onDownload: (url: string, fileName: string) => void;
   isSending: boolean;
 }) => {
-  if (item.isLoading || !item.url) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  // Reset states when URL changes
+  useEffect(() => {
+    if (item.url) {
+      setImageLoaded(false);
+      setImageError(false);
+    }
+  }, [item.url]);
+
+  // Loading skeleton state
+  if (item.isLoading) {
     return (
       <div className="glass rounded-2xl overflow-hidden">
         <Skeleton className="aspect-square w-full" />
@@ -64,18 +77,53 @@ const MediaCard = memo(({
     );
   }
 
+  // Error state - no URL or failed to generate
+  if (item.error || !item.url) {
+    return (
+      <div className="glass rounded-2xl overflow-hidden">
+        <div className="aspect-square w-full bg-muted/30 flex flex-col items-center justify-center gap-2">
+          <ImageOff className="w-10 h-10 text-muted-foreground/50" />
+          <p className="text-xs text-muted-foreground">Failed to load</p>
+        </div>
+        <div className="p-4">
+          <h3 className="font-semibold text-sm mb-1 truncate">{item.file_name}</h3>
+          <p className="text-xs text-muted-foreground">
+            {formatDate(item.created_at)}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="glass rounded-2xl overflow-hidden group">
-      <div className="relative aspect-square overflow-hidden">
+      <div className="relative aspect-square overflow-hidden bg-muted/20">
+        {/* Skeleton while image loads */}
+        {!imageLoaded && !imageError && (
+          <Skeleton className="absolute inset-0 w-full h-full" />
+        )}
+        
+        {/* Error fallback */}
+        {imageError && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted/30">
+            <ImageOff className="w-10 h-10 text-muted-foreground/50" />
+            <p className="text-xs text-muted-foreground mt-2">Failed to load image</p>
+          </div>
+        )}
+        
         <img 
           src={item.url} 
           alt={item.file_name}
           loading="lazy"
           decoding="async"
-          className="w-full h-full object-cover transition-transform group-hover:scale-105"
+          onLoad={() => setImageLoaded(true)}
+          onError={() => setImageError(true)}
+          className={`w-full h-full object-cover transition-all duration-300 group-hover:scale-105 ${
+            imageLoaded && !imageError ? 'opacity-100' : 'opacity-0'
+          }`}
         />
         
-        {item.event_name && (
+        {item.event_name && imageLoaded && !imageError && (
           <div className="absolute top-3 left-3">
             <Badge variant="secondary" className="bg-primary/90 text-primary-foreground">
               {item.event_name}
@@ -83,30 +131,32 @@ const MediaCard = memo(({
           </div>
         )}
         
-        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3">
-          <Button
-            size="sm"
-            onClick={() => onSendToInstagram(item)}
-            disabled={isSending}
-            className="w-40"
-          >
-            {isSending ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            ) : (
-              <Instagram className="w-4 h-4 mr-2" />
-            )}
-            Send to Instagram
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => onDownload(item.url!, item.file_name)}
-            className="w-40 bg-white/10"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Download
-          </Button>
-        </div>
+        {imageLoaded && !imageError && (
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3">
+            <Button
+              size="sm"
+              onClick={() => onSendToInstagram(item)}
+              disabled={isSending}
+              className="w-40"
+            >
+              {isSending ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Instagram className="w-4 h-4 mr-2" />
+              )}
+              Send to Instagram
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => onDownload(item.url!, item.file_name)}
+              className="w-40 bg-white/10"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Download
+            </Button>
+          </div>
+        )}
       </div>
 
       <div className="p-4">
@@ -151,19 +201,37 @@ export function VirtualizedMediaGrid({
   sendingId
 }: VirtualizedMediaGridProps) {
   const parentRef = useRef<HTMLDivElement>(null);
-  const columns = 4; // xl:grid-cols-4
+  
+  // Responsive columns
+  const getColumns = () => {
+    if (typeof window === 'undefined') return 4;
+    if (window.innerWidth < 768) return 1;
+    if (window.innerWidth < 1024) return 2;
+    if (window.innerWidth < 1280) return 3;
+    return 4;
+  };
+  
+  const [columns, setColumns] = useState(getColumns);
+  
+  useEffect(() => {
+    const handleResize = () => setColumns(getColumns());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
   const rowCount = Math.ceil(items.length / columns);
 
   const rowVirtualizer = useVirtualizer({
     count: rowCount + (hasMore ? 1 : 0), // +1 for loading row
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 380, // Approximate height of a row
-    overscan: 2,
+    estimateSize: () => 420, // Approximate height of a row (including padding)
+    overscan: 3, // Increased overscan for smoother scrolling
   });
 
   // Trigger load more when scrolling near bottom
   useEffect(() => {
-    const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
+    const virtualItems = rowVirtualizer.getVirtualItems();
+    const [lastItem] = [...virtualItems].reverse();
     if (!lastItem) return;
     
     if (lastItem.index >= rowCount - 1 && hasMore && !loadingMore) {
@@ -173,7 +241,7 @@ export function VirtualizedMediaGrid({
 
   if (loading) {
     return (
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="glass rounded-2xl overflow-hidden">
             <Skeleton className="aspect-square w-full" />
@@ -187,10 +255,14 @@ export function VirtualizedMediaGrid({
     );
   }
 
+  if (items.length === 0) {
+    return null; // Let parent handle empty state
+  }
+
   return (
     <div 
       ref={parentRef}
-      className="h-[800px] overflow-auto"
+      className="h-[800px] overflow-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent"
       style={{ contain: 'strict' }}
     >
       <div
@@ -229,6 +301,9 @@ export function VirtualizedMediaGrid({
             );
           }
 
+          // Skip empty rows
+          if (rowItems.length === 0) return null;
+
           return (
             <div
               key={virtualRow.key}
@@ -241,7 +316,12 @@ export function VirtualizedMediaGrid({
                 transform: `translateY(${virtualRow.start}px)`,
               }}
             >
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-1">
+              <div 
+                className="grid gap-6 px-1"
+                style={{ 
+                  gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` 
+                }}
+              >
                 {rowItems.map((item) => (
                   <MediaCard
                     key={item.id}
