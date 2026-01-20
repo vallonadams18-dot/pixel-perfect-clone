@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
+import { jsPDF } from 'jspdf';
 import { supabase } from '@/integrations/supabase/client';
 import { useAdminRole } from '@/hooks/useAdminRole';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Skeleton } from '@/components/ui/skeleton';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { 
   BarChart3, 
@@ -21,11 +28,13 @@ import {
   Activity,
   Eye,
   Send,
-  LogIn,
   LogOut,
   Eye as EyeIcon,
   EyeOff,
-  ChevronDown
+  ChevronDown,
+  Download,
+  FileText,
+  FileSpreadsheet
 } from 'lucide-react';
 import {
   AreaChart,
@@ -35,12 +44,11 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  BarChart,
-  Bar,
   PieChart,
   Pie,
   Cell,
 } from 'recharts';
+import { toast } from 'sonner';
 
 type DateRange = {
   from: Date;
@@ -261,6 +269,172 @@ const AnalyticsDashboardPage = () => {
     return `${format(dateRange.from, 'MMM d, yyyy')} - ${format(dateRange.to, 'MMM d, yyyy')}`;
   };
 
+  // Export to CSV
+  const exportToCSV = () => {
+    const dateRangeStr = `${format(dateRange.from, 'yyyy-MM-dd')}_to_${format(dateRange.to, 'yyyy-MM-dd')}`;
+    
+    // Build CSV content
+    let csvContent = 'PixelAI Pro Analytics Report\n';
+    csvContent += `Date Range: ${format(dateRange.from, 'MMM d, yyyy')} - ${format(dateRange.to, 'MMM d, yyyy')}\n`;
+    csvContent += `Generated: ${format(new Date(), 'MMM d, yyyy HH:mm')}\n\n`;
+    
+    // Key Metrics
+    csvContent += 'KEY METRICS\n';
+    csvContent += 'Metric,Value,Change\n';
+    csvContent += 'Total Page Views,12456,+12.5%\n';
+    csvContent += 'Unique Visitors,3892,+8.2%\n';
+    csvContent += 'CTA Click Rate,4.7%,-1.3%\n';
+    csvContent += 'Form Submissions,156,+23.4%\n\n';
+    
+    // Database Metrics
+    csvContent += 'DATABASE METRICS\n';
+    csvContent += 'Metric,Value\n';
+    csvContent += `Media Files,${mediaCount}\n`;
+    csvContent += `Scheduled Posts,${scheduledPostsCount}\n`;
+    csvContent += `Published Posts,${publishedPostsCount}\n`;
+    csvContent += `Pending Posts,${pendingPostsCount}\n\n`;
+    
+    // Weekly Traffic
+    csvContent += 'WEEKLY TRAFFIC\n';
+    csvContent += 'Day,Page Views,Visitors\n';
+    weeklyPageViews.forEach(item => {
+      csvContent += `${item.day},${item.views},${item.visitors}\n`;
+    });
+    csvContent += '\n';
+    
+    // Traffic Sources
+    csvContent += 'TRAFFIC SOURCES\n';
+    csvContent += 'Source,Percentage\n';
+    trafficSources.forEach(source => {
+      csvContent += `${source.name},${source.value}%\n`;
+    });
+    csvContent += '\n';
+    
+    // Top Pages
+    csvContent += 'TOP PAGES\n';
+    csvContent += 'Page,Views,Change\n';
+    topPages.forEach(page => {
+      csvContent += `${page.page},${page.views},${page.change >= 0 ? '+' : ''}${page.change}%\n`;
+    });
+    
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `pixelai-analytics-${dateRangeStr}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+    
+    toast.success('CSV report downloaded successfully');
+  };
+
+  // Export to PDF
+  const exportToPDF = () => {
+    const dateRangeStr = `${format(dateRange.from, 'yyyy-MM-dd')}_to_${format(dateRange.to, 'yyyy-MM-dd')}`;
+    const doc = new jsPDF();
+    
+    // Title
+    doc.setFontSize(20);
+    doc.setTextColor(40, 40, 40);
+    doc.text('PixelAI Pro Analytics Report', 20, 20);
+    
+    // Date range
+    doc.setFontSize(12);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Date Range: ${format(dateRange.from, 'MMM d, yyyy')} - ${format(dateRange.to, 'MMM d, yyyy')}`, 20, 30);
+    doc.text(`Generated: ${format(new Date(), 'MMM d, yyyy HH:mm')}`, 20, 37);
+    
+    // Key Metrics Section
+    doc.setFontSize(14);
+    doc.setTextColor(40, 40, 40);
+    doc.text('Key Metrics', 20, 52);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    const keyMetrics = [
+      ['Total Page Views', '12,456', '+12.5%'],
+      ['Unique Visitors', '3,892', '+8.2%'],
+      ['CTA Click Rate', '4.7%', '-1.3%'],
+      ['Form Submissions', '156', '+23.4%'],
+    ];
+    
+    let yPos = 60;
+    keyMetrics.forEach(([metric, value, change]) => {
+      doc.text(`${metric}: ${value} (${change})`, 25, yPos);
+      yPos += 7;
+    });
+    
+    // Database Metrics Section
+    yPos += 5;
+    doc.setFontSize(14);
+    doc.setTextColor(40, 40, 40);
+    doc.text('Database Metrics', 20, yPos);
+    
+    yPos += 8;
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    doc.text(`Media Files: ${mediaCount}`, 25, yPos);
+    yPos += 7;
+    doc.text(`Scheduled Posts: ${scheduledPostsCount}`, 25, yPos);
+    yPos += 7;
+    doc.text(`Published Posts: ${publishedPostsCount}`, 25, yPos);
+    yPos += 7;
+    doc.text(`Pending Posts: ${pendingPostsCount}`, 25, yPos);
+    
+    // Weekly Traffic Section
+    yPos += 12;
+    doc.setFontSize(14);
+    doc.setTextColor(40, 40, 40);
+    doc.text('Weekly Traffic', 20, yPos);
+    
+    yPos += 8;
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    weeklyPageViews.forEach(item => {
+      doc.text(`${item.day}: ${item.views} views, ${item.visitors} visitors`, 25, yPos);
+      yPos += 6;
+    });
+    
+    // Traffic Sources Section
+    yPos += 8;
+    doc.setFontSize(14);
+    doc.setTextColor(40, 40, 40);
+    doc.text('Traffic Sources', 20, yPos);
+    
+    yPos += 8;
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    trafficSources.forEach(source => {
+      doc.text(`${source.name}: ${source.value}%`, 25, yPos);
+      yPos += 6;
+    });
+    
+    // Top Pages Section
+    yPos += 8;
+    doc.setFontSize(14);
+    doc.setTextColor(40, 40, 40);
+    doc.text('Top Pages', 20, yPos);
+    
+    yPos += 8;
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    topPages.forEach(page => {
+      const changeStr = page.change >= 0 ? `+${page.change}%` : `${page.change}%`;
+      doc.text(`${page.page}: ${page.views.toLocaleString()} views (${changeStr})`, 25, yPos);
+      yPos += 6;
+    });
+    
+    // Footer
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text('Generated by PixelAI Pro Analytics Dashboard', 20, 285);
+    
+    // Save PDF
+    doc.save(`pixelai-analytics-${dateRangeStr}.pdf`);
+    
+    toast.success('PDF report downloaded successfully');
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -346,6 +520,27 @@ const AnalyticsDashboardPage = () => {
                 </PopoverContent>
               </Popover>
             </div>
+            
+            {/* Export Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Download className="w-4 h-4 mr-2" />
+                  <span className="hidden sm:inline">Export</span>
+                  <ChevronDown className="ml-1 h-4 w-4 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={exportToCSV}>
+                  <FileSpreadsheet className="w-4 h-4 mr-2" />
+                  Export as CSV
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={exportToPDF}>
+                  <FileText className="w-4 h-4 mr-2" />
+                  Export as PDF
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             
             <Button onClick={handleSignOut} variant="outline" size="sm">
               <LogOut className="w-4 h-4 mr-2" />
