@@ -1,12 +1,13 @@
+import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import SocialShareButtons from '@/components/SocialShareButtons';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Calendar, Clock, User, Lightbulb, TrendingUp, Users, Zap } from 'lucide-react';
+import { ArrowRight, Calendar, Clock, User, Lightbulb, TrendingUp, Users, Zap, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
 import RelatedServices from '@/components/RelatedServices';
-
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 // Trade Show Gallery Images
 import tradeshowBasketball from '@/assets/tradeshow-trading-card-basketball.jpg';
 import tradeshowFootball from '@/assets/tradeshow-trading-card-football.jpg';
@@ -21,7 +22,37 @@ import tradeshowPixelaipro1 from '@/assets/tradeshow-pixelaipro-1.jpg';
 import tradeshowPixelaipro2 from '@/assets/tradeshow-pixelaipro-2.jpg';
 import tradeshowGrfuRugby from '@/assets/tradeshow-grfu-rugby.jpg';
 
+const galleryImages = [
+  { src: tradeshowGiantsGold, alt: 'NY Giants Champions trading card', label: 'NY Giants Champions' },
+  { src: tradeshowGiantsBlue, alt: 'NY Giants neon trading card', label: 'Giants Neon Edition' },
+  { src: tradeshowBrowns, alt: 'Cleveland Browns trading card', label: 'Cleveland Browns' },
+  { src: tradeshowCowboys, alt: 'Dallas Cowboys trading card', label: 'Dallas Cowboys' },
+  { src: tradeshowBleepshare, alt: 'Custom basketball trading card', label: 'Custom Basketball' },
+  { src: tradeshowBraves, alt: 'Atlanta Braves baseball trading card', label: 'Atlanta Braves' },
+  { src: tradeshowPixelaipro1, alt: 'PixelAI Pro basketball card', label: 'PixelAI Pro Basketball' },
+  { src: tradeshowPixelaipro2, alt: 'PixelAI Pro branded trading card', label: 'PixelAI Pro Edition' },
+  { src: tradeshowGrfuRugby, alt: 'GRFU Rugby trading card', label: 'Rugby Trading Card' },
+  { src: tradeshowBasketball, alt: 'Buffalo basketball trading card', label: 'Buffalo Basketball' },
+  { src: tradeshowFootball, alt: 'Hurricanes football trading card', label: 'Miami Hurricanes' },
+  { src: tradeshowBoothFemale, alt: 'AI photo booth interface', label: 'Interactive Booth' },
+];
+
 const TradeShowBoothIdeasPage = () => {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const openLightbox = (index: number) => {
+    setCurrentImageIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const navigateImage = (direction: 'prev' | 'next') => {
+    if (direction === 'prev') {
+      setCurrentImageIndex((prev) => (prev === 0 ? galleryImages.length - 1 : prev - 1));
+    } else {
+      setCurrentImageIndex((prev) => (prev === galleryImages.length - 1 ? 0 : prev + 1));
+    }
+  };
   usePageMeta({
     title: 'Trade Show Booth Ideas That Actually Drive Leads in 2026 | PixelAI Pro',
     description: 'Stop blending in at trade shows. Discover experiential marketing strategies that top exhibitors use to capture qualified leads and create memorable brand experiences.',
@@ -198,21 +229,12 @@ const TradeShowBoothIdeasPage = () => {
                 Real AI Booth Activations in Action
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {[
-                  { src: tradeshowGiantsGold, alt: 'NY Giants Champions trading card', label: 'NY Giants Champions' },
-                  { src: tradeshowGiantsBlue, alt: 'NY Giants neon trading card', label: 'Giants Neon Edition' },
-                  { src: tradeshowBrowns, alt: 'Cleveland Browns trading card', label: 'Cleveland Browns' },
-                  { src: tradeshowCowboys, alt: 'Dallas Cowboys trading card', label: 'Dallas Cowboys' },
-                  { src: tradeshowBleepshare, alt: 'Custom basketball trading card', label: 'Custom Basketball' },
-                  { src: tradeshowBraves, alt: 'Atlanta Braves baseball trading card', label: 'Atlanta Braves' },
-                  { src: tradeshowPixelaipro1, alt: 'PixelAI Pro basketball card', label: 'PixelAI Pro Basketball' },
-                  { src: tradeshowPixelaipro2, alt: 'PixelAI Pro branded trading card', label: 'PixelAI Pro Edition' },
-                  { src: tradeshowGrfuRugby, alt: 'GRFU Rugby trading card', label: 'Rugby Trading Card' },
-                  { src: tradeshowBasketball, alt: 'Buffalo basketball trading card', label: 'Buffalo Basketball' },
-                  { src: tradeshowFootball, alt: 'Hurricanes football trading card', label: 'Miami Hurricanes' },
-                  { src: tradeshowBoothFemale, alt: 'AI photo booth interface', label: 'Interactive Booth' },
-                ].map((item, idx) => (
-                  <div key={idx} className="relative group overflow-hidden rounded-xl">
+                {galleryImages.map((item, idx) => (
+                  <div 
+                    key={idx} 
+                    className="relative group overflow-hidden rounded-xl cursor-pointer"
+                    onClick={() => openLightbox(idx)}
+                  >
                     <img 
                       src={item.src} 
                       alt={item.alt}
@@ -220,8 +242,9 @@ const TradeShowBoothIdeasPage = () => {
                       decoding="async"
                       className="w-full h-64 md:h-80 object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-between p-4">
                       <span className="text-white text-sm font-medium">{item.label}</span>
+                      <span className="text-white/70 text-xs">Click to enlarge</span>
                     </div>
                   </div>
                 ))}
@@ -229,6 +252,52 @@ const TradeShowBoothIdeasPage = () => {
               <p className="text-sm text-muted-foreground mt-4 text-center">
                 Examples of AI-powered trading cards that drive engagement at trade shows and corporate events
               </p>
+
+              {/* Lightbox Modal */}
+              <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+                <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 bg-background/95 backdrop-blur-xl border-0">
+                  <div className="relative flex items-center justify-center min-h-[80vh]">
+                    {/* Close button */}
+                    <button
+                      onClick={() => setLightboxOpen(false)}
+                      className="absolute top-4 right-4 z-50 w-10 h-10 rounded-full bg-background/80 flex items-center justify-center hover:bg-background transition-colors"
+                    >
+                      <X size={20} className="text-foreground" />
+                    </button>
+
+                    {/* Previous button */}
+                    <button
+                      onClick={() => navigateImage('prev')}
+                      className="absolute left-4 z-50 w-12 h-12 rounded-full bg-background/80 flex items-center justify-center hover:bg-background transition-colors"
+                    >
+                      <ChevronLeft size={24} className="text-foreground" />
+                    </button>
+
+                    {/* Image */}
+                    <div className="max-w-4xl max-h-[85vh] p-4">
+                      <img
+                        src={galleryImages[currentImageIndex]?.src}
+                        alt={galleryImages[currentImageIndex]?.alt}
+                        className="max-w-full max-h-[80vh] object-contain rounded-lg"
+                      />
+                      <p className="text-center text-foreground text-sm mt-4 font-medium">
+                        {galleryImages[currentImageIndex]?.label}
+                      </p>
+                      <p className="text-center text-muted-foreground/60 text-xs mt-2">
+                        {currentImageIndex + 1} / {galleryImages.length}
+                      </p>
+                    </div>
+
+                    {/* Next button */}
+                    <button
+                      onClick={() => navigateImage('next')}
+                      className="absolute right-4 z-50 w-12 h-12 rounded-full bg-background/80 flex items-center justify-center hover:bg-background transition-colors"
+                    >
+                      <ChevronRight size={24} className="text-foreground" />
+                    </button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
 
             <article className="prose prose-lg prose-invert max-w-none">
