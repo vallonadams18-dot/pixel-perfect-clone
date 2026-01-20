@@ -22,6 +22,39 @@ const EXPERIENCE_STYLES: Record<string, string> = {
   'identity': 'Create a stylized artistic portrait that captures the essence and identity of this person. Use creative lighting, artistic filters, and portrait techniques that highlight their unique features and personality.',
 };
 
+function extractGeneratedImageUrl(data: any): string | null {
+  // Common formats across OpenAI-compatible image models
+  const direct = data?.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+  if (typeof direct === 'string' && direct.length > 0) return direct;
+
+  const content = data?.choices?.[0]?.message?.content;
+  if (Array.isArray(content)) {
+    const part = content.find((p: any) => p?.type === 'image_url' && p?.image_url?.url);
+    if (part?.image_url?.url) return part.image_url.url;
+  }
+
+  // Some providers return images at the top level
+  if (Array.isArray(data?.images) && data.images?.[0]?.url) return data.images[0].url;
+
+  // Older OpenAI-style image outputs
+  if (Array.isArray(data?.data)) {
+    const first = data.data[0];
+    if (first?.url) return first.url;
+    if (first?.b64_json) return `data:image/jpeg;base64,${first.b64_json}`;
+  }
+
+  return null;
+}
+
+function decodeDataUrl(dataUrl: string): { contentType: string; bytes: Uint8Array } {
+  const match = dataUrl.match(/^data:([^;]+);base64,(.+)$/);
+  if (!match) throw new Error('Invalid data URL');
+  const contentType = match[1];
+  const b64 = match[2];
+  const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+  return { contentType, bytes };
+}
+
 Deno.serve(async (req) => {
   console.log('Demo transform request received');
   
@@ -70,14 +103,49 @@ Deno.serve(async (req) => {
     console.log(`Processing demo for experience: ${experience}`);
 
     // Get the style prompt
-    const stylePrompt = EXPERIENCE_STYLES[experience.toLowerCase()] || 
+    const stylePrompt = EXPERIENCE_STYLES[experience.toLowerCase()] ||
       `Transform this image into ${experience} style.`;
-    
-    const fullPrompt = customPrompt 
+
+    const fullPrompt = customPrompt
       ? `${customPrompt}. Maintain the person's likeness and identity.`
       : `${stylePrompt} Maintain the person's likeness and identity. Create a high-quality, professional result suitable for social media posting.`;
 
-    console.log('Calling AI gateway for demo transformation...');
+    // IMPORTANT: The image model needs a URL it can fetch. Data URLs can be flaky, so we upload
+    // the input to the public demo-images bucket and pass the public URL to the AI.
+    let inputImageUrl = imageBase64;
+    if (imageBase64.startsWith('data:')) {
+      try {
+        const { contentType, bytes } = decodeDataUrl(imageBase64);
+        const timestamp = Date.now();
+        const randomId = crypto.randomUUID().slice(0, 8);
+        const ext = contentType.includes('png') ? 'png' : 'jpg';
+        const inputPath = `inputs/demo-input-${experience}-${timestamp}-${randomId}.${ext}`;
+
+        const { error: inputUploadError } = await supabase.storage
+          .from('demo-images')
+          .upload(inputPath, bytes, {
+            contentType,
+            upsert: false,
+          });
+
+        if (!inputUploadError) {
+          const { data: publicUrlData } = supabase.storage
+            .from('demo-images')
+            .getPublicUrl(inputPath);
+          inputImageUrl = publicUrlData.publicUrl;
+          console.log('Input uploaded for AI access');
+        } else {
+          console.error('Input upload error (using data URL directly):', inputUploadError);
+        }
+      } catch (e) {
+        console.error('Failed to decode/upload input image:', e);
+      }
+    }
+
+    console.log('Calling AI gateway for demo transformation...', {
+      experience,
+      model: 'google/gemini-2.5-flash-image',
+    });
 
     // Call Lovable AI for image editing using Nano Banana (image generation model)
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -92,27 +160,22 @@ Deno.serve(async (req) => {
           {
             role: 'user',
             content: [
-              {
-                type: 'text',
-                text: fullPrompt
-              },
+              { type: 'text', text: fullPrompt },
               {
                 type: 'image_url',
-                image_url: {
-                  url: imageBase64
-                }
-              }
-            ]
-          }
+                image_url: { url: inputImageUrl },
+              },
+            ],
+          },
         ],
-        modalities: ['image', 'text']
+        modalities: ['image', 'text'],
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error('AI gateway error:', response.status, errorText);
-      
+
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: 'High demand! Please try again in a moment.' }),
@@ -125,7 +188,7 @@ Deno.serve(async (req) => {
           { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      
+
       return new Response(
         JSON.stringify({ error: 'Transformation failed. Please try a different photo.' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -135,9 +198,9 @@ Deno.serve(async (req) => {
     const data = await response.json();
     console.log('AI response received');
 
-    // Extract the generated image
-    const generatedImage = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-    
+    // Extract the generated image (supports multiple gateway response formats)
+    const generatedImage = extractGeneratedImageUrl(data);
+
     if (!generatedImage) {
       console.error('No image in response:', JSON.stringify(data));
       return new Response(
@@ -146,40 +209,44 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Upload to storage for persistence
-    const timestamp = Date.now();
-    const randomId = crypto.randomUUID().slice(0, 8);
-    const fileName = `demo-${experience}-${timestamp}-${randomId}.jpg`;
-
-    // Convert base64 to binary
-    const base64Data = generatedImage.split(',')[1];
-    const binaryData = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
-
-    const { error: uploadError } = await supabase.storage
-      .from('demo-images')
-      .upload(fileName, binaryData, {
-        contentType: 'image/jpeg',
-        upsert: false
-      });
-
+    // If the model returns a data URL, persist it to storage. If it returns an https URL, return it directly.
     let imageUrl = generatedImage;
-    
-    if (!uploadError) {
-      const { data: publicUrlData } = supabase.storage
-        .from('demo-images')
-        .getPublicUrl(fileName);
-      imageUrl = publicUrlData.publicUrl;
-      console.log('Demo image uploaded successfully');
-    } else {
-      console.error('Upload error (returning base64):', uploadError);
+
+    if (generatedImage.startsWith('data:')) {
+      const timestamp = Date.now();
+      const randomId = crypto.randomUUID().slice(0, 8);
+      const fileName = `demo-${experience}-${timestamp}-${randomId}.jpg`;
+
+      try {
+        const { bytes } = decodeDataUrl(generatedImage);
+
+        const { error: uploadError } = await supabase.storage
+          .from('demo-images')
+          .upload(fileName, bytes, {
+            contentType: 'image/jpeg',
+            upsert: false,
+          });
+
+        if (!uploadError) {
+          const { data: publicUrlData } = supabase.storage
+            .from('demo-images')
+            .getPublicUrl(fileName);
+          imageUrl = publicUrlData.publicUrl;
+          console.log('Demo image uploaded successfully');
+        } else {
+          console.error('Output upload error (returning data URL):', uploadError);
+        }
+      } catch (e) {
+        console.error('Failed to decode/upload output image (returning data URL):', e);
+      }
     }
 
     return new Response(
       JSON.stringify({
         success: true,
-        imageUrl: imageUrl,
-        experience: experience,
-        message: `Your ${experience} transformation is ready!`
+        imageUrl,
+        experience,
+        message: `Your ${experience} transformation is ready!`,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
