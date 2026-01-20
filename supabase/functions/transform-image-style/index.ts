@@ -9,6 +9,7 @@ interface TransformRequest {
   imageUrl: string;
   style: string;
   customPrompt?: string;
+  model?: 'gemini' | 'chatgpt';
 }
 
 const SERVICE_STYLES: Record<string, string> = {
@@ -68,7 +69,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const { imageUrl, style, customPrompt } = await req.json() as TransformRequest;
+    const { imageUrl, style, customPrompt, model = 'gemini' } = await req.json() as TransformRequest;
     
     if (!imageUrl) {
       return new Response(
@@ -127,7 +128,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log(`Transforming image for user ${user.id} with style: ${style}${isCustomStyle ? ' (custom)' : ''}`);
+    console.log(`Transforming image for user ${user.id} with style: ${style}${isCustomStyle ? ' (custom)' : ''}, model: ${model}`);
 
     // Get the style prompt - prioritize custom prompt for custom style
     let stylePrompt: string;
@@ -146,6 +147,11 @@ Deno.serve(async (req) => {
 
     console.log('Calling AI gateway for image transformation...');
 
+    // Determine the model to use
+    const modelId = model === 'chatgpt' 
+      ? 'openai/gpt-5' 
+      : 'google/gemini-2.5-flash-image-preview';
+
     // Call Lovable AI for image editing
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -154,7 +160,7 @@ Deno.serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash-image-preview',
+        model: modelId,
         messages: [
           {
             role: 'user',
