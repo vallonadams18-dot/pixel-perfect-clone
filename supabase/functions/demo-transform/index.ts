@@ -79,7 +79,7 @@ Deno.serve(async (req) => {
 
     console.log('Calling AI gateway for demo transformation...');
 
-    // Call Lovable AI for image editing
+    // Call Lovable AI for image editing using Nano Banana (image generation model)
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -87,7 +87,7 @@ Deno.serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash-image-preview',
+        model: 'google/gemini-2.5-flash-image',
         messages: [
           {
             role: 'user',
