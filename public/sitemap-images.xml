@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <!-- Homepage Images -->
+  <url>
+    <loc>https://pixelaipro.lovable.app/</loc>
+    <image:image>
+      <image:loc>https://pixelaipro.lovable.app/og-image.jpg</image:loc>
+      <image:title>PixelAI Pro - AI Photo Booth Rental NYC</image:title>
+      <image:caption>Professional AI photo booth experiences for corporate events, conferences, and brand activations</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Experience Page Images -->
+  <url>
+    <loc>https://pixelaipro.lovable.app/experiences/ai-trading-cards</loc>
+    <image:image>
+      <image:loc>https://pixelaipro.lovable.app/og-ai-trading-cards.jpg</image:loc>
+      <image:title>AI Trading Cards - Custom Sports Cards Experience</image:title>
+      <image:caption>Create personalized AI-generated trading cards featuring guests as sports stars</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pixelaipro.lovable.app/experiences/headshots</loc>
+    <image:image>
+      <image:loc>https://pixelaipro.lovable.app/og-headshots.jpg</image:loc>
+      <image:title>AI Professional Headshots - Corporate Photo Booth</image:title>
+      <image:caption>Instant AI-enhanced professional headshots for conferences and corporate events</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pixelaipro.lovable.app/experiences/ai-video-booths</loc>
+    <image:image>
+      <image:loc>https://pixelaipro.lovable.app/og-ai-video-booths.jpg</image:loc>
+      <image:title>AI Video Booths - Dynamic Video Experiences</image:title>
+      <image:caption>Transform guests into animated characters with AI-powered video booth technology</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pixelaipro.lovable.app/experiences/pixelwear</loc>
+    <image:image>
+      <image:loc>https://pixelaipro.lovable.app/og-pixelwear.jpg</image:loc>
+      <image:title>PixelWear - AI Virtual Try-On Experience</image:title>
+      <image:caption>Virtual branded apparel try-on powered by AI for events and activations</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pixelaipro.lovable.app/experiences/identity</loc>
+    <image:image>
+      <image:loc>https://pixelaipro.lovable.app/og-identity.jpg</image:loc>
+      <image:title>Identity - AI Style Transformation</image:title>
+      <image:caption>Transform your look with AI-powered style and identity transformations</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pixelaipro.lovable.app/experiences/co-star</loc>
+    <image:image>
+      <image:loc>https://pixelaipro.lovable.app/og-co-star.jpg</image:loc>
+      <image:title>Co-Star - Celebrity Photo Experience</image:title>
+      <image:caption>Pose alongside AI-generated celebrities and icons</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pixelaipro.lovable.app/experiences/persona-pop</loc>
+    <image:image>
+      <image:loc>https://pixelaipro.lovable.app/og-persona-pop.jpg</image:loc>
+      <image:title>Persona Pop - AI Character Transformation</image:title>
+      <image:caption>Transform into pop culture characters with AI-powered photo booth</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pixelaipro.lovable.app/experiences/axon-ai</loc>
+    <image:image>
+      <image:loc>https://pixelaipro.lovable.app/og-axon-ai.jpg</image:loc>
+      <image:title>Axon AI - Interactive AI Robot Experience</image:title>
+      <image:caption>Engage guests with an interactive AI robot photo experience</image:caption>
+    </image:image>
+  </url>
+
+  <!-- PixelWear Gallery Images -->
+  <url>
+    <loc>https://pixelaipro.lovable.app/experiences/pixelwear</loc>
+    <image:image>
+      <image:loc>https://pixelaipro.lovable.app/images/pixelwear/pixelwear-nike.jpg</image:loc>
+      <image:title>PixelWear Nike Virtual Try-On</image:title>
+      <image:caption>AI-powered Nike branded apparel virtual try-on experience</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://pixelaipro.lovable.app/images/pixelwear/pixelwear-gucci.jpg</image:loc>
+      <image:title>PixelWear Gucci Virtual Try-On</image:title>
+      <image:caption>AI-powered luxury Gucci virtual try-on experience</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://pixelaipro.lovable.app/images/pixelwear/pixelwear-cowboys.jpg</image:loc>
+      <image:title>PixelWear Cowboys Jersey Virtual Try-On</image:title>
+      <image:caption>AI-powered Dallas Cowboys jersey virtual try-on for sports events</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://pixelaipro.lovable.app/images/pixelwear/pixelwear-giants.jpg</image:loc>
+      <image:title>PixelWear Giants Jersey Virtual Try-On</image:title>
+      <image:caption>AI-powered NY Giants jersey virtual try-on for sports events</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://pixelaipro.lovable.app/images/pixelwear/pixelwear-lv.jpg</image:loc>
+      <image:title>PixelWear Louis Vuitton Virtual Try-On</image:title>
+      <image:caption>AI-powered Louis Vuitton luxury virtual try-on experience</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://pixelaipro.lovable.app/images/pixelwear/pixelwear-puma.jpg</image:loc>
+      <image:title>PixelWear Puma Virtual Try-On</image:title>
+      <image:caption>AI-powered Puma sportswear virtual try-on experience</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://pixelaipro.lovable.app/images/pixelwear/pixelwear-supreme.jpg</image:loc>
+      <image:title>PixelWear Supreme Virtual Try-On</image:title>
+      <image:caption>AI-powered Supreme streetwear virtual try-on experience</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://pixelaipro.lovable.app/images/pixelwear/pixelwear-versace.jpg</image:loc>
+      <image:title>PixelWear Versace Virtual Try-On</image:title>
+      <image:caption>AI-powered Versace luxury virtual try-on experience</image:caption>
+    </image:image>
+  </url>
+</urlset>
