@@ -1,25 +1,15 @@
-import { Download, Instagram, Calendar, Copy, Check, Clock, Sparkles, Camera, Users, TrendingUp, Megaphone, Heart, RefreshCw, Send, Image as ImageIcon, Loader2 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { Download, Instagram, Calendar, Clock, Sparkles, Camera, Users, TrendingUp, Megaphone, Heart, RefreshCw, Send, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useVirtualizedMedia } from '@/hooks/useVirtualizedMedia';
+import { VirtualizedMediaGrid } from '@/components/VirtualizedMediaGrid';
 
 // Hero Image
 import downloadHero from '@/assets/download-hero.jpg';
-
-interface ContentItem {
-  id: string;
-  title: string;
-  type: 'post' | 'story' | 'reel';
-  image: string;
-  caption: string;
-  hashtags: string;
-  scheduledFor?: string;
-}
 
 interface UploaderMedia {
   id: string;
@@ -32,75 +22,41 @@ interface UploaderMedia {
   created_at: string;
   user_id: string | null;
   url?: string;
+  isLoading?: boolean;
 }
 
 const ContentHubPage = () => {
-  const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [uploaderMedia, setUploaderMedia] = useState<UploaderMedia[]>([]);
-  const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [session, setSession] = useState<any>(null);
   const [sendingToInstagram, setSendingToInstagram] = useState<string | null>(null);
   const { toast } = useToast();
 
-  // Fetch auth session and media on mount
+  // Use virtualized media hook for performance
+  const { 
+    items: uploaderMedia, 
+    loading, 
+    loadingMore,
+    hasMore,
+    totalCount,
+    loadMore,
+    refresh: fetchUploaderMedia 
+  } = useVirtualizedMedia({ 
+    bucketName: 'event-media',
+    pageSize: 20 
+  });
+
+  // Fetch auth session on mount
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      if (session) {
-        fetchUploaderMedia();
-      } else {
-        setLoading(false);
-      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      if (session) {
-        fetchUploaderMedia();
-      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
-
-  const fetchUploaderMedia = async () => {
-    setLoading(true);
-    try {
-      // Fetch all event media (uploaded content)
-      const { data, error } = await supabase
-        .from('event_media')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      // Generate signed URLs for each media item
-      const mediaWithUrls = await Promise.all(
-        (data || []).map(async (item) => {
-          const { data: signedUrl } = await supabase.storage
-            .from('event-media')
-            .createSignedUrl(item.file_path, 3600);
-          
-          return {
-            ...item,
-            url: signedUrl?.signedUrl || ''
-          };
-        })
-      );
-
-      setUploaderMedia(mediaWithUrls.filter(item => item.url));
-    } catch (error) {
-      console.error('Error fetching uploader media:', error);
-      toast({
-        title: "Error loading content",
-        description: "Could not load media from uploader",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Sync uploader media to Instagram-ready bucket
   const syncToInstagram = async () => {
@@ -242,16 +198,6 @@ const ContentHubPage = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
@@ -292,8 +238,8 @@ const ContentHubPage = () => {
               {/* Stats & Actions Bar */}
               <div className="glass rounded-2xl p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  <div className="text-center">
-                    <p className="text-3xl font-bold text-primary">{uploaderMedia.length}</p>
+                <div className="text-center">
+                    <p className="text-3xl font-bold text-primary">{totalCount}</p>
                     <p className="text-sm text-muted-foreground">Total Images</p>
                   </div>
                   <div className="h-12 w-px bg-border" />
@@ -315,13 +261,8 @@ const ContentHubPage = () => {
                 </div>
               </div>
 
-              {/* Content Grid */}
-              {loading ? (
-                <div className="flex items-center justify-center py-20">
-                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                  <span className="ml-3 text-muted-foreground">Loading content...</span>
-                </div>
-              ) : uploaderMedia.length === 0 ? (
+              {/* Virtualized Content Grid */}
+              {!loading && uploaderMedia.length === 0 ? (
                 <div className="glass rounded-2xl p-12 text-center">
                   <ImageIcon className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                   <h2 className="text-2xl font-bold mb-2">No Content Yet</h2>
@@ -333,84 +274,16 @@ const ContentHubPage = () => {
                   </Button>
                 </div>
               ) : (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {uploaderMedia.map((item) => (
-                    <div key={item.id} className="glass rounded-2xl overflow-hidden group">
-                      {/* Image Preview */}
-                      <div className="relative aspect-square overflow-hidden">
-                        <img 
-                          src={item.url} 
-                          alt={item.file_name}
-                          className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                        />
-                        
-                        {/* Event Badge */}
-                        {item.event_name && (
-                          <div className="absolute top-3 left-3">
-                            <Badge variant="secondary" className="bg-primary/90 text-primary-foreground">
-                              {item.event_name}
-                            </Badge>
-                          </div>
-                        )}
-                        
-                        {/* Quick Actions Overlay */}
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3">
-                          <Button
-                            size="sm"
-                            onClick={() => sendToInstagramScheduler(item)}
-                            disabled={sendingToInstagram === item.id}
-                            className="w-40"
-                          >
-                            {sendingToInstagram === item.id ? (
-                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            ) : (
-                              <Instagram className="w-4 h-4 mr-2" />
-                            )}
-                            Send to Instagram
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleDownload(item.url!, item.file_name)}
-                            className="w-40 bg-white/10"
-                          >
-                            <Download className="w-4 h-4 mr-2" />
-                            Download
-                          </Button>
-                        </div>
-                      </div>
-
-                      {/* Content Info */}
-                      <div className="p-4">
-                        <h3 className="font-semibold text-sm mb-1 truncate">{item.file_name}</h3>
-                        <p className="text-xs text-muted-foreground mb-2">
-                          {formatDate(item.created_at)}
-                        </p>
-                        
-                        {/* Tags */}
-                        {item.tags && item.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
-                            {item.tags.slice(0, 3).map((tag, idx) => (
-                              <span key={idx} className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full">
-                                {tag}
-                              </span>
-                            ))}
-                            {item.tags.length > 3 && (
-                              <span className="text-xs text-muted-foreground">+{item.tags.length - 3}</span>
-                            )}
-                          </div>
-                        )}
-                        
-                        {/* Description Preview */}
-                        {item.description && (
-                          <p className="text-xs text-muted-foreground mt-2 line-clamp-2">
-                            {item.description}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <VirtualizedMediaGrid
+                  items={uploaderMedia}
+                  loading={loading}
+                  loadingMore={loadingMore}
+                  hasMore={hasMore}
+                  onLoadMore={loadMore}
+                  onSendToInstagram={sendToInstagramScheduler}
+                  onDownload={handleDownload}
+                  sendingId={sendingToInstagram}
+                />
               )}
 
               {/* Weekly Content Calendar */}
