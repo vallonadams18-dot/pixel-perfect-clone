@@ -58,8 +58,11 @@ Disallow: /
 User-agent: Google-Extended
 Disallow: /
 
-# Sitemap location
+# Sitemap index location (contains pages, blog, and images sitemaps)
 Sitemap: https://pixelaipro.lovable.app/sitemap.xml
+Sitemap: https://pixelaipro.lovable.app/sitemap-pages.xml
+Sitemap: https://pixelaipro.lovable.app/sitemap-blog.xml
+Sitemap: https://pixelaipro.lovable.app/sitemap-images.xml
 
 # Host directive for search engines
 Host: https://pixelaipro.lovable.app
