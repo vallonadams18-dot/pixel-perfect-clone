@@ -9,6 +9,40 @@ import { supabase } from '@/integrations/supabase/client';
 import { z } from 'zod';
 import { cn } from '@/lib/utils';
 
+// Import actual gallery images for thumbnails
+import headshot1 from '@/assets/headshot-1.jpg';
+import headshot2 from '@/assets/headshot-2.jpg';
+import headshot3 from '@/assets/headshot-3.jpg';
+import pixarStyle from '@/assets/persona-pop-3d-pixar-style-character.jpg';
+import animeStyle from '@/assets/persona-pop-anime-style-transformation.jpg';
+import superheroMale from '@/assets/persona-pop-superhero-transformation-male.jpg';
+import vintage1920s from '@/assets/persona-pop-vintage-1920s-portrait.jpg';
+import cyberpunkNeon from '@/assets/persona-pop-cyberpunk-neon-portrait.jpg';
+import fantasyElf from '@/assets/persona-pop-fantasy-elf-warrior.jpg';
+import pixelwearNike from '@/assets/pixelwear-nike.jpg';
+import pixelwearGucci from '@/assets/pixelwear-gucci.jpg';
+import pixelwearCowboys from '@/assets/pixelwear-cowboys.jpg';
+import pixelwearGiants from '@/assets/pixelwear-giants.jpg';
+import pixelwearLV from '@/assets/pixelwear-lv.jpg';
+import pixelwearSupreme from '@/assets/pixelwear-supreme.jpg';
+import tradingCardMultiSport from '@/assets/ai-trading-cards-multi-sport-collection.jpg';
+import tradingCardBaseball from '@/assets/ai-trading-cards-baseball-custom-portrait.jpg';
+import tradingCardAthlete from '@/assets/ai-trading-cards-athlete-personalized-cards.jpg';
+import tradingCardSportsDisplay from '@/assets/ai-trading-cards-sports-collectibles-display.jpg';
+import coStarGuest1 from '@/assets/co-star-guest-1.jpg';
+import coStarGuest2 from '@/assets/co-star-guest-2.jpg';
+import coStarGuest4 from '@/assets/co-star-guest-4.jpg';
+import coStarGuest5 from '@/assets/co-star-guest-5.jpg';
+import coStarGuest6 from '@/assets/co-star-guest-6.jpg';
+import neoCyberpunk from '@/assets/ai-photo-booth-neo-cyberpunk-style.jpg';
+import cowboyWestern from '@/assets/ai-photo-booth-cowboy-western-portrait.jpg';
+import graffitiArt from '@/assets/ai-photo-booth-graffiti-street-art-portrait.jpg';
+import axonRobot from '@/assets/axon-ai-robot.png';
+import neoFuturistic from '@/assets/ai-photo-booth-neo-futuristic-portrait.jpg';
+import sketchPencil from '@/assets/sketch-guest-after-1.jpg';
+import sketchCharcoal from '@/assets/sketch-guest-charcoal-1.jpg';
+import sketchWatercolor from '@/assets/sketch-guest-watercolor-3.jpg';
+
 // Filter/style options by experience type
 export interface FilterOption {
   id: string;
@@ -27,55 +61,55 @@ interface ExperienceDemoProps {
 
 const emailSchema = z.string().trim().email({ message: "Please enter a valid email address" });
 
-// Default filters for each experience type
+// Default filters for each experience type with real gallery thumbnails
 const DEFAULT_FILTERS: Record<string, FilterOption[]> = {
   headshots: [
-    { id: 'professional', label: 'Corporate Pro', thumbnail: '/images/pixelwear/pixelwear-before.jpg', prompt: 'Transform this into a professional corporate headshot with clean studio lighting, neutral gradient background, professional color grading, subtle skin retouching, and executive portrait style.' },
-    { id: 'linkedin', label: 'LinkedIn Ready', thumbnail: '/images/pixelwear/pixelwear-before.jpg', prompt: 'Create a LinkedIn-optimized professional headshot with perfect dimensions, warm professional lighting, clean background, and approachable confident expression.' },
-    { id: 'creative', label: 'Creative Director', thumbnail: '/images/pixelwear/pixelwear-before.jpg', prompt: 'Transform into a creative professional headshot with artistic lighting, slight color grading, modern aesthetic, and creative industry vibe.' },
+    { id: 'professional', label: 'Corporate Pro', thumbnail: headshot1, prompt: 'Transform this into a professional corporate headshot with clean studio lighting, neutral gradient background, professional color grading, subtle skin retouching, and executive portrait style.' },
+    { id: 'linkedin', label: 'LinkedIn Ready', thumbnail: headshot2, prompt: 'Create a LinkedIn-optimized professional headshot with perfect dimensions, warm professional lighting, clean background, and approachable confident expression.' },
+    { id: 'creative', label: 'Creative Director', thumbnail: headshot3, prompt: 'Transform into a creative professional headshot with artistic lighting, slight color grading, modern aesthetic, and creative industry vibe.' },
   ],
   'persona-pop': [
-    { id: 'pixar', label: '3D Pixar', thumbnail: '/images/pixelwear/pixelwear-gucci.jpg', prompt: 'Transform this person into a fun Pixar/Disney 3D animated character style. Exaggerated features, colorful cartoon aesthetic, soft lighting, playful expression while maintaining likeness.' },
-    { id: 'anime', label: 'Anime Style', thumbnail: '/images/pixelwear/pixelwear-nike.jpg', prompt: 'Transform this person into anime/manga art style with expressive eyes, stylized features, dynamic pose, vibrant colors while maintaining their likeness.' },
-    { id: 'superhero', label: 'Superhero', thumbnail: '/images/pixelwear/pixelwear-cowboys.jpg', prompt: 'Transform this person into a superhero character with costume, cape, dramatic lighting, heroic pose, and comic book aesthetic while maintaining their likeness.' },
-    { id: 'vintage', label: '1920s Vintage', thumbnail: '/images/pixelwear/pixelwear-lv.jpg', prompt: 'Transform this into a vintage 1920s portrait with art deco styling, gatsby era glamour, sepia tones, classic portrait lighting while maintaining likeness.' },
-    { id: 'cyberpunk', label: 'Cyberpunk', thumbnail: '/images/pixelwear/pixelwear-versace.jpg', prompt: 'Transform into cyberpunk style with neon lights, futuristic visor, tech implants, dystopian city backdrop while maintaining likeness.' },
-    { id: 'fantasy', label: 'Fantasy Elf', thumbnail: '/images/pixelwear/pixelwear-supreme.jpg', prompt: 'Transform into a fantasy elf warrior with pointed ears, Celtic armor, magical glowing eyes, ethereal forest backdrop while maintaining likeness.' },
+    { id: 'pixar', label: '3D Pixar', thumbnail: pixarStyle, prompt: 'Transform this person into a fun Pixar/Disney 3D animated character style. Exaggerated features, colorful cartoon aesthetic, soft lighting, playful expression while maintaining likeness.' },
+    { id: 'anime', label: 'Anime Style', thumbnail: animeStyle, prompt: 'Transform this person into anime/manga art style with expressive eyes, stylized features, dynamic pose, vibrant colors while maintaining their likeness.' },
+    { id: 'superhero', label: 'Superhero', thumbnail: superheroMale, prompt: 'Transform this person into a superhero character with costume, cape, dramatic lighting, heroic pose, and comic book aesthetic while maintaining their likeness.' },
+    { id: 'vintage', label: '1920s Vintage', thumbnail: vintage1920s, prompt: 'Transform this into a vintage 1920s portrait with art deco styling, gatsby era glamour, sepia tones, classic portrait lighting while maintaining likeness.' },
+    { id: 'cyberpunk', label: 'Cyberpunk', thumbnail: cyberpunkNeon, prompt: 'Transform into cyberpunk style with neon lights, futuristic visor, tech implants, dystopian city backdrop while maintaining likeness.' },
+    { id: 'fantasy', label: 'Fantasy Elf', thumbnail: fantasyElf, prompt: 'Transform into a fantasy elf warrior with pointed ears, Celtic armor, magical glowing eyes, ethereal forest backdrop while maintaining likeness.' },
   ],
   pixelwear: [
-    { id: 'nike', label: 'Nike Athletics', thumbnail: '/images/pixelwear/pixelwear-nike.jpg', prompt: 'Transform this person wearing premium Nike athletic apparel including a sleek Nike jacket/jersey. Keep the face and background intact but make it look like they are wearing high-end Nike sportswear.' },
-    { id: 'gucci', label: 'Gucci Luxury', thumbnail: '/images/pixelwear/pixelwear-gucci.jpg', prompt: 'Transform this person wearing luxury Gucci fashion items including a designer jacket or shirt with Gucci patterns. Keep face intact and make it look like authentic high-fashion photography.' },
-    { id: 'cowboys', label: 'Dallas Cowboys', thumbnail: '/images/pixelwear/pixelwear-cowboys.jpg', prompt: 'Transform this person wearing an official Dallas Cowboys NFL jersey with team colors and logo. Stadium backdrop, sports photography style while keeping face intact.' },
-    { id: 'giants', label: 'NY Giants', thumbnail: '/images/pixelwear/pixelwear-giants.jpg', prompt: 'Transform this person wearing an official New York Giants NFL jersey with team colors. Professional sports photography style while keeping face and likeness intact.' },
-    { id: 'lv', label: 'Louis Vuitton', thumbnail: '/images/pixelwear/pixelwear-lv.jpg', prompt: 'Transform this person wearing luxury Louis Vuitton fashion with the iconic LV monogram pattern. High-fashion editorial style while keeping face intact.' },
-    { id: 'supreme', label: 'Supreme Street', thumbnail: '/images/pixelwear/pixelwear-supreme.jpg', prompt: 'Transform this person wearing Supreme streetwear with the iconic box logo. Urban street style photography while keeping face and likeness intact.' },
+    { id: 'nike', label: 'Nike Athletics', thumbnail: pixelwearNike, prompt: 'Transform this person wearing premium Nike athletic apparel including a sleek Nike jacket/jersey. Keep the face and background intact but make it look like they are wearing high-end Nike sportswear.' },
+    { id: 'gucci', label: 'Gucci Luxury', thumbnail: pixelwearGucci, prompt: 'Transform this person wearing luxury Gucci fashion items including a designer jacket or shirt with Gucci patterns. Keep face intact and make it look like authentic high-fashion photography.' },
+    { id: 'cowboys', label: 'Dallas Cowboys', thumbnail: pixelwearCowboys, prompt: 'Transform this person wearing an official Dallas Cowboys NFL jersey with team colors and logo. Stadium backdrop, sports photography style while keeping face intact.' },
+    { id: 'giants', label: 'NY Giants', thumbnail: pixelwearGiants, prompt: 'Transform this person wearing an official New York Giants NFL jersey with team colors. Professional sports photography style while keeping face and likeness intact.' },
+    { id: 'lv', label: 'Louis Vuitton', thumbnail: pixelwearLV, prompt: 'Transform this person wearing luxury Louis Vuitton fashion with the iconic LV monogram pattern. High-fashion editorial style while keeping face intact.' },
+    { id: 'supreme', label: 'Supreme Street', thumbnail: pixelwearSupreme, prompt: 'Transform this person wearing Supreme streetwear with the iconic box logo. Urban street style photography while keeping face and likeness intact.' },
   ],
   'trading-cards': [
-    { id: 'baseball', label: 'Baseball Star', thumbnail: '/images/pixelwear/pixelwear-giants.jpg', prompt: 'Transform this image into a professional baseball trading card style with player in uniform, stadium backdrop, stats overlay frame, glossy card finish, and bold typography.' },
-    { id: 'basketball', label: 'Basketball MVP', thumbnail: '/images/pixelwear/pixelwear-cowboys.jpg', prompt: 'Transform this image into a basketball trading card with player in jersey, arena lighting, dynamic pose, stats overlay, holographic card effects.' },
-    { id: 'football', label: 'Football Legend', thumbnail: '/images/pixelwear/pixelwear-nike.jpg', prompt: 'Transform this image into an NFL football trading card with player in full gear, stadium atmosphere, dramatic lighting, collectible card frame and finish.' },
-    { id: 'soccer', label: 'Soccer Champion', thumbnail: '/images/pixelwear/pixelwear-puma.jpg', prompt: 'Transform this image into a professional soccer/football trading card with player in kit, pitch backdrop, international style card design with stats.' },
+    { id: 'baseball', label: 'Baseball Star', thumbnail: tradingCardBaseball, prompt: 'Transform this image into a professional baseball trading card style with player in uniform, stadium backdrop, stats overlay frame, glossy card finish, and bold typography.' },
+    { id: 'basketball', label: 'Basketball MVP', thumbnail: tradingCardMultiSport, prompt: 'Transform this image into a basketball trading card with player in jersey, arena lighting, dynamic pose, stats overlay, holographic card effects.' },
+    { id: 'football', label: 'Football Legend', thumbnail: tradingCardAthlete, prompt: 'Transform this image into an NFL football trading card with player in full gear, stadium atmosphere, dramatic lighting, collectible card frame and finish.' },
+    { id: 'soccer', label: 'Soccer Champion', thumbnail: tradingCardSportsDisplay, prompt: 'Transform this image into a professional soccer/football trading card with player in kit, pitch backdrop, international style card design with stats.' },
   ],
   'co-star': [
-    { id: 'redcarpet', label: 'Red Carpet', thumbnail: '/images/pixelwear/pixelwear-gucci.jpg', prompt: 'Transform this image to place the person on a Hollywood red carpet premiere with paparazzi flashes, velvet ropes, glamorous lighting, movie poster backdrop.' },
-    { id: 'talkshow', label: 'Talk Show Guest', thumbnail: '/images/pixelwear/pixelwear-lv.jpg', prompt: 'Transform this image to place the person on a late-night talk show set with interview chair, desk, city skyline backdrop, studio lighting.' },
-    { id: 'musicawards', label: 'Music Awards', thumbnail: '/images/pixelwear/pixelwear-versace.jpg', prompt: 'Transform this image to place the person at a glamorous music awards show with stage lighting, trophy backdrop, celebrity event atmosphere.' },
-    { id: 'sportslegend', label: 'Sports Arena', thumbnail: '/images/pixelwear/pixelwear-cowboys.jpg', prompt: 'Transform this image to place the person in a professional sports arena with stadium lights, crowd atmosphere, championship celebration vibe.' },
+    { id: 'redcarpet', label: 'Red Carpet', thumbnail: coStarGuest1, prompt: 'Transform this image to place the person on a Hollywood red carpet premiere with paparazzi flashes, velvet ropes, glamorous lighting, movie poster backdrop.' },
+    { id: 'talkshow', label: 'Talk Show Guest', thumbnail: coStarGuest5, prompt: 'Transform this image to place the person on a late-night talk show set with interview chair, desk, city skyline backdrop, studio lighting.' },
+    { id: 'musicawards', label: 'Music Awards', thumbnail: coStarGuest4, prompt: 'Transform this image to place the person at a glamorous music awards show with stage lighting, trophy backdrop, celebrity event atmosphere.' },
+    { id: 'sportslegend', label: 'Sports Arena', thumbnail: coStarGuest6, prompt: 'Transform this image to place the person in a professional sports arena with stadium lights, crowd atmosphere, championship celebration vibe.' },
   ],
   'video-booths': [
-    { id: 'neon', label: 'Neon Lights', thumbnail: '/images/pixelwear/pixelwear-versace.jpg', prompt: 'Transform this into a dynamic shot with colorful neon lights, cyberpunk aesthetic, futuristic overlays, and dramatic visual effects that suggest energy and movement.' },
-    { id: 'action', label: 'Action Hero', thumbnail: '/images/pixelwear/pixelwear-nike.jpg', prompt: 'Transform this into a dynamic action shot with motion blur effects, dramatic lighting, explosion effects, and cinematic movie poster style.' },
-    { id: 'disco', label: 'Disco Fever', thumbnail: '/images/pixelwear/pixelwear-supreme.jpg', prompt: 'Transform this into a retro disco scene with mirror ball reflections, colorful dance floor lights, 70s aesthetic, and funky party atmosphere.' },
+    { id: 'neon', label: 'Neon Lights', thumbnail: neoCyberpunk, prompt: 'Transform this into a dynamic shot with colorful neon lights, cyberpunk aesthetic, futuristic overlays, and dramatic visual effects that suggest energy and movement.' },
+    { id: 'action', label: 'Action Hero', thumbnail: cowboyWestern, prompt: 'Transform this into a dynamic action shot with motion blur effects, dramatic lighting, explosion effects, and cinematic movie poster style.' },
+    { id: 'graffiti', label: 'Street Art', thumbnail: graffitiArt, prompt: 'Transform this into a vibrant street art scene with graffiti walls, urban backdrop, spray paint effects, and hip-hop culture aesthetic.' },
   ],
   'axon-ai': [
-    { id: 'robot', label: 'AI Companion', thumbnail: '/images/pixelwear/pixelwear-gucci.jpg', prompt: 'Transform this to include an AI robot companion standing beside the person with holographic displays, sleek robotic elements, and sci-fi technology aesthetic.' },
-    { id: 'neural', label: 'Neural Network', thumbnail: '/images/pixelwear/pixelwear-nike.jpg', prompt: 'Transform this to show neural network visualizations overlaid on the portrait, with glowing synaptic connections, data streams, and brain-computer interface aesthetic.' },
-    { id: 'hologram', label: 'Holographic', thumbnail: '/images/pixelwear/pixelwear-lv.jpg', prompt: 'Transform this into a holographic projection style with blue translucent effect, scan lines, futuristic interface elements, and sci-fi hologram aesthetic.' },
+    { id: 'robot', label: 'AI Companion', thumbnail: axonRobot, prompt: 'Transform this to include an AI robot companion standing beside the person with holographic displays, sleek robotic elements, and sci-fi technology aesthetic.' },
+    { id: 'neural', label: 'Neural Network', thumbnail: neoFuturistic, prompt: 'Transform this to show neural network visualizations overlaid on the portrait, with glowing synaptic connections, data streams, and brain-computer interface aesthetic.' },
+    { id: 'hologram', label: 'Holographic', thumbnail: neoCyberpunk, prompt: 'Transform this into a holographic projection style with blue translucent effect, scan lines, futuristic interface elements, and sci-fi hologram aesthetic.' },
   ],
   identity: [
-    { id: 'artistic', label: 'Artistic Portrait', thumbnail: '/images/pixelwear/pixelwear-gucci.jpg', prompt: 'Create a stylized artistic portrait with creative lighting, artistic filters, and portrait techniques that highlight unique features and personality.' },
-    { id: 'editorial', label: 'Editorial Style', thumbnail: '/images/pixelwear/pixelwear-lv.jpg', prompt: 'Transform into high-fashion editorial portrait with dramatic lighting, magazine cover quality, and sophisticated color grading.' },
-    { id: 'minimalist', label: 'Minimalist', thumbnail: '/images/pixelwear/pixelwear-nike.jpg', prompt: 'Create a clean minimalist portrait with simple background, soft lighting, and focus on natural features and expression.' },
+    { id: 'pencil', label: 'Pencil Sketch', thumbnail: sketchPencil, prompt: 'Transform this into a classic pencil sketch portrait with delicate line work, shading, artistic hand-drawn quality while maintaining likeness.' },
+    { id: 'charcoal', label: 'Charcoal Art', thumbnail: sketchCharcoal, prompt: 'Transform this into a dramatic charcoal portrait with deep shadows, bold strokes, artistic texture, and fine art gallery quality.' },
+    { id: 'watercolor', label: 'Watercolor', thumbnail: sketchWatercolor, prompt: 'Transform this into a vibrant watercolor portrait with soft color washes, artistic bleeding effects, and elegant painterly style.' },
   ],
 };
 
