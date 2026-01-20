@@ -109,6 +109,14 @@ const InstagramSchedulerPage = () => {
   }>({ gemini: null, chatgpt: null });
   const [savingComparisonResult, setSavingComparisonResult] = useState<'gemini' | 'chatgpt' | null>(null);
   
+  // Fallback info state
+  const [fallbackInfo, setFallbackInfo] = useState<{
+    usedFallback: boolean;
+    originalModel: string;
+    actualModel: string;
+    reason?: string;
+  } | null>(null);
+  
   // Batch transformation state
   const [batchMode, setBatchMode] = useState(false);
   const [selectedBatchItems, setSelectedBatchItems] = useState<Set<string>>(new Set());
@@ -661,6 +669,18 @@ const InstagramSchedulerPage = () => {
         setImageUrl(data.imageUrl);
         setImageFile(null);
         
+        // Track fallback info if applicable
+        if (data?.usedFallback) {
+          setFallbackInfo({
+            usedFallback: true,
+            originalModel: data.originalModel,
+            actualModel: data.actualModel,
+            reason: data.fallbackReason,
+          });
+        } else {
+          setFallbackInfo(null);
+        }
+        
         // Also set the service for caption generation
         setSelectedService(selectedTransformStyle.replace('-', ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '));
       }
@@ -670,10 +690,13 @@ const InstagramSchedulerPage = () => {
         addPromptToHistory(customStylePrompt.trim(), selectedTransformStyle === 'custom' ? 'custom' : selectedTransformStyle);
       }
 
-      setLastApiCall({ function: 'transform-image-style', status: 'success', message: `Transformed to ${selectedTransformStyle}`, timestamp: new Date() });
+      const modelLabel = data?.usedFallback ? 'Nano Banana (fallback)' : (selectedModel === 'gemini' ? 'Nano Banana' : 'ChatGPT');
+      setLastApiCall({ function: 'transform-image-style', status: 'success', message: `Transformed to ${selectedTransformStyle} via ${modelLabel}`, timestamp: new Date() });
       toast({ 
-        title: 'Image transformed!', 
-        description: `Applied ${selectedTransformStyle} style` 
+        title: data?.usedFallback ? 'Image transformed (fallback used)' : 'Image transformed!', 
+        description: data?.usedFallback 
+          ? `ChatGPT failed, used Nano Banana instead`
+          : `Applied ${selectedTransformStyle} style` 
       });
     } catch (error: any) {
       console.error('Transform error:', error);
@@ -694,6 +717,7 @@ const InstagramSchedulerPage = () => {
       setTransformedPreview('');
       setShowBeforeAfter(false);
       setComparisonResults({ gemini: null, chatgpt: null });
+      setFallbackInfo(null);
       toast({ title: 'Reverted to original' });
     }
   };
@@ -2085,27 +2109,53 @@ const InstagramSchedulerPage = () => {
                       
                       {/* Before/After Side by Side */}
                       {showBeforeAfter && transformedPreview && originalImageUrl ? (
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="relative rounded-lg overflow-hidden border">
-                            <img 
-                              src={originalImageUrl} 
-                              alt="Original" 
-                              className="w-full aspect-square object-cover"
-                            />
-                            <div className="absolute bottom-0 inset-x-0 bg-black/80 p-2">
-                              <p className="text-white text-xs text-center font-medium">BEFORE</p>
+                        <div className="space-y-3">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="relative rounded-lg overflow-hidden border">
+                              <img 
+                                src={originalImageUrl} 
+                                alt="Original" 
+                                className="w-full aspect-square object-cover"
+                              />
+                              <div className="absolute bottom-0 inset-x-0 bg-black/80 p-2">
+                                <p className="text-white text-xs text-center font-medium">BEFORE</p>
+                              </div>
+                            </div>
+                            <div className="relative rounded-lg overflow-hidden border border-primary">
+                              <img 
+                                src={transformedPreview} 
+                                alt="Transformed" 
+                                className="w-full aspect-square object-cover"
+                              />
+                              <div className="absolute bottom-0 inset-x-0 bg-primary p-2">
+                                <p className="text-primary-foreground text-xs text-center font-medium">AFTER</p>
+                              </div>
+                              {fallbackInfo?.usedFallback && (
+                                <div className="absolute top-2 left-2">
+                                  <Badge className="bg-amber-500/90 text-white text-xs flex items-center gap-1 shadow-lg">
+                                    <RefreshCw className="w-3 h-3" />
+                                    Fallback Used
+                                  </Badge>
+                                </div>
+                              )}
                             </div>
                           </div>
-                          <div className="relative rounded-lg overflow-hidden border border-primary">
-                            <img 
-                              src={transformedPreview} 
-                              alt="Transformed" 
-                              className="w-full aspect-square object-cover"
-                            />
-                            <div className="absolute bottom-0 inset-x-0 bg-primary p-2">
-                              <p className="text-primary-foreground text-xs text-center font-medium">AFTER</p>
+                          
+                          {/* Fallback info alert */}
+                          {fallbackInfo?.usedFallback && (
+                            <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-start gap-2">
+                              <AlertCircle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                              <div className="text-sm">
+                                <p className="font-medium text-amber-600">Fallback Model Used</p>
+                                <p className="text-muted-foreground text-xs">
+                                  ChatGPT failed to generate an image, so we used Nano Banana instead.
+                                  {fallbackInfo.reason && (
+                                    <span className="block mt-1 italic">Reason: {fallbackInfo.reason}</span>
+                                  )}
+                                </p>
+                              </div>
                             </div>
-                          </div>
+                          )}
                         </div>
                       ) : (
                         <div className="relative w-40 h-40 rounded-lg overflow-hidden border mx-auto">
@@ -2118,7 +2168,7 @@ const InstagramSchedulerPage = () => {
                             size="sm"
                             variant="secondary"
                             className="absolute top-2 right-2"
-                            onClick={() => { setImageUrl(''); setImageFile(null); setOriginalImageUrl(''); setTransformedPreview(''); }}
+                            onClick={() => { setImageUrl(''); setImageFile(null); setOriginalImageUrl(''); setTransformedPreview(''); setFallbackInfo(null); }}
                           >
                             <X className="w-4 h-4" />
                           </Button>

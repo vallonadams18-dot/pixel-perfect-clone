@@ -13,6 +13,7 @@ interface TransformRequest {
   style: string;
   customPrompt?: string;
   model?: 'gemini' | 'chatgpt';
+  noFallback?: boolean; // If true, skip automatic fallback to Gemini
 }
 
 const SERVICE_STYLES: Record<string, string> = {
@@ -124,7 +125,7 @@ Deno.serve(async (req) => {
       return ok({ success: false, error: 'Invalid request body' });
     }
 
-    const { imageUrl, style, customPrompt, model = 'gemini' } = body;
+    const { imageUrl, style, customPrompt, model = 'gemini', noFallback = false } = body;
 
     if (!style) return ok({ success: false, error: 'Style is required' });
     if (!imageUrl) return ok({ success: false, error: 'Image URL is required' });
@@ -165,67 +166,89 @@ Deno.serve(async (req) => {
 
     const fullPrompt = `${stylePrompt} Maintain the person's likeness and identity. Create a high-quality, professional result suitable for social media posting. Output MUST include exactly one generated image. Do not ask questions.`;
 
-    const modelId = model === 'chatgpt'
-      ? 'openai/gpt-5'
-      : 'google/gemini-2.5-flash-image';
+    // Helper function to call AI model
+    const callAiModel = async (selectedModel: string): Promise<{ success: boolean; imageUrl?: string; error?: string }> => {
+      const modelId = selectedModel === 'chatgpt'
+        ? 'openai/gpt-5'
+        : 'google/gemini-2.5-flash-image';
 
-    console.log('Calling AI gateway for image transformation...', { modelId });
+      console.log('Calling AI gateway for image transformation...', { modelId });
 
-    // NOTE: Do NOT upload inputs to storage here; pass data: URLs directly to the model to avoid storage bucket/config issues.
-    // Some gateway models reject the `modalities` parameter (notably OpenAI models), so we only send it for Google image models.
-    const aiBody: Record<string, unknown> = {
-      model: modelId,
-      messages: [
-        { role: 'system', content: 'You are an image generation + editing model. Always return an image output.' },
-        {
-          role: 'user',
-          content: [
-            { type: 'text', text: fullPrompt },
-            { type: 'image_url', image_url: { url: imageUrl } },
-          ],
+      const aiBody: Record<string, unknown> = {
+        model: modelId,
+        messages: [
+          { role: 'system', content: 'You are an image generation + editing model. Always return an image output.' },
+          {
+            role: 'user',
+            content: [
+              { type: 'text', text: fullPrompt },
+              { type: 'image_url', image_url: { url: imageUrl } },
+            ],
+          },
+        ],
+      };
+
+      if (modelId.startsWith('google/')) {
+        aiBody.modalities = ['image', 'text'];
+      }
+
+      const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
         },
-      ],
+        body: JSON.stringify(aiBody),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('AI gateway error:', response.status, errorText);
+        return { success: false, error: friendlyAiError(response.status, errorText) };
+      }
+
+      const data = await response.json();
+      console.log('AI response received');
+
+      const generatedImage = extractGeneratedImageUrl(data);
+
+      if (!generatedImage) {
+        console.error('No image in response:', JSON.stringify(data));
+        return { success: false, error: 'No image was generated. Try a different photo or style.' };
+      }
+
+      return { success: true, imageUrl: generatedImage };
     };
 
-    if (modelId.startsWith('google/')) {
-      aiBody.modalities = ['image', 'text'];
+    // Try primary model
+    let result = await callAiModel(model);
+    let usedFallback = false;
+    let originalError: string | undefined;
+
+    // If ChatGPT failed and fallback is allowed, try Gemini
+    if (!result.success && model === 'chatgpt' && !noFallback) {
+      console.log('ChatGPT failed, falling back to Nano Banana (Gemini)...');
+      originalError = result.error;
+      result = await callAiModel('gemini');
+      if (result.success) {
+        usedFallback = true;
+      }
     }
 
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(aiBody),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('AI gateway error:', response.status, errorText);
-      return ok({
-        success: false,
-        error: friendlyAiError(response.status, errorText),
-        providerStatus: response.status,
-      });
+    if (!result.success) {
+      return ok({ success: false, error: result.error || 'Transform failed' });
     }
 
-    const data = await response.json();
-    console.log('AI response received');
-
-    const generatedImage = extractGeneratedImageUrl(data);
-
-    if (!generatedImage) {
-      console.error('No image in response:', JSON.stringify(data));
-      return ok({ success: false, error: 'No image was generated. Try a different photo or style.' });
-    }
-
-    // Return the generated image URL as-is (can be https: or data:)
+    // Return the generated image URL
     return ok({
       success: true,
-      imageUrl: generatedImage,
+      imageUrl: result.imageUrl,
       style,
       message: `Image transformed to ${style} style`,
+      usedFallback,
+      originalModel: model,
+      actualModel: usedFallback ? 'gemini' : model,
+      fallbackReason: usedFallback ? originalError : undefined,
     });
   } catch (error) {
     console.error('Transform error:', error);
