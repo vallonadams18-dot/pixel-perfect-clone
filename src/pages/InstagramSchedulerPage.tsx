@@ -11,8 +11,9 @@ import {
   XCircle, AlertCircle, Image as ImageIcon, Upload,
   FolderOpen, Search, X, Sparkles, TrendingUp, RefreshCw,
   Download, Grid, List, LayoutGrid, Wand2, Wifi, WifiOff,
-  Settings, Save, Key, Zap, Users, UserCheck, Filter, CheckCircle2, Mail
+  Settings, Save, Key, Zap, Users, UserCheck, Filter, CheckCircle2, Mail, Images
 } from 'lucide-react';
+import JSZip from 'jszip';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -46,6 +47,17 @@ interface Lead {
   notes: string | null;
   referrer: string | null;
   user_agent: string | null;
+  created_at: string;
+}
+
+interface DemoGalleryItem {
+  id: string;
+  email: string;
+  experience_type: string;
+  original_image_url: string;
+  transformed_image_url: string;
+  user_agent: string | null;
+  referrer: string | null;
   created_at: string;
 }
 
@@ -166,7 +178,7 @@ const InstagramSchedulerPage = () => {
   const [batchResults, setBatchResults] = useState<Array<{ id: string; original: string; transformed: string; success: boolean }>>([]);
   
   // Main panel tab
-  const [mainTab, setMainTab] = useState<'library' | 'scheduler' | 'posts' | 'settings' | 'optimize' | 'leads'>('library');
+  const [mainTab, setMainTab] = useState<'library' | 'scheduler' | 'posts' | 'settings' | 'optimize' | 'leads' | 'demo-gallery'>('library');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   
   // Auto-scheduling state
@@ -200,6 +212,14 @@ const InstagramSchedulerPage = () => {
   const [leadsSourceFilter, setLeadsSourceFilter] = useState('all');
   const [leadsConvertedFilter, setLeadsConvertedFilter] = useState<'all' | 'converted' | 'not-converted'>('all');
   const [selectedLeadIds, setSelectedLeadIds] = useState<Set<string>>(new Set());
+  
+  // Demo gallery state
+  const [demoGallery, setDemoGallery] = useState<DemoGalleryItem[]>([]);
+  const [demoGalleryLoading, setDemoGalleryLoading] = useState(false);
+  const [demoGallerySearch, setDemoGallerySearch] = useState('');
+  const [demoGalleryExperienceFilter, setDemoGalleryExperienceFilter] = useState('all');
+  const [selectedDemoItems, setSelectedDemoItems] = useState<Set<string>>(new Set());
+  const [downloadingDemos, setDownloadingDemos] = useState(false);
   
   const { toast } = useToast();
 
@@ -302,10 +322,11 @@ const InstagramSchedulerPage = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Fetch leads when admin
+  // Fetch leads and demo gallery when admin
   useEffect(() => {
     if (session && isAdmin) {
       fetchLeads();
+      fetchDemoGallery();
     }
   }, [session, isAdmin]);
   
@@ -424,6 +445,122 @@ const InstagramSchedulerPage = () => {
       console.error('Error fetching leads:', error);
     } finally {
       setLeadsLoading(false);
+    }
+  };
+
+  // Demo Gallery Functions
+  const fetchDemoGallery = async () => {
+    if (!isAdmin) return;
+    setDemoGalleryLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('demo_gallery')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setDemoGallery(data || []);
+    } catch (error: any) {
+      console.error('Error fetching demo gallery:', error);
+    } finally {
+      setDemoGalleryLoading(false);
+    }
+  };
+
+  const filteredDemoGallery = useMemo(() => {
+    return demoGallery.filter(item => {
+      const matchesSearch = demoGallerySearch === '' || 
+        item.email.toLowerCase().includes(demoGallerySearch.toLowerCase()) ||
+        item.experience_type.toLowerCase().includes(demoGallerySearch.toLowerCase());
+      const matchesExperience = demoGalleryExperienceFilter === 'all' || 
+        item.experience_type === demoGalleryExperienceFilter;
+      return matchesSearch && matchesExperience;
+    });
+  }, [demoGallery, demoGallerySearch, demoGalleryExperienceFilter]);
+
+  const handleSelectAllDemoItems = () => {
+    if (selectedDemoItems.size === filteredDemoGallery.length) {
+      setSelectedDemoItems(new Set());
+    } else {
+      setSelectedDemoItems(new Set(filteredDemoGallery.map(item => item.id)));
+    }
+  };
+
+  const handleSelectDemoItem = (id: string) => {
+    setSelectedDemoItems(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const downloadDemoImage = async (url: string, filename: string) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error('Download error:', error);
+      toast({ title: 'Failed to download image', variant: 'destructive' });
+    }
+  };
+
+  const downloadSelectedDemos = async () => {
+    if (selectedDemoItems.size === 0) {
+      toast({ title: 'No items selected', variant: 'destructive' });
+      return;
+    }
+
+    setDownloadingDemos(true);
+    try {
+      const zip = new JSZip();
+      const selectedItems = filteredDemoGallery.filter(item => selectedDemoItems.has(item.id));
+      
+      for (const item of selectedItems) {
+        const timestamp = new Date(item.created_at).toISOString().split('T')[0];
+        const folderName = `${item.experience_type}-${timestamp}-${item.id.slice(0, 8)}`;
+        
+        // Download original
+        try {
+          const originalRes = await fetch(item.original_image_url);
+          const originalBlob = await originalRes.blob();
+          zip.file(`${folderName}/original.jpg`, originalBlob);
+        } catch (e) {
+          console.error('Failed to fetch original:', e);
+        }
+        
+        // Download transformed
+        try {
+          const transformedRes = await fetch(item.transformed_image_url);
+          const transformedBlob = await transformedRes.blob();
+          zip.file(`${folderName}/transformed.jpg`, transformedBlob);
+        } catch (e) {
+          console.error('Failed to fetch transformed:', e);
+        }
+      }
+      
+      const content = await zip.generateAsync({ type: 'blob' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(content);
+      link.download = `demo-gallery-${Date.now()}.zip`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+      
+      toast({ title: `Downloaded ${selectedItems.length} demo pairs` });
+      setSelectedDemoItems(new Set());
+    } catch (error) {
+      console.error('Bulk download error:', error);
+      toast({ title: 'Failed to create download', variant: 'destructive' });
+    } finally {
+      setDownloadingDemos(false);
     }
   };
 
@@ -1872,7 +2009,7 @@ const InstagramSchedulerPage = () => {
 
           {/* Main Tabs */}
           <Tabs value={mainTab} onValueChange={(v) => setMainTab(v as any)} className="w-full">
-            <TabsList className="grid w-full grid-cols-6 mb-6">
+            <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-7' : 'grid-cols-5'} mb-6`}>
               <TabsTrigger value="library" className="flex items-center gap-2">
                 <FolderOpen className="w-4 h-4" />
                 <span className="hidden sm:inline">Library</span>
@@ -1892,6 +2029,13 @@ const InstagramSchedulerPage = () => {
                   <Users className="w-4 h-4" />
                   <span className="hidden sm:inline">Leads</span>
                   <Badge variant="secondary" className="ml-1 hidden md:inline-flex">{leads.length}</Badge>
+                </TabsTrigger>
+              )}
+              {isAdmin && (
+                <TabsTrigger value="demo-gallery" className="flex items-center gap-2">
+                  <Images className="w-4 h-4" />
+                  <span className="hidden sm:inline">Demos</span>
+                  <Badge variant="secondary" className="ml-1 hidden md:inline-flex">{demoGallery.length}</Badge>
                 </TabsTrigger>
               )}
               <TabsTrigger value="optimize" className="flex items-center gap-2">
@@ -3365,6 +3509,181 @@ const InstagramSchedulerPage = () => {
                           Showing 50 of {filteredLeads.length} leads. Export for full list.
                         </div>
                       )}
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+            )}
+
+            {/* Demo Gallery Tab - Admin Only */}
+            {isAdmin && (
+              <TabsContent value="demo-gallery">
+                <div className="bg-card rounded-2xl border p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                        <Images className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h2 className="text-xl font-bold">Demo Gallery</h2>
+                        <p className="text-sm text-muted-foreground">{demoGallery.length} before/after pairs from public demos</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button onClick={fetchDemoGallery} variant="outline" size="sm" disabled={demoGalleryLoading}>
+                        <RefreshCw className={`w-4 h-4 mr-2 ${demoGalleryLoading ? 'animate-spin' : ''}`} />
+                        Refresh
+                      </Button>
+                      {selectedDemoItems.size > 0 && (
+                        <Button onClick={downloadSelectedDemos} disabled={downloadingDemos} size="sm">
+                          {downloadingDemos ? (
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          ) : (
+                            <Download className="w-4 h-4 mr-2" />
+                          )}
+                          Download {selectedDemoItems.size} Selected
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Stats */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div className="bg-muted/30 rounded-xl p-4 border">
+                      <p className="text-sm text-muted-foreground">Total Demos</p>
+                      <p className="text-2xl font-bold">{demoGallery.length}</p>
+                    </div>
+                    <div className="bg-muted/30 rounded-xl p-4 border">
+                      <p className="text-sm text-muted-foreground">Filtered</p>
+                      <p className="text-2xl font-bold">{filteredDemoGallery.length}</p>
+                    </div>
+                    <div className="bg-muted/30 rounded-xl p-4 border">
+                      <p className="text-sm text-muted-foreground">Selected</p>
+                      <p className="text-2xl font-bold text-primary">{selectedDemoItems.size}</p>
+                    </div>
+                    <div className="bg-muted/30 rounded-xl p-4 border">
+                      <p className="text-sm text-muted-foreground">Experiences</p>
+                      <p className="text-2xl font-bold">{new Set(demoGallery.map(d => d.experience_type)).size}</p>
+                    </div>
+                  </div>
+
+                  {/* Filters */}
+                  <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between mb-6">
+                    <div className="flex flex-col md:flex-row gap-3 flex-1">
+                      <div className="relative flex-1 max-w-md">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Search by email or experience..."
+                          value={demoGallerySearch}
+                          onChange={(e) => setDemoGallerySearch(e.target.value)}
+                          className="pl-10"
+                        />
+                      </div>
+                      <select 
+                        value={demoGalleryExperienceFilter} 
+                        onChange={(e) => setDemoGalleryExperienceFilter(e.target.value)}
+                        className="h-10 px-3 rounded-md border bg-background text-sm"
+                      >
+                        {EXPERIENCE_OPTIONS.map(opt => (
+                          <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        id="select-all-demos"
+                        checked={selectedDemoItems.size === filteredDemoGallery.length && filteredDemoGallery.length > 0}
+                        onCheckedChange={handleSelectAllDemoItems}
+                      />
+                      <Label htmlFor="select-all-demos" className="text-sm cursor-pointer">
+                        Select All ({filteredDemoGallery.length})
+                      </Label>
+                    </div>
+                  </div>
+
+                  {/* Gallery Grid */}
+                  {demoGalleryLoading ? (
+                    <div className="flex items-center justify-center py-12">
+                      <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : filteredDemoGallery.length === 0 ? (
+                    <div className="text-center py-12 text-muted-foreground">
+                      <Images className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                      <p>No demo images found</p>
+                      <p className="text-sm mt-1">Demo transformations will appear here as users try the experiences</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {filteredDemoGallery.map((item) => (
+                        <div 
+                          key={item.id} 
+                          className={`border rounded-xl overflow-hidden transition-all ${
+                            selectedDemoItems.has(item.id) ? 'ring-2 ring-primary border-primary' : 'hover:border-primary/50'
+                          }`}
+                        >
+                          {/* Header */}
+                          <div className="flex items-center justify-between p-3 bg-muted/30 border-b">
+                            <div className="flex items-center gap-2">
+                              <Checkbox
+                                checked={selectedDemoItems.has(item.id)}
+                                onCheckedChange={() => handleSelectDemoItem(item.id)}
+                              />
+                              <Badge variant="secondary" className="capitalize">
+                                {item.experience_type}
+                              </Badge>
+                            </div>
+                            <span className="text-xs text-muted-foreground">
+                              {format(new Date(item.created_at), 'MMM d, yyyy')}
+                            </span>
+                          </div>
+                          
+                          {/* Before/After Images */}
+                          <div className="grid grid-cols-2 gap-1 p-2">
+                            <div className="relative group">
+                              <img 
+                                src={item.original_image_url} 
+                                alt="Original" 
+                                className="w-full aspect-[3/4] object-cover rounded-lg"
+                              />
+                              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                                <Button 
+                                  size="sm" 
+                                  variant="secondary"
+                                  onClick={() => downloadDemoImage(item.original_image_url, `${item.experience_type}-original-${item.id.slice(0,8)}.jpg`)}
+                                >
+                                  <Download className="w-4 h-4" />
+                                </Button>
+                              </div>
+                              <span className="absolute bottom-2 left-2 text-xs bg-black/70 text-white px-2 py-1 rounded">Before</span>
+                            </div>
+                            <div className="relative group">
+                              <img 
+                                src={item.transformed_image_url} 
+                                alt="Transformed" 
+                                className="w-full aspect-[3/4] object-cover rounded-lg"
+                              />
+                              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                                <Button 
+                                  size="sm" 
+                                  variant="secondary"
+                                  onClick={() => downloadDemoImage(item.transformed_image_url, `${item.experience_type}-transformed-${item.id.slice(0,8)}.jpg`)}
+                                >
+                                  <Download className="w-4 h-4" />
+                                </Button>
+                              </div>
+                              <span className="absolute bottom-2 left-2 text-xs bg-primary/90 text-white px-2 py-1 rounded">After</span>
+                            </div>
+                          </div>
+                          
+                          {/* Footer */}
+                          <div className="p-3 border-t bg-muted/20">
+                            <p className="text-sm text-muted-foreground truncate" title={item.email}>
+                              <Mail className="w-3 h-3 inline mr-1" />
+                              {item.email}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
