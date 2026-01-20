@@ -160,26 +160,32 @@ Deno.serve(async (req) => {
     console.log('Calling AI gateway for image transformation...', { modelId });
 
     // NOTE: Do NOT upload inputs to storage here; pass data: URLs directly to the model to avoid storage bucket/config issues.
+    // Some gateway models reject the `modalities` parameter (notably OpenAI models), so we only send it for Google image models.
+    const aiBody: Record<string, unknown> = {
+      model: modelId,
+      messages: [
+        { role: 'system', content: 'You are an image generation + editing model. Always return an image output.' },
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: fullPrompt },
+            { type: 'image_url', image_url: { url: imageUrl } },
+          ],
+        },
+      ],
+    };
+
+    if (modelId.startsWith('google/')) {
+      aiBody.modalities = ['image', 'text'];
+    }
+
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        model: modelId,
-        messages: [
-          { role: 'system', content: 'You are an image generation + editing model. Always return an image output.' },
-          {
-            role: 'user',
-            content: [
-              { type: 'text', text: fullPrompt },
-              { type: 'image_url', image_url: { url: imageUrl } },
-            ],
-          },
-        ],
-        modalities: ['image', 'text'],
-      }),
+      body: JSON.stringify(aiBody),
     });
 
     if (!response.ok) {
