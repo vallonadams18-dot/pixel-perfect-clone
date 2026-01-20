@@ -39,6 +39,10 @@ import MiamiPage from "./pages/locations/MiamiPage";
 import AustinPage from "./pages/locations/AustinPage";
 import BostonPage from "./pages/locations/BostonPage";
 import WashingtonDCPage from "./pages/locations/WashingtonDCPage";
+import DallasPage from "./pages/locations/DallasPage";
+import SeattlePage from "./pages/locations/SeattlePage";
+import DenverPage from "./pages/locations/DenverPage";
+import PhoenixPage from "./pages/locations/PhoenixPage";
 // Blog Pages
 import BlogPage from "./pages/BlogPage";
 import CustomAIFiltersPage from "./pages/blog/CustomAIFiltersPage";
@@ -127,6 +131,14 @@ const App = () => (
           <Route path="/ai-photo-booth-rental-boston" element={<BostonPage />} />
           <Route path="/locations/washington-dc" element={<WashingtonDCPage />} />
           <Route path="/ai-photo-booth-rental-washington-dc" element={<WashingtonDCPage />} />
+          <Route path="/locations/dallas" element={<DallasPage />} />
+          <Route path="/ai-photo-booth-rental-dallas" element={<DallasPage />} />
+          <Route path="/locations/seattle" element={<SeattlePage />} />
+          <Route path="/ai-photo-booth-rental-seattle" element={<SeattlePage />} />
+          <Route path="/locations/denver" element={<DenverPage />} />
+          <Route path="/ai-photo-booth-rental-denver" element={<DenverPage />} />
+          <Route path="/locations/phoenix" element={<PhoenixPage />} />
+          <Route path="/ai-photo-booth-rental-phoenix" element={<PhoenixPage />} />
           {/* Blog Pages */}
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/custom-ai-filters-for-events" element={<CustomAIFiltersPage />} />
