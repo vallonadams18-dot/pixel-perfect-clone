@@ -1,18 +1,35 @@
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
+import { analytics } from '@/lib/analytics';
 
 const Contact = () => {
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     company: '',
     message: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Form submission logic would go here
-    console.log('Form submitted:', formData);
+    setIsSubmitting(true);
+    
+    // Track form submission
+    analytics.contactFormSubmit('main_contact_section');
+    
+    // Simulate form submission
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    toast({
+      title: "Message Sent!",
+      description: "We'll get back to you within 24 hours.",
+    });
+    
+    setFormData({ name: '', email: '', company: '', message: '' });
+    setIsSubmitting(false);
   };
 
   return (
@@ -134,8 +151,12 @@ const Contact = () => {
                 />
               </div>
 
-              <button type="submit" className="btn-primary w-full flex items-center justify-center gap-2 group">
-                Send Message
+              <button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="btn-primary w-full flex items-center justify-center gap-2 group disabled:opacity-50"
+              >
+                {isSubmitting ? 'Sending...' : 'Send Message'}
                 <Send size={18} className="group-hover:translate-x-1 transition-transform" />
               </button>
             </form>

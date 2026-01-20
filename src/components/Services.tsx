@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-
+import { analytics } from '@/lib/analytics';
 // Import real photos from gallery
 import pixelwearImage from '@/assets/pixelwear-cowboys.jpg';
 import identityImage from '@/assets/sketch-guest-after-1.jpg';
@@ -97,6 +97,7 @@ const Services = () => {
               key={service.title}
               className="group relative glass rounded-2xl overflow-hidden card-hover gradient-border block"
               style={{ animationDelay: `${index * 0.1}s` }}
+              onClick={() => analytics.serviceView(service.title)}
             >
               {/* Service Image */}
               <div className="relative h-52 overflow-hidden">
