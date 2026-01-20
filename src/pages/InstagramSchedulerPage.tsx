@@ -89,6 +89,7 @@ const InstagramSchedulerPage = () => {
   // AI image transformation state
   const [transformingImage, setTransformingImage] = useState(false);
   const [selectedTransformStyle, setSelectedTransformStyle] = useState<string>('');
+  const [customStylePrompt, setCustomStylePrompt] = useState<string>('');
   const [originalImageUrl, setOriginalImageUrl] = useState<string>('');
   const [transformedPreview, setTransformedPreview] = useState<string>('');
   const [showBeforeAfter, setShowBeforeAfter] = useState(false);
@@ -98,6 +99,7 @@ const InstagramSchedulerPage = () => {
   const [batchMode, setBatchMode] = useState(false);
   const [selectedBatchItems, setSelectedBatchItems] = useState<Set<string>>(new Set());
   const [batchTransformStyle, setBatchTransformStyle] = useState<string>('');
+  const [batchCustomPrompt, setBatchCustomPrompt] = useState<string>('');
   const [batchTransforming, setBatchTransforming] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0 });
   const [batchResults, setBatchResults] = useState<Array<{ id: string; original: string; transformed: string; success: boolean }>>([]);
@@ -554,6 +556,18 @@ const InstagramSchedulerPage = () => {
       toast({ title: 'Select a style', description: 'Choose a transformation style', variant: 'destructive' });
       return;
     }
+
+    // Validate custom prompt required for custom style
+    if (selectedTransformStyle === 'custom' && !customStylePrompt.trim()) {
+      toast({ title: 'Custom prompt required', description: 'Describe the style you want', variant: 'destructive' });
+      return;
+    }
+
+    // Validate custom prompt length
+    if (customStylePrompt && customStylePrompt.length > 1000) {
+      toast({ title: 'Prompt too long', description: 'Max 1000 characters', variant: 'destructive' });
+      return;
+    }
     
     if (!session?.access_token) {
       toast({ title: 'Please log in', variant: 'destructive' });
@@ -576,6 +590,7 @@ const InstagramSchedulerPage = () => {
         body: {
           imageUrl: currentImageUrl,
           style: selectedTransformStyle,
+          customPrompt: customStylePrompt.trim() || undefined,
         },
       });
 
@@ -716,7 +731,11 @@ const InstagramSchedulerPage = () => {
       try {
         const { data, error } = await supabase.functions.invoke('transform-image-style', {
           headers: { Authorization: `Bearer ${session.access_token}` },
-          body: { imageUrl: item.url, style: batchTransformStyle },
+          body: { 
+            imageUrl: item.url, 
+            style: batchTransformStyle,
+            customPrompt: batchTransformStyle === 'custom' ? batchCustomPrompt.trim() : undefined,
+          },
         });
 
         if (error) throw error;
@@ -1330,58 +1349,79 @@ const InstagramSchedulerPage = () => {
                   {/* Batch Mode Controls */}
                   {batchMode && (
                     <div className="bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-4 border border-primary/20">
-                      <div className="flex flex-col md:flex-row md:items-center gap-4">
-                        <div className="flex items-center gap-3">
+                      <div className="flex flex-col gap-4">
+                        <div className="flex flex-col md:flex-row md:items-center gap-4">
+                          <div className="flex items-center gap-3">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={toggleSelectAll}
+                            >
+                              {selectedBatchItems.size === filteredMediaItems.length ? 'Deselect All' : 'Select All'}
+                            </Button>
+                            <Badge variant="secondary">{selectedBatchItems.size} selected</Badge>
+                          </div>
+                          
+                          <div className="flex-1">
+                            <select
+                              value={batchTransformStyle}
+                              onChange={(e) => setBatchTransformStyle(e.target.value)}
+                              className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+                            >
+                              <option value="">Choose transformation style...</option>
+                              <optgroup label="Event Services">
+                                <option value="pixelwear">PixelWear</option>
+                                <option value="trading-cards">Trading Cards</option>
+                                <option value="headshots">Headshots</option>
+                                <option value="persona-pop">Persona Pop</option>
+                                <option value="co-star">Co-Star</option>
+                                <option value="sketch">Sketch</option>
+                              </optgroup>
+                              <optgroup label="Creative">
+                                <option value="superhero">Superhero</option>
+                                <option value="vintage">Vintage</option>
+                                <option value="cyberpunk">Cyberpunk</option>
+                                <option value="anime">Anime</option>
+                              </optgroup>
+                              <optgroup label="Custom">
+                                <option value="custom">✨ Custom Style</option>
+                              </optgroup>
+                            </select>
+                          </div>
+                          
                           <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={toggleSelectAll}
+                            onClick={handleBatchTransform}
+                            disabled={batchTransforming || selectedBatchItems.size === 0 || !batchTransformStyle || (batchTransformStyle === 'custom' && !batchCustomPrompt.trim())}
                           >
-                            {selectedBatchItems.size === filteredMediaItems.length ? 'Deselect All' : 'Select All'}
+                            {batchTransforming ? (
+                              <>
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                {batchProgress.current}/{batchProgress.total}
+                              </>
+                            ) : (
+                              <>
+                                <Wand2 className="w-4 h-4 mr-2" />
+                                Transform {selectedBatchItems.size > 0 ? `(${selectedBatchItems.size})` : ''}
+                              </>
+                            )}
                           </Button>
-                          <Badge variant="secondary">{selectedBatchItems.size} selected</Badge>
                         </div>
-                        
-                        <div className="flex-1">
-                          <select
-                            value={batchTransformStyle}
-                            onChange={(e) => setBatchTransformStyle(e.target.value)}
-                            className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
-                          >
-                            <option value="">Choose transformation style...</option>
-                            <optgroup label="Event Services">
-                              <option value="pixelwear">PixelWear</option>
-                              <option value="trading-cards">Trading Cards</option>
-                              <option value="headshots">Headshots</option>
-                              <option value="persona-pop">Persona Pop</option>
-                              <option value="co-star">Co-Star</option>
-                              <option value="sketch">Sketch</option>
-                            </optgroup>
-                            <optgroup label="Creative">
-                              <option value="superhero">Superhero</option>
-                              <option value="vintage">Vintage</option>
-                              <option value="cyberpunk">Cyberpunk</option>
-                              <option value="anime">Anime</option>
-                            </optgroup>
-                          </select>
-                        </div>
-                        
-                        <Button
-                          onClick={handleBatchTransform}
-                          disabled={batchTransforming || selectedBatchItems.size === 0 || !batchTransformStyle}
-                        >
-                          {batchTransforming ? (
-                            <>
-                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                              {batchProgress.current}/{batchProgress.total}
-                            </>
-                          ) : (
-                            <>
-                              <Wand2 className="w-4 h-4 mr-2" />
-                              Transform {selectedBatchItems.size > 0 ? `(${selectedBatchItems.size})` : ''}
-                            </>
-                          )}
-                        </Button>
+
+                        {/* Custom Prompt for Batch */}
+                        {batchTransformStyle === 'custom' && (
+                          <div>
+                            <Label className="text-xs mb-2 block">Describe Your Custom Style *</Label>
+                            <Textarea
+                              value={batchCustomPrompt}
+                              onChange={(e) => setBatchCustomPrompt(e.target.value)}
+                              placeholder="Describe the style to apply to all selected images..."
+                              rows={2}
+                              maxLength={1000}
+                              className="text-sm"
+                            />
+                            <p className="text-xs text-muted-foreground mt-1 text-right">{batchCustomPrompt.length}/1000</p>
+                          </div>
+                        )}
                       </div>
                       
                       {batchTransforming && (
@@ -1705,13 +1745,47 @@ const InstagramSchedulerPage = () => {
                             <option value="anime">Anime - Japanese Animation</option>
                             <option value="fantasy">Fantasy - Magical Realm</option>
                           </optgroup>
+                          <optgroup label="Custom">
+                            <option value="custom">✨ Custom Style - Describe Your Own</option>
+                          </optgroup>
                         </select>
                       </div>
+
+                      {/* Custom Style Prompt */}
+                      {selectedTransformStyle === 'custom' && (
+                        <div className="mb-3">
+                          <Label className="text-xs mb-2 block">Describe Your Custom Style *</Label>
+                          <Textarea
+                            value={customStylePrompt}
+                            onChange={(e) => setCustomStylePrompt(e.target.value)}
+                            placeholder="E.g., Transform into a steampunk inventor with brass goggles, Victorian clothing, and cogs/gears in the background..."
+                            rows={3}
+                            maxLength={1000}
+                            className="text-sm"
+                          />
+                          <p className="text-xs text-muted-foreground mt-1 text-right">{customStylePrompt.length}/1000</p>
+                        </div>
+                      )}
+
+                      {/* Optional enhancement for preset styles */}
+                      {selectedTransformStyle && selectedTransformStyle !== 'custom' && (
+                        <div className="mb-3">
+                          <Label className="text-xs mb-2 block text-muted-foreground">Optional: Add Custom Details</Label>
+                          <Textarea
+                            value={customStylePrompt}
+                            onChange={(e) => setCustomStylePrompt(e.target.value)}
+                            placeholder="Add specific details like 'wearing a red cape' or 'in a forest setting'..."
+                            rows={2}
+                            maxLength={500}
+                            className="text-sm"
+                          />
+                        </div>
+                      )}
                       
                       <div className="flex gap-2 flex-wrap">
                         <Button 
                           onClick={handleTransformImage} 
-                          disabled={transformingImage || !selectedTransformStyle}
+                          disabled={transformingImage || !selectedTransformStyle || (selectedTransformStyle === 'custom' && !customStylePrompt.trim())}
                           className="flex-1"
                         >
                           {transformingImage ? (
@@ -1752,14 +1826,14 @@ const InstagramSchedulerPage = () => {
                         <div className="mt-3 p-2 bg-background rounded-lg border flex items-center gap-2">
                           <CheckCircle className="w-4 h-4 text-green-600 shrink-0" />
                           <span className="text-xs text-muted-foreground flex-1">
-                            Transformed to <strong>{selectedTransformStyle}</strong> - ready to post!
+                            Transformed to <strong>{selectedTransformStyle === 'custom' ? 'custom style' : selectedTransformStyle}</strong> - ready to post!
                           </span>
                         </div>
                       )}
                       
                       {!selectedTransformStyle && (
                         <p className="text-xs text-muted-foreground text-center mt-2">
-                          Select a style above to transform your image
+                          Select a style above or create your own custom transformation
                         </p>
                       )}
                     </div>
