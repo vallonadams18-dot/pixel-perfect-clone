@@ -3,6 +3,8 @@ import Footer from '@/components/Footer';
 import RelatedServices from '@/components/RelatedServices';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import FAQSection from '@/components/FAQSection';
+import ImageWithSkeleton from '@/components/ImageWithSkeleton';
+import { GalleryGrid } from '@/components/GalleryGrid';
 import { Link } from 'react-router-dom';
 import { Sparkles, Check, ArrowRight, Layers, Smartphone, Gem } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -288,19 +290,20 @@ const AITradingCardsPage = () => {
             <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
               Explore our collection of AI-generated trading cards featuring custom sports portraits and collectible designs.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <GalleryGrid columns={3} gap="lg">
               {galleryImages.map((image, index) => (
                 <div key={index} className="group relative overflow-hidden rounded-2xl glass">
-                  <img 
-                    src={image.src} 
+                  <ImageWithSkeleton
+                    src={image.src}
                     alt={image.alt}
-                    loading="lazy"
-                    className="w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-110"
+                    aspectRatio="4/3"
+                    priority={index < 3}
+                    className="transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
               ))}
-            </div>
+            </GalleryGrid>
           </div>
         </section>
 

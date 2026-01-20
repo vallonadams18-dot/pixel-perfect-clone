@@ -6,6 +6,8 @@ import InternalLinks from '@/components/InternalLinks';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import BeforeAfterSlider from '@/components/BeforeAfterSlider';
 import FAQSection from '@/components/FAQSection';
+import ImageWithSkeleton from '@/components/ImageWithSkeleton';
+import { GalleryGrid } from '@/components/GalleryGrid';
 import { Link } from 'react-router-dom';
 import { Camera, Check, ArrowRight, Briefcase, Users, Sparkles, X } from 'lucide-react';
 import usePageMeta from '@/hooks/usePageMeta';
@@ -212,22 +214,23 @@ const HeadshotsPage = () => {
             <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
               Real examples of our AI-enhanced professional headshots, delivering studio-quality results in seconds.
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              {headshotGallery.map((image) => (
+            <GalleryGrid columns={4} gap="md" className="md:gap-6">
+              {headshotGallery.map((image, index) => (
                 <div 
                   key={image.id} 
-                  className="aspect-[3/4] rounded-xl overflow-hidden cursor-pointer group"
+                  className="rounded-xl overflow-hidden cursor-pointer group"
                   onClick={() => setSelectedImage(image)}
                 >
-                  <img
+                  <ImageWithSkeleton
                     src={image.src}
                     alt={image.alt}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
+                    aspectRatio="3/4"
+                    priority={index < 4}
+                    className="transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
               ))}
-            </div>
+            </GalleryGrid>
           </div>
         </section>
 
