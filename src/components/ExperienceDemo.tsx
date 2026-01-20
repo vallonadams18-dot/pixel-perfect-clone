@@ -31,12 +31,46 @@ const ExperienceDemo = ({
   
   const { toast } = useToast();
 
+  const normalizeToJpeg = useCallback(async (dataUrl: string) => {
+    // Downscale + convert to JPEG to avoid unsupported formats (e.g., HEIC) and huge images.
+    const maxDim = 1280;
+
+    return await new Promise<string>((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+          const w = Math.max(1, Math.round(img.width * scale));
+          const h = Math.max(1, Math.round(img.height * scale));
+
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+
+          const ctx = canvas.getContext('2d');
+          if (!ctx) return reject(new Error('Canvas not supported'));
+
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', 0.9));
+        } catch (e) {
+          reject(e instanceof Error ? e : new Error('Failed to process image'));
+        }
+      };
+      img.onerror = () => reject(new Error('Could not read this image. Try a different file.'));
+      img.src = dataUrl;
+    });
+  }, []);
   const handleFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      toast({ title: 'Please upload an image file', variant: 'destructive' });
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowed.includes(file.type)) {
+      toast({
+        title: 'Unsupported image type',
+        description: 'Please upload a JPG, PNG, or WebP image.',
+        variant: 'destructive',
+      });
       return;
     }
 
@@ -46,12 +80,23 @@ const ExperienceDemo = ({
     }
 
     const reader = new FileReader();
-    reader.onload = (e) => {
-      setOriginalImage(e.target?.result as string);
-      setTransformedImage(null);
+    reader.onload = async (e) => {
+      try {
+        const raw = e.target?.result as string;
+        const normalized = await normalizeToJpeg(raw);
+        setOriginalImage(normalized);
+        setTransformedImage(null);
+      } catch (err) {
+        console.error('Image normalize error:', err);
+        toast({
+          title: 'Could not process image',
+          description: err instanceof Error ? err.message : 'Please try a different photo.',
+          variant: 'destructive',
+        });
+      }
     };
     reader.readAsDataURL(file);
-  }, [toast]);
+  }, [toast, normalizeToJpeg]);
 
   const startCamera = useCallback(async () => {
     try {
@@ -81,17 +126,23 @@ const ExperienceDemo = ({
     setIsCameraOpen(false);
   }, []);
 
-  const capturePhoto = useCallback(() => {
+  const capturePhoto = useCallback(async () => {
     if (!videoRef.current || !canvasRef.current) return;
 
+    const maxDim = 1280;
     const video = videoRef.current;
     const canvas = canvasRef.current;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    
+
+    const vw = video.videoWidth || 1280;
+    const vh = video.videoHeight || 720;
+    const scale = Math.min(1, maxDim / Math.max(vw, vh));
+
+    canvas.width = Math.max(1, Math.round(vw * scale));
+    canvas.height = Math.max(1, Math.round(vh * scale));
+
     const ctx = canvas.getContext('2d');
     if (ctx) {
-      ctx.drawImage(video, 0, 0);
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       const imageData = canvas.toDataURL('image/jpeg', 0.9);
       setOriginalImage(imageData);
       setTransformedImage(null);

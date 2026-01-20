@@ -55,6 +55,19 @@ function decodeDataUrl(dataUrl: string): { contentType: string; bytes: Uint8Arra
   return { contentType, bytes };
 }
 
+async function waitForPublicImage(url: string): Promise<void> {
+  // Storage uploads can be briefly eventual-consistent; give the provider a moment to fetch.
+  for (let i = 0; i < 6; i++) {
+    try {
+      const res = await fetch(url, { method: 'HEAD' });
+      if (res.ok) return;
+    } catch {
+      // ignore
+    }
+    await new Promise((r) => setTimeout(r, 250));
+  }
+}
+
 Deno.serve(async (req) => {
   console.log('Demo transform request received');
   
@@ -133,6 +146,7 @@ Deno.serve(async (req) => {
             .from('demo-images')
             .getPublicUrl(inputPath);
           inputImageUrl = publicUrlData.publicUrl;
+          await waitForPublicImage(inputImageUrl);
           console.log('Input uploaded for AI access');
         } else {
           console.error('Input upload error (using data URL directly):', inputUploadError);
@@ -176,6 +190,7 @@ Deno.serve(async (req) => {
       const errorText = await response.text();
       console.error('AI gateway error:', response.status, errorText);
 
+      // Surface common gateway billing/rate errors
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: 'High demand! Please try again in a moment.' }),
@@ -186,6 +201,28 @@ Deno.serve(async (req) => {
         return new Response(
           JSON.stringify({ error: 'Demo temporarily unavailable. Please try again later.' }),
           { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Try to extract the provider error message for better UX
+      let providerMessage: string | null = null;
+      try {
+        const parsed = JSON.parse(errorText);
+        const raw = parsed?.error?.metadata?.raw;
+        if (typeof raw === 'string') {
+          const rawParsed = JSON.parse(raw);
+          providerMessage = rawParsed?.error?.message ?? null;
+        }
+      } catch {
+        // ignore
+      }
+
+      if (providerMessage && /unable to process input image/i.test(providerMessage)) {
+        return new Response(
+          JSON.stringify({
+            error: 'We could not read this photo. Please try a JPG/PNG photo with good lighting (and avoid screenshots/very large images).',
+          }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
