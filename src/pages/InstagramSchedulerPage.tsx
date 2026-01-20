@@ -11,7 +11,7 @@ import {
   XCircle, AlertCircle, Image as ImageIcon, Upload,
   FolderOpen, Search, X, Sparkles, TrendingUp, RefreshCw,
   Download, Grid, List, LayoutGrid, Wand2, Wifi, WifiOff,
-  Settings, Save, Key
+  Settings, Save, Key, Zap
 } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -21,6 +21,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import StylePreviewThumbnails, { styleOptions } from '@/components/StylePreviewThumbnails';
 import PromptHistory, { addPromptToHistory } from '@/components/PromptHistory';
+import ImageConverter from '@/components/ImageConverter';
 
 interface ScheduledPost {
   id: string;
@@ -107,7 +108,7 @@ const InstagramSchedulerPage = () => {
   const [batchResults, setBatchResults] = useState<Array<{ id: string; original: string; transformed: string; success: boolean }>>([]);
   
   // Main panel tab
-  const [mainTab, setMainTab] = useState<'library' | 'scheduler' | 'posts' | 'settings'>('library');
+  const [mainTab, setMainTab] = useState<'library' | 'scheduler' | 'posts' | 'settings' | 'optimize'>('library');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   
   // Instagram credentials state
@@ -1278,7 +1279,7 @@ const InstagramSchedulerPage = () => {
 
           {/* Main Tabs */}
           <Tabs value={mainTab} onValueChange={(v) => setMainTab(v as any)} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-6">
+            <TabsList className="grid w-full grid-cols-5 mb-6">
               <TabsTrigger value="library" className="flex items-center gap-2">
                 <FolderOpen className="w-4 h-4" />
                 <span className="hidden sm:inline">Content Library</span>
@@ -1295,6 +1296,11 @@ const InstagramSchedulerPage = () => {
                 <span className="hidden sm:inline">Scheduled</span>
                 <span className="sm:hidden">Posts</span>
                 <Badge variant="secondary" className="ml-1">{scheduledPosts.filter(p => p.status === 'pending').length}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="optimize" className="flex items-center gap-2">
+                <Zap className="w-4 h-4" />
+                <span className="hidden sm:inline">Optimize</span>
+                <span className="sm:hidden">Opt</span>
               </TabsTrigger>
               <TabsTrigger value="settings" className="flex items-center gap-2">
                 <Settings className="w-4 h-4" />
@@ -2284,6 +2290,55 @@ const InstagramSchedulerPage = () => {
                   >
                     Check token expiry & extend →
                   </a>
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* Image Optimizer Tab */}
+            <TabsContent value="optimize">
+              <div className="bg-card rounded-2xl border p-6">
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold mb-2">Image Optimizer</h2>
+                  <p className="text-muted-foreground">
+                    Convert and compress images for faster loading. WebP format provides up to 30% better compression than JPEG.
+                  </p>
+                </div>
+                
+                <ImageConverter 
+                  initialImageUrl={selectedLibraryItem?.url || imageUrl}
+                  onConverted={(optimizedUrl) => {
+                    setImageUrl(optimizedUrl);
+                    toast({
+                      title: "Image Optimized",
+                      description: "The optimized image URL has been set for scheduling.",
+                    });
+                  }}
+                />
+
+                {/* Tips Section */}
+                <div className="mt-6 p-4 rounded-xl bg-muted/30 border">
+                  <h3 className="font-medium mb-3 flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-primary" />
+                    Optimization Tips
+                  </h3>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary">•</span>
+                      <span><strong>WebP format</strong> offers the best compression for web images</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary">•</span>
+                      <span><strong>Quality 70-85%</strong> balances file size and visual quality</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary">•</span>
+                      <span><strong>Max width 1200px</strong> is ideal for Instagram feed posts</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-primary">•</span>
+                      <span>Optimized images load <strong>2-3x faster</strong> on mobile devices</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </TabsContent>
