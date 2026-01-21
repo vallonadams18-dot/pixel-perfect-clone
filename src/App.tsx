@@ -70,6 +70,7 @@ import InstagramSchedulerPage from "./pages/InstagramSchedulerPage";
 import AnalyticsDashboardPage from "./pages/AnalyticsDashboardPage";
 import UserManagementPage from "./pages/UserManagementPage";
 import LeadsDashboardPage from "./pages/LeadsDashboardPage";
+import ReviewTemplatesPage from "./pages/ReviewTemplatesPage";
 
 const queryClient = new QueryClient();
 
@@ -178,6 +179,8 @@ const App = () => (
           <Route path="/user-m4nagement" element={<UserManagementPage />} />
           {/* Leads Dashboard */}
           <Route path="/leads-d4shb0ard" element={<LeadsDashboardPage />} />
+          {/* Review Templates */}
+          <Route path="/review-templates-x9r2" element={<ReviewTemplatesPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
           </Routes>
