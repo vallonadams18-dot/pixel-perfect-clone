@@ -21,7 +21,17 @@ const locationLinks = [
   { name: 'Miami', href: '/locations/miami' },
   { name: 'San Francisco', href: '/locations/san-francisco' },
   { name: 'Atlanta', href: '/locations/atlanta' },
+  { name: 'Dallas', href: '/locations/dallas' },
+  { name: 'Houston', href: '/locations/houston' },
+  { name: 'Seattle', href: '/locations/seattle' },
+  { name: 'Denver', href: '/locations/denver' },
+  { name: 'Phoenix', href: '/locations/phoenix' },
+  { name: 'San Diego', href: '/locations/san-diego' },
+  { name: 'Nashville', href: '/locations/nashville' },
   { name: 'Orlando', href: '/locations/orlando' },
+  { name: 'Boston', href: '/locations/boston' },
+  { name: 'Washington DC', href: '/locations/washington-dc' },
+  { name: 'Austin', href: '/locations/austin' },
   { name: 'New Jersey', href: '/locations/new-jersey' },
   { name: 'Pennsylvania', href: '/locations/pennsylvania' },
   { name: 'California', href: '/locations/california' },
@@ -100,7 +110,7 @@ const Header = () => {
               
               {isLocationsOpen && (
                 <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2">
-                  <div className="bg-card border border-border rounded-xl shadow-xl p-4 min-w-[280px] grid grid-cols-2 gap-2">
+                  <div className="bg-card border border-border rounded-xl shadow-xl p-4 min-w-[420px] grid grid-cols-3 gap-2 max-h-[400px] overflow-y-auto">
                     {locationLinks.map((loc) => (
                       <Link
                         key={loc.name}

@@ -49,15 +49,17 @@ export const usePageMeta = ({
     document.title = title;
 
     // Google Search Console verification meta tag
-    // Replace YOUR_VERIFICATION_CODE with your actual code from Google Search Console
-    let googleVerification = document.querySelector('meta[name="google-site-verification"]') as HTMLMetaElement;
-    if (!googleVerification) {
-      googleVerification = document.createElement('meta');
-      googleVerification.name = 'google-site-verification';
-      document.head.appendChild(googleVerification);
+    // Only set if a valid verification code is configured
+    const GOOGLE_VERIFICATION_CODE = import.meta.env.VITE_GOOGLE_SITE_VERIFICATION || '';
+    if (GOOGLE_VERIFICATION_CODE && GOOGLE_VERIFICATION_CODE !== 'YOUR_VERIFICATION_CODE') {
+      let googleVerification = document.querySelector('meta[name="google-site-verification"]') as HTMLMetaElement;
+      if (!googleVerification) {
+        googleVerification = document.createElement('meta');
+        googleVerification.name = 'google-site-verification';
+        document.head.appendChild(googleVerification);
+      }
+      googleVerification.content = GOOGLE_VERIFICATION_CODE;
     }
-    // TODO: Replace with your actual Google Search Console verification code
-    googleVerification.content = 'YOUR_VERIFICATION_CODE';
 
     // Helper to set or create meta tag
     const setMeta = (selector: string, attribute: string, content: string) => {
