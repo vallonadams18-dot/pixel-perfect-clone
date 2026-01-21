@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import { GalleryGrid } from '@/components/GalleryGrid';
 
@@ -33,8 +32,6 @@ const portfolioImages = [
 ];
 
 const Portfolio = () => {
-  const [selectedImage, setSelectedImage] = useState<typeof portfolioImages[0] | null>(null);
-
   return (
     <section id="portfolio" className="section-padding relative">
       {/* Background Effects */}
@@ -58,10 +55,10 @@ const Portfolio = () => {
         {/* Masonry Grid */}
         <GalleryGrid columns={4} gap="md">
           {portfolioImages.map((image, index) => (
-            <div
+            <Link
+              to="/portfolio"
               key={image.id}
-              className="group relative overflow-hidden rounded-2xl cursor-pointer card-hover"
-              onClick={() => setSelectedImage(image)}
+              className="group relative overflow-hidden rounded-2xl cursor-pointer card-hover block"
             >
               {/* Portfolio Image with Skeleton */}
               <ImageWithSkeleton
@@ -82,50 +79,17 @@ const Portfolio = () => {
                   <p className="text-muted-foreground text-sm">AI Photo Booth Experience</p>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </GalleryGrid>
 
         {/* View More Button */}
         <div className="text-center mt-12">
-          <a href="#contact" className="btn-outline inline-flex">
+          <Link to="/portfolio" className="btn-outline inline-flex">
             View Full Portfolio
-          </a>
+          </Link>
         </div>
       </div>
-
-      {/* Lightbox Modal */}
-      {selectedImage && (
-        <div 
-          className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setSelectedImage(null)}
-        >
-          <button 
-            className="absolute top-4 right-4 w-12 h-12 rounded-full glass flex items-center justify-center hover:bg-primary/20 transition-colors z-10"
-            onClick={() => setSelectedImage(null)}
-          >
-            <X className="text-foreground" />
-          </button>
-          <div 
-            className="max-w-2xl w-full rounded-2xl overflow-hidden shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <img 
-              src={selectedImage.src} 
-              alt={selectedImage.alt}
-              loading="eager"
-              className="w-full h-auto"
-            />
-            <div className="p-6 bg-card">
-              <span className="inline-block px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium mb-2">
-                {selectedImage.category}
-              </span>
-              <h3 className="font-display text-xl font-bold text-foreground mb-2">{selectedImage.alt}</h3>
-              <p className="text-muted-foreground">AI-powered transformation created with our advanced neural network technology.</p>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 };
