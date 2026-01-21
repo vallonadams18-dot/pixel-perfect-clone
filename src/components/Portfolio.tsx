@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 import ImageWithSkeleton from '@/components/ImageWithSkeleton';
 import { GalleryGrid } from '@/components/GalleryGrid';
 
@@ -32,6 +34,54 @@ const portfolioImages = [
 ];
 
 const Portfolio = () => {
+  const location = useLocation();
+  const isPortfolioPage = location.pathname === '/portfolio';
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+  const handlePrev = useCallback(() => {
+    if (selectedIndex !== null) {
+      setSelectedIndex(selectedIndex === 0 ? portfolioImages.length - 1 : selectedIndex - 1);
+    }
+  }, [selectedIndex]);
+
+  const handleNext = useCallback(() => {
+    if (selectedIndex !== null) {
+      setSelectedIndex(selectedIndex === portfolioImages.length - 1 ? 0 : selectedIndex + 1);
+    }
+  }, [selectedIndex]);
+
+  const handleClose = useCallback(() => {
+    setSelectedIndex(null);
+  }, []);
+
+  // Keyboard navigation
+  useEffect(() => {
+    if (selectedIndex === null) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') handleClose();
+      if (e.key === 'ArrowLeft') handlePrev();
+      if (e.key === 'ArrowRight') handleNext();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [selectedIndex, handleClose, handlePrev, handleNext]);
+
+  const selectedImage = selectedIndex !== null ? portfolioImages[selectedIndex] : null;
+
+  const handleImageClick = (index: number, e: React.MouseEvent) => {
+    if (isPortfolioPage) {
+      e.preventDefault();
+      setSelectedIndex(index);
+    }
+  };
+
   return (
     <section id="portfolio" className="section-padding relative">
       {/* Background Effects */}
@@ -54,42 +104,123 @@ const Portfolio = () => {
 
         {/* Masonry Grid */}
         <GalleryGrid columns={4} gap="md">
-          {portfolioImages.map((image, index) => (
-            <Link
-              to="/portfolio"
-              key={image.id}
-              className="group relative overflow-hidden rounded-2xl cursor-pointer card-hover block"
-            >
-              {/* Portfolio Image with Skeleton */}
-              <ImageWithSkeleton
-                src={image.src}
-                alt={image.alt}
-                aspectRatio="3/4"
-                priority={index < 4}
-                className="transition-transform duration-500 group-hover:scale-110"
-              />
+          {portfolioImages.map((image, index) => {
+            const content = (
+              <>
+                {/* Portfolio Image with Skeleton */}
+                <ImageWithSkeleton
+                  src={image.src}
+                  alt={image.alt}
+                  aspectRatio="3/4"
+                  priority={index < 4}
+                  className="transition-transform duration-500 group-hover:scale-110"
+                />
 
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                <div>
-                  <span className="inline-block px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium mb-2">
-                    {image.category}
-                  </span>
-                  <h3 className="font-display font-bold text-foreground">{image.alt}</h3>
-                  <p className="text-muted-foreground text-sm">AI Photo Booth Experience</p>
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+                  <div>
+                    <span className="inline-block px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium mb-2">
+                      {image.category}
+                    </span>
+                    <h3 className="font-display font-bold text-foreground">{image.alt}</h3>
+                    <p className="text-muted-foreground text-sm">AI Photo Booth Experience</p>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </>
+            );
+
+            // On portfolio page: open lightbox; elsewhere: link to portfolio
+            if (isPortfolioPage) {
+              return (
+                <div
+                  key={image.id}
+                  className="group relative overflow-hidden rounded-2xl cursor-pointer card-hover block"
+                  onClick={(e) => handleImageClick(index, e)}
+                >
+                  {content}
+                </div>
+              );
+            }
+
+            return (
+              <Link
+                to="/portfolio"
+                key={image.id}
+                className="group relative overflow-hidden rounded-2xl cursor-pointer card-hover block"
+              >
+                {content}
+              </Link>
+            );
+          })}
         </GalleryGrid>
 
-        {/* View More Button */}
-        <div className="text-center mt-12">
-          <Link to="/portfolio" className="btn-outline inline-flex">
-            View Full Portfolio
-          </Link>
-        </div>
+        {/* View More Button - only show on homepage */}
+        {!isPortfolioPage && (
+          <div className="text-center mt-12">
+            <Link to="/portfolio" className="btn-outline inline-flex">
+              View Full Portfolio
+            </Link>
+          </div>
+        )}
       </div>
+
+      {/* Lightbox Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={handleClose}
+        >
+          {/* Close Button */}
+          <button 
+            className="absolute top-4 right-4 w-12 h-12 rounded-full glass flex items-center justify-center hover:bg-primary/20 transition-colors z-10"
+            onClick={handleClose}
+            aria-label="Close lightbox"
+          >
+            <X className="text-foreground" size={24} />
+          </button>
+
+          {/* Navigation Buttons */}
+          <button
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full glass flex items-center justify-center hover:bg-primary/20 transition-colors z-10"
+            onClick={(e) => { e.stopPropagation(); handlePrev(); }}
+            aria-label="Previous image"
+          >
+            <ChevronLeft className="text-foreground" size={28} />
+          </button>
+          <button
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full glass flex items-center justify-center hover:bg-primary/20 transition-colors z-10"
+            onClick={(e) => { e.stopPropagation(); handleNext(); }}
+            aria-label="Next image"
+          >
+            <ChevronRight className="text-foreground" size={28} />
+          </button>
+
+          {/* Image Counter */}
+          <div className="absolute top-4 left-4 glass rounded-full px-4 py-2 text-sm font-medium text-foreground">
+            {selectedIndex !== null ? selectedIndex + 1 : 0} / {portfolioImages.length}
+          </div>
+
+          {/* Image Container */}
+          <div 
+            className="max-w-4xl w-full max-h-[85vh] rounded-2xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img 
+              src={selectedImage.src} 
+              alt={selectedImage.alt}
+              loading="eager"
+              className="w-full h-auto max-h-[70vh] object-contain bg-card"
+            />
+            <div className="p-6 bg-card">
+              <span className="inline-block px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-medium mb-2">
+                {selectedImage.category}
+              </span>
+              <h3 className="font-display text-xl font-bold text-foreground mb-2">{selectedImage.alt}</h3>
+              <p className="text-muted-foreground">AI-powered transformation created with our advanced neural network technology.</p>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
