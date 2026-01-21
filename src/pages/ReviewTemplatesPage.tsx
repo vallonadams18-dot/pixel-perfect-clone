@@ -1,9 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Download, Star, Copy, Check } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import jsPDF from "jspdf";
 
+// Prevent search engines from indexing this private page
+const useNoIndex = () => {
+  useEffect(() => {
+    const meta = document.createElement('meta');
+    meta.name = 'robots';
+    meta.content = 'noindex, nofollow';
+    document.head.appendChild(meta);
+    return () => { document.head.removeChild(meta); };
+  }, []);
+};
 const reviews = [
   {
     name: "Sarah M.",
@@ -108,6 +118,7 @@ const reviews = [
 ];
 
 const ReviewTemplatesPage = () => {
+  useNoIndex(); // Block search engines
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   const handleCopy = (review: string, index: number) => {
