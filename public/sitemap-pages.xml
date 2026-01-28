@@ -109,7 +109,13 @@
   <!-- Location Pages -->
   <url>
     <loc>https://pixelaipro.lovable.app/locations/nyc</loc>
-    <lastmod>2026-01-23</lastmod>
+    <lastmod>2026-01-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://pixelaipro.lovable.app/locations/nyc-five-boroughs</loc>
+    <lastmod>2026-01-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
