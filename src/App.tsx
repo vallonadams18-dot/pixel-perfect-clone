@@ -47,6 +47,7 @@ import PhoenixPage from "./pages/locations/PhoenixPage";
 import HoustonPage from "./pages/locations/HoustonPage";
 import SanDiegoPage from "./pages/locations/SanDiegoPage";
 import NashvillePage from "./pages/locations/NashvillePage";
+import LongIslandPage from "./pages/locations/LongIslandPage";
 // Blog Pages
 import BlogPage from "./pages/BlogPage";
 import CustomAIFiltersPage from "./pages/blog/CustomAIFiltersPage";
@@ -152,6 +153,8 @@ const App = () => (
           <Route path="/ai-photo-booth-rental-san-diego" element={<SanDiegoPage />} />
           <Route path="/locations/nashville" element={<NashvillePage />} />
           <Route path="/ai-photo-booth-rental-nashville" element={<NashvillePage />} />
+          <Route path="/locations/long-island" element={<LongIslandPage />} />
+          <Route path="/ai-photo-booth-rental-long-island" element={<LongIslandPage />} />
           {/* Blog Pages */}
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/custom-ai-filters-for-events" element={<CustomAIFiltersPage />} />
