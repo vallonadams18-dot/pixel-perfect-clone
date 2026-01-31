@@ -51,7 +51,7 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Load LeadConnector chat widget
+  // Load LeadConnector chat widget and reposition to top
   useEffect(() => {
     const existingScript = document.querySelector('script[data-widget-id="697d7c10dad8afcf1102a661"]');
     if (existingScript) return;
@@ -63,7 +63,47 @@ const Header = () => {
     script.async = true;
     document.body.appendChild(script);
 
+    // Reposition widget to top using MutationObserver
+    const repositionWidget = () => {
+      const selectors = [
+        '#lc_chat_widget',
+        '[id^="lc-chat"]',
+        '.lc-chat-widget',
+        'div[data-lc-widget]',
+        'iframe[src*="leadconnector"]',
+        'iframe[src*="widgets.leadconnectorhq"]'
+      ];
+      
+      selectors.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(el => {
+          const htmlEl = el as HTMLElement;
+          if (htmlEl.style) {
+            htmlEl.style.bottom = 'auto';
+            htmlEl.style.top = '80px';
+          }
+        });
+      });
+    };
+
+    // Use MutationObserver to detect when widget is added
+    const observer = new MutationObserver(() => {
+      repositionWidget();
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style']
+    });
+
+    // Also run periodically to catch any style resets
+    const interval = setInterval(repositionWidget, 500);
+
     return () => {
+      observer.disconnect();
+      clearInterval(interval);
       const scriptToRemove = document.querySelector('script[data-widget-id="697d7c10dad8afcf1102a661"]');
       if (scriptToRemove) {
         scriptToRemove.remove();
