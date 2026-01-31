@@ -208,3 +208,18 @@
     text-wrap: balance;
   }
 }
+
+/* LeadConnector Chat Widget - Position at top */
+#lc_chat_widget,
+[id^="lc-chat"],
+.lc-chat-widget,
+div[data-lc-widget] {
+  bottom: auto !important;
+  top: 80px !important;
+}
+
+#lc_chat_widget iframe,
+[id^="lc-chat"] iframe {
+  bottom: auto !important;
+  top: 80px !important;
+}
