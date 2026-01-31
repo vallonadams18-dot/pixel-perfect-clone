@@ -51,6 +51,26 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Load LeadConnector chat widget
+  useEffect(() => {
+    const existingScript = document.querySelector('script[data-widget-id="697d7c10dad8afcf1102a661"]');
+    if (existingScript) return;
+
+    const script = document.createElement('script');
+    script.src = 'https://widgets.leadconnectorhq.com/loader.js';
+    script.setAttribute('data-resources-url', 'https://widgets.leadconnectorhq.com/chat-widget/loader.js');
+    script.setAttribute('data-widget-id', '697d7c10dad8afcf1102a661');
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      const scriptToRemove = document.querySelector('script[data-widget-id="697d7c10dad8afcf1102a661"]');
+      if (scriptToRemove) {
+        scriptToRemove.remove();
+      }
+    };
+  }, []);
+
   return (
     <header
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-3"
@@ -127,14 +147,8 @@ const Header = () => {
             </div>
           </nav>
 
-          {/* Right Side - CTA Button & Mobile Menu */}
+          {/* Right Side - Mobile Menu */}
           <div className="flex items-center gap-4">
-            {/* CTA Button */}
-            <div className="hidden lg:block">
-              <Link to="/contact" className="btn-primary text-sm">
-                Book a Demo
-              </Link>
-            </div>
 
             {/* Mobile Menu Button */}
             <button
@@ -184,13 +198,6 @@ const Header = () => {
               </div>
             </div>
             
-            <Link
-              to="/contact"
-              className="btn-primary text-center mt-4"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Book a Demo
-            </Link>
           </nav>
         </div>
       )}
