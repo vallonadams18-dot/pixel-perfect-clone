@@ -90,22 +90,22 @@ export const generateExperiencePDF = (experience: ExperiencePackage): void => {
   doc.text(descLines, margin, yPos);
   yPos += descLines.length * 6 + 10;
 
-  // Decorative accent box
-  yPos += 15;
+  // Starting price highlight
+  yPos += 10;
   doc.setFillColor(250, 245, 255);
-  doc.roundedRect(margin, yPos, contentWidth, 30, 5, 5, 'F');
+  doc.roundedRect(margin, yPos, contentWidth, 25, 5, 5, 'F');
   doc.setDrawColor(168, 85, 247);
   doc.setLineWidth(0.3);
-  doc.roundedRect(margin, yPos, contentWidth, 30, 5, 5, 'S');
+  doc.roundedRect(margin, yPos, contentWidth, 25, 5, 5, 'S');
 
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(168, 85, 247);
-  doc.text('EXPERIENCE PACKAGE', margin + 10, yPos + 12);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
   doc.setTextColor(107, 114, 128);
-  doc.text('Everything you need to know about this AI photo experience', margin + 10, yPos + 22);
+  doc.text('STARTING AT', margin + 10, yPos + 10);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(20);
+  doc.setTextColor(168, 85, 247);
+  doc.text(experience.pricing.startingAt, margin + 10, yPos + 20);
 
   // ========== PAGE 2: HOW IT WORKS ==========
   doc.addPage();
@@ -257,6 +257,135 @@ export const generateExperiencePDF = (experience: ExperiencePackage): void => {
     xPos += textWidth + 8;
   });
 
+  // ========== PAGE 5: PRICING ==========
+  doc.addPage();
+  addPageHeader();
+  yPos = 25;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(24);
+  doc.setTextColor(26, 26, 26);
+  doc.text('Pricing Packages', margin, yPos);
+
+  yPos += 8;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  doc.setTextColor(107, 114, 128);
+  doc.text(`Starting at ${experience.pricing.startingAt}`, margin, yPos);
+
+  yPos += 18;
+
+  // Pricing tiers
+  experience.pricing.tiers.forEach((tier, index) => {
+    checkPageBreak(75);
+
+    // Tier header box
+    const isMiddleTier = index === 1;
+    if (isMiddleTier) {
+      doc.setFillColor(168, 85, 247);
+    } else {
+      doc.setFillColor(249, 250, 251);
+    }
+    doc.roundedRect(margin, yPos, contentWidth, 20, 3, 3, 'F');
+
+    // Tier name and price
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    if (isMiddleTier) {
+      doc.setTextColor(255, 255, 255);
+    } else {
+      doc.setTextColor(26, 26, 26);
+    }
+    doc.text(tier.name, margin + 8, yPos + 13);
+
+    doc.setFontSize(16);
+    doc.text(tier.price, margin + contentWidth - 8 - doc.getTextWidth(tier.price), yPos + 13);
+
+    // Duration badge
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    const durationX = margin + 8 + doc.getTextWidth(tier.name) + 10;
+    if (isMiddleTier) {
+      doc.setTextColor(220, 200, 255);
+    } else {
+      doc.setTextColor(107, 114, 128);
+    }
+    doc.text(`(${tier.duration})`, durationX, yPos + 13);
+
+    yPos += 22;
+
+    // Includes list
+    tier.includes.forEach((item, i) => {
+      checkPageBreak(10);
+      
+      doc.setFillColor(34, 197, 94);
+      doc.circle(margin + 6, yPos + 2, 2, 'F');
+      
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      doc.setTextColor(55, 65, 81);
+      const itemLines = doc.splitTextToSize(item, contentWidth - 20);
+      doc.text(itemLines, margin + 14, yPos + 4);
+      
+      yPos += 8 + (itemLines.length > 1 ? (itemLines.length - 1) * 4 : 0);
+    });
+
+    yPos += 10;
+  });
+
+  // ========== PAGE 6: ADD-ONS ==========
+  doc.addPage();
+  addPageHeader();
+  yPos = 25;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(24);
+  doc.setTextColor(26, 26, 26);
+  doc.text('Available Add-Ons', margin, yPos);
+
+  yPos += 20;
+
+  // Add-ons table
+  experience.pricing.addOns.forEach((addOn, index) => {
+    checkPageBreak(18);
+
+    // Alternating background
+    if (index % 2 === 0) {
+      doc.setFillColor(249, 250, 251);
+      doc.rect(margin, yPos - 5, contentWidth, 14, 'F');
+    }
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor(55, 65, 81);
+    doc.text(addOn.name, margin + 5, yPos + 2);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(168, 85, 247);
+    doc.text(addOn.price, margin + contentWidth - 5 - doc.getTextWidth(addOn.price), yPos + 2);
+
+    yPos += 14;
+  });
+
+  // Pricing note
+  yPos += 15;
+  checkPageBreak(30);
+
+  doc.setFillColor(255, 251, 235);
+  doc.roundedRect(margin, yPos, contentWidth, 25, 3, 3, 'F');
+  doc.setDrawColor(234, 179, 8);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(margin, yPos, contentWidth, 25, 3, 3, 'S');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9);
+  doc.setTextColor(161, 98, 7);
+  doc.text('NOTE:', margin + 8, yPos + 10);
+
+  doc.setFont('helvetica', 'normal');
+  const noteLines = doc.splitTextToSize(experience.pricing.note, contentWidth - 30);
+  doc.text(noteLines, margin + 22, yPos + 10);
+
   // ========== FINAL PAGE: CONTACT CTA ==========
   doc.addPage();
   addPageHeader();
@@ -279,8 +408,24 @@ export const generateExperiencePDF = (experience: ExperiencePackage): void => {
   );
   doc.text(ctaText, margin + 15, yPos + 40);
 
+  // Quick pricing recap
+  yPos += 95;
+
+  doc.setFillColor(249, 250, 251);
+  doc.roundedRect(margin, yPos, contentWidth, 35, 3, 3, 'F');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.setTextColor(26, 26, 26);
+  doc.text('Investment Summary', margin + 10, yPos + 12);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(107, 114, 128);
+  doc.text(`Starting at ${experience.pricing.startingAt} | ${experience.pricing.tiers.length} packages available`, margin + 10, yPos + 24);
+
   // Contact Info
-  yPos += 100;
+  yPos += 50;
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
@@ -294,8 +439,6 @@ export const generateExperiencePDF = (experience: ExperiencePackage): void => {
   doc.text('Website: pixelaipro.lovable.app', margin, yPos);
   yPos += 8;
   doc.text('Book a Demo: pixelaipro.lovable.app/contact', margin, yPos);
-
-  yPos += 25;
 
   // Footer
   doc.setFillColor(249, 250, 251);
