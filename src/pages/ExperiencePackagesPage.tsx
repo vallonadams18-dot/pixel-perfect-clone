@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -6,7 +7,6 @@ import { Badge } from '@/components/ui/badge';
 import { Download, Camera, Sparkles, Shirt, Layers, Users, Video, Bot, Pencil } from 'lucide-react';
 import { experiencePackages } from '@/lib/experiencePackages';
 import { generateExperiencePDF } from '@/lib/generateExperiencePDF';
-import usePageMeta from '@/hooks/usePageMeta';
 import type { LucideIcon } from 'lucide-react';
 
 const iconMap: Record<string, LucideIcon> = {
@@ -20,12 +20,24 @@ const iconMap: Record<string, LucideIcon> = {
   'identity': Pencil,
 };
 
+// Custom hook to add noindex meta tag for private pages
+const useNoIndex = () => {
+  useEffect(() => {
+    const meta = document.createElement('meta');
+    meta.name = 'robots';
+    meta.content = 'noindex, nofollow';
+    document.head.appendChild(meta);
+    
+    document.title = 'Experience Packages | PixelAI Pro';
+    
+    return () => {
+      document.head.removeChild(meta);
+    };
+  }, []);
+};
+
 const ExperiencePackagesPage = () => {
-  usePageMeta({
-    title: 'Experience Packages | Download PDF Brochures | PixelAI Pro',
-    description: 'Download detailed PDF packages for all PixelAI Pro AI photo booth experiences. Perfect for sharing with clients via email or booking links.',
-    canonicalPath: '/experience-packages',
-  });
+  useNoIndex();
 
   const handleDownload = (experienceId: string) => {
     const experience = experiencePackages.find(exp => exp.id === experienceId);
