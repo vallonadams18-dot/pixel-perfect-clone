@@ -73,7 +73,7 @@ import AnalyticsDashboardPage from "./pages/AnalyticsDashboardPage";
 import UserManagementPage from "./pages/UserManagementPage";
 import LeadsDashboardPage from "./pages/LeadsDashboardPage";
 import ReviewTemplatesPage from "./pages/ReviewTemplatesPage";
-
+import ExperiencePackagesPage from "./pages/ExperiencePackagesPage";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -187,6 +187,8 @@ const App = () => (
           <Route path="/leads-d4shb0ard" element={<LeadsDashboardPage />} />
           {/* Review Templates */}
           <Route path="/review-templates-x9r2" element={<ReviewTemplatesPage />} />
+          {/* Experience Packages */}
+          <Route path="/experience-packages" element={<ExperiencePackagesPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
           </Routes>
