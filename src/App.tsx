@@ -74,6 +74,7 @@ import UserManagementPage from "./pages/UserManagementPage";
 import LeadsDashboardPage from "./pages/LeadsDashboardPage";
 import ReviewTemplatesPage from "./pages/ReviewTemplatesPage";
 import ExperiencePackagesPage from "./pages/ExperiencePackagesPage";
+import AssetExportPage from "./pages/AssetExportPage";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -189,6 +190,8 @@ const App = () => (
           <Route path="/review-templates-x9r2" element={<ReviewTemplatesPage />} />
           {/* Experience Packages (Private) */}
           <Route path="/exp-p4ck4ges-pr1v4te" element={<ExperiencePackagesPage />} />
+          {/* Asset Export (Private) */}
+          <Route path="/asset-export-wp" element={<AssetExportPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
           </Routes>
