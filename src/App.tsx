@@ -187,8 +187,8 @@ const App = () => (
           <Route path="/leads-d4shb0ard" element={<LeadsDashboardPage />} />
           {/* Review Templates */}
           <Route path="/review-templates-x9r2" element={<ReviewTemplatesPage />} />
-          {/* Experience Packages */}
-          <Route path="/experience-packages" element={<ExperiencePackagesPage />} />
+          {/* Experience Packages (Private) */}
+          <Route path="/exp-p4ck4ges-pr1v4te" element={<ExperiencePackagesPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
           </Routes>
