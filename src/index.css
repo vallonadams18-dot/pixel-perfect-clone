@@ -209,21 +209,20 @@
   }
 }
 
-/* LeadConnector Chat Widget - Position at top right */
+/* LeadConnector Chat Widget - Position at bottom right */
 #lc_chat_widget,
 [id^="lc-chat"],
 .lc-chat-widget,
 div[data-lc-widget],
-[data-widget-id="6980374eaa41f4d730557ebd"] ~ div,
 .chat-widget-container {
-  bottom: auto !important;
-  top: 80px !important;
+  bottom: 20px !important;
+  top: auto !important;
   right: 20px !important;
 }
 
 #lc_chat_widget iframe,
 [id^="lc-chat"] iframe,
 .chat-widget-container iframe {
-  bottom: auto !important;
-  top: 80px !important;
+  bottom: 20px !important;
+  top: auto !important;
 }

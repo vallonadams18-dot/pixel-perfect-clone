@@ -53,18 +53,18 @@ const Header = () => {
 
   // Load LeadConnector chat widget
   useEffect(() => {
-    const existingScript = document.querySelector('script[data-widget-id="6980374eaa41f4d730557ebd"]');
+    const existingScript = document.querySelector('script[data-widget-id="6980398b0079c3e46271aab2"]');
     if (existingScript) return;
 
     const script = document.createElement('script');
     script.src = 'https://widgets.leadconnectorhq.com/loader.js';
     script.setAttribute('data-resources-url', 'https://widgets.leadconnectorhq.com/chat-widget/loader.js');
-    script.setAttribute('data-widget-id', '6980374eaa41f4d730557ebd');
+    script.setAttribute('data-widget-id', '6980398b0079c3e46271aab2');
     script.async = true;
     document.body.appendChild(script);
 
     return () => {
-      const scriptToRemove = document.querySelector('script[data-widget-id="6980374eaa41f4d730557ebd"]');
+      const scriptToRemove = document.querySelector('script[data-widget-id="6980398b0079c3e46271aab2"]');
       if (scriptToRemove) {
         scriptToRemove.remove();
       }
