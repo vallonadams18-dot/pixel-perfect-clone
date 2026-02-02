@@ -209,20 +209,18 @@
   }
 }
 
-/* LeadConnector Chat Widget - Position at bottom right */
-#lc_chat_widget,
-[id^="lc-chat"],
-.lc-chat-widget,
-div[data-lc-widget],
-.chat-widget-container {
-  bottom: 20px !important;
-  top: auto !important;
+/* LeadConnector Voice Widget - Position at top right */
+[data-widget-id="6980374eaa41f4d730557ebd"] ~ div,
+[data-widget-id="6980374eaa41f4d730557ebd"] ~ div iframe {
+  bottom: auto !important;
+  top: 80px !important;
   right: 20px !important;
 }
 
-#lc_chat_widget iframe,
-[id^="lc-chat"] iframe,
-.chat-widget-container iframe {
+/* LeadConnector Chat Widget - Position at bottom right */
+[data-widget-id="6980398b0079c3e46271aab2"] ~ div,
+[data-widget-id="6980398b0079c3e46271aab2"] ~ div iframe {
   bottom: 20px !important;
   top: auto !important;
+  right: 20px !important;
 }
