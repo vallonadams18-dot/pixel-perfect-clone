@@ -75,6 +75,7 @@ import LeadsDashboardPage from "./pages/LeadsDashboardPage";
 import ReviewTemplatesPage from "./pages/ReviewTemplatesPage";
 import ExperiencePackagesPage from "./pages/ExperiencePackagesPage";
 import AssetExportPage from "./pages/AssetExportPage";
+ import OffsiteDemoPage from "./pages/OffsiteDemoPage";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -192,6 +193,8 @@ const App = () => (
           <Route path="/exp-p4ck4ges-pr1v4te" element={<ExperiencePackagesPage />} />
           {/* Asset Export (Private) */}
           <Route path="/asset-export-wp" element={<AssetExportPage />} />
+           {/* Offsite Demo Page */}
+           <Route path="/demo" element={<OffsiteDemoPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
           </Routes>
