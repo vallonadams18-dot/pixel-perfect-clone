@@ -99,10 +99,6 @@ const faqs = [
     answer: 'We regularly service Manhattan\'s premier venues including Javits Center, Cipriani Wall Street, The Plaza Hotel, Spring Studios, The Glasshouse, and Gotham Hall. We\'re familiar with the logistics of each venue and can provide seamless setup anywhere in Manhattan.'
   },
   {
-    question: 'Do you offer floral photo wall setups in Manhattan?',
-    answer: 'Yes! Our floral photo wall in Manhattan NY is one of our signature offerings for galas, weddings, and upscale events. We provide beautiful flower wall photo booth experiences and flower wall photo backdrop options that create stunning social media moments at venues throughout Midtown, SoHo, and beyond.'
-  },
-  {
     question: 'How do you handle Manhattan parking and load-in?',
     answer: 'We handle all Manhattan logistics including parking permits, loading dock coordination, and freight elevator scheduling. Our team is experienced with the unique challenges of Manhattan venues and always arrives early to ensure smooth setup.'
   },
@@ -142,11 +138,11 @@ const faqs = [
 
 const ManhattanPage = () => {
   usePageMeta({
-    title: 'Floral Photo Wall Manhattan NY | Flower Wall Photo Booth | PixelAI Pro',
-    description: 'Manhattan\'s premier floral photo wall & flower wall photo booth provider. Serving Javits Center, Cipriani, The Plaza & 40+ Manhattan venues. Perfect for galas, weddings & corporate events. Get your free quote!',
+    title: 'AI Photo Booth Manhattan NY | Corporate Events & Galas | PixelAI Pro',
+    description: 'Manhattan\'s premier AI photo booth rental for corporate events & galas. Serving Javits Center, Cipriani, The Plaza & 40+ Manhattan venues. Fortune 500 trusted. Get your free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/manhattan',
-    keywords: 'floral photo wall in Manhattan NY, flower wall photo booth in Manhattan NY, flower wall photo backdrop in Manhattan NY, AI photo booth Manhattan, photo booth rental Manhattan, photo booth rental Midtown, Times Square photo booth, Wall Street event photographer, corporate event Manhattan, brand activation SoHo, trade show Javits Center, photo booth Financial District, glam photo booth Manhattan, 360 photo booth Manhattan, corporate brand activation Manhattan, event activation Manhattan',
+    keywords: 'AI photo booth Manhattan, photo booth rental Manhattan, photo booth rental Midtown, Times Square photo booth, Wall Street event photographer, corporate event Manhattan, brand activation SoHo, trade show Javits Center, photo booth Financial District, glam photo booth Manhattan, 360 photo booth Manhattan, corporate brand activation Manhattan, event activation Manhattan',
     schema: [
       {
         "@context": "https://schema.org",
