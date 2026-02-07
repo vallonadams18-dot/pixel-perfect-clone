@@ -103,8 +103,24 @@ const faqs = [
     answer: 'Bronx AI photo booth packages start at $1,000 for smaller events and scale based on duration and experience type. Yankee Stadium and large venue activations have custom pricing. Contact us for a detailed quote.'
   },
   {
+    question: 'Do you offer floral photo wall setups in the Bronx?',
+    answer: 'Yes! Our floral photo wall in Bronx NY is one of our most requested options for weddings and galas at venues like the NY Botanical Garden and Wave Hill. We offer luxury flower wall photo experiences with AI-enhanced transformations that create stunning wedding guest photo experiences.'
+  },
+  {
     question: 'Can you set up at outdoor Bronx venues?',
     answer: 'Absolutely! We regularly work at outdoor venues including the New York Botanical Garden, Wave Hill, and Pelham Bay Park. Our equipment includes weather protection and we bring backup power for outdoor events.'
+  },
+  {
+    question: 'What creative AI photo booth options do you offer in the Bronx?',
+    answer: 'We offer a full range of creative AI photo booth experiences in Bronx NY including custom AI photo effects, glambot photo experiences with slow motion capture, and branded photo backdrops. Our fashion event photo experiences are perfect for corporate photo activations.'
+  },
+  {
+    question: 'Do you offer wedding photo booth services in the Bronx?',
+    answer: 'Absolutely! Our custom wedding photo booth in Bronx NY creates unforgettable wedding guest photo experiences. From flower wall photo backdrops to custom wedding photo setups, we offer luxury flower wall photo experiences and wedding flower wall photos that guests love to share.'
+  },
+  {
+    question: 'What types of corporate photo activations do you offer?',
+    answer: 'Our corporate photo activation in Bronx NY includes branded photo backdrops, employee photo engagement experiences, and photo booth signage options. We help companies create memorable brand activations with custom AI photo effects and interactive experiences.'
   },
   {
     question: 'Do you serve all Bronx neighborhoods?',
@@ -138,11 +154,11 @@ const faqs = [
 
 const BronxPage = () => {
   usePageMeta({
-    title: 'AI Photo Booth Bronx | Yankee Stadium & Botanical Garden | PixelAI Pro',
-    description: 'Bronx\'s top AI photo booth rental for sports events, galas & brand activations. Serving Yankee Stadium, NY Botanical Garden, Bronx Zoo & 15+ Bronx venues. Get your free quote!',
+    title: 'Photo Booth in Bronx NY | Floral Photo Wall & AI Photo Booth | PixelAI Pro',
+    description: 'Bronx\'s premier photo booth rental & floral photo wall provider. Custom AI photo effects, wedding flower wall photos, corporate photo activation & glambot photo experience. Serving Yankee Stadium, NY Botanical Garden & 15+ Bronx venues.',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/bronx',
-    keywords: 'AI photo booth Bronx, photo booth rental Bronx, photo booth rental Yankee Stadium, Bronx Zoo photo booth, NY Botanical Garden event, sports event photo booth Bronx, brand activation Bronx, corporate event Bronx, Fordham photo booth, glam photo booth Bronx, 360 photo booth Bronx, event activation Bronx',
+    keywords: 'photo booth in Bronx NY, floral photo wall in Bronx NY, photo booth signage in Bronx NY, corporate photo activation in Bronx NY, custom AI photo effects in Bronx NY, wedding guest photo experience in Bronx NY, custom wedding photo setup in Bronx NY, creative AI photo booth in Bronx NY, branded photo backdrop in Bronx NY, employee photo engagement in Bronx NY, wedding flower wall photos in Bronx NY, luxury flower wall photo experience in Bronx NY, flower wall photo backdrop in Bronx NY, glambot photo experience in Bronx NY, custom wedding photo booth in Bronx NY, slow motion photo capture in Bronx NY, fashion event photo experience in Bronx NY, AI photo booth Bronx, photo booth rental Bronx',
     schema: [
       {
         "@context": "https://schema.org",
