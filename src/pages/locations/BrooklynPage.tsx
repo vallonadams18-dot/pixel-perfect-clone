@@ -99,12 +99,28 @@ const faqs = [
     answer: 'Yes! We provide AI photo booth rental throughout all of Brooklyn including Williamsburg, DUMBO, Bushwick, Park Slope, Brooklyn Heights, Greenpoint, Red Hook, Crown Heights, Bed-Stuy, and Prospect Heights. Our team is based locally and can set up at any venue in the borough.'
   },
   {
+    question: 'What brand activation photo booth options do you offer in Brooklyn?',
+    answer: 'Our brand activation photo booth in Brooklyn NY is perfect for product launches and experiential marketing. We offer fully customizable experiences with branded overlays, custom AI transformations, and real-time lead capture. Popular with startups and major brands at Industry City and DUMBO venues.'
+  },
+  {
+    question: 'Do you offer marketing campaign photo booth services?',
+    answer: 'Absolutely! Our marketing campaign photo booth in Brooklyn NY helps brands create shareable moments that drive social engagement. We integrate with your marketing stack for real-time analytics and provide custom hashtag tracking and branded sharing pages.'
+  },
+  {
+    question: 'What about product launch photo booth experiences?',
+    answer: 'Our product launch photo booth in Brooklyn NY creates buzz-worthy moments for new product reveals. We offer interactive corporate photo booth setups with custom transformations themed to your product, perfect for tech launches at Industry City or fashion reveals in Williamsburg.'
+  },
+  {
     question: 'What is the pricing for AI photo booth rental in Brooklyn?',
     answer: 'Our Brooklyn AI photo booth packages start at $1,500 for smaller events and scale based on duration, experience type, and customization needs. We offer competitive pricing for Brooklyn venues and include setup, operation, and teardown. Contact us for a custom quote.'
   },
   {
     question: 'Can you set up at industrial Brooklyn venues like Industry City?',
     answer: 'Absolutely! We regularly work at Brooklyn\'s unique industrial and creative spaces including Industry City, Brooklyn Navy Yard, and The Green Building. Our equipment is self-contained and we bring our own power and lighting as needed.'
+  },
+  {
+    question: 'Do you offer professional event photo booth services for corporate clients?',
+    answer: 'Yes! Our professional event photo booth in Brooklyn NY is designed for corporate events, conferences, and executive gatherings. We offer AI headshots, branded experiences, and interactive corporate photo booth setups that impress clients and capture leads.'
   },
   {
     question: 'How long does setup take at Brooklyn event spaces?',
@@ -138,11 +154,11 @@ const faqs = [
 
 const BrooklynPage = () => {
   usePageMeta({
-    title: 'AI Photo Booth Brooklyn | Williamsburg, DUMBO & Park Slope | PixelAI Pro',
-    description: 'Brooklyn\'s top AI photo booth rental for corporate events, weddings & brand activations. Serving Williamsburg, DUMBO, Industry City & 25+ Brooklyn venues. Get your free quote today!',
+    title: 'Brand Activation Photo Booth Brooklyn NY | Product Launch | PixelAI Pro',
+    description: 'Brooklyn\'s premier brand activation photo booth & marketing campaign photo booth provider. Professional event photo booth for Williamsburg, DUMBO, Industry City & 25+ Brooklyn venues. Get your free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/brooklyn',
-    keywords: 'AI photo booth Brooklyn, photo booth rental Brooklyn, photo booth rental Williamsburg, DUMBO photo booth, Brooklyn event photographer, Industry City photo booth, brand activation Brooklyn, corporate event Brooklyn, photo booth Park Slope, glam photo booth Brooklyn, 360 photo booth Brooklyn, corporate brand activation Brooklyn, event activation Brooklyn',
+    keywords: 'brand activation photo booth in Brooklyn NY, marketing campaign photo booth in Brooklyn NY, professional event photo booth in Brooklyn NY, product launch photo booth in Brooklyn NY, interactive corporate photo booth in Brooklyn NY, AI photo booth Brooklyn, photo booth rental Brooklyn, photo booth rental Williamsburg, DUMBO photo booth, Brooklyn event photographer, Industry City photo booth, brand activation Brooklyn, corporate event Brooklyn, photo booth Park Slope, glam photo booth Brooklyn, 360 photo booth Brooklyn, corporate brand activation Brooklyn, event activation Brooklyn',
     schema: [
       {
         "@context": "https://schema.org",

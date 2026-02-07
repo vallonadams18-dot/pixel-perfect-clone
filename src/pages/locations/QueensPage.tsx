@@ -99,6 +99,14 @@ const faqs = [
     answer: 'Yes! We\'re experienced partners for fan activations at Citi Field and the USTA National Tennis Center. We understand the unique logistics of stadium events and can handle high-volume crowds while maintaining fast turnaround times.'
   },
   {
+    question: 'What corporate photo booth options do you offer in Queens?',
+    answer: 'Our corporate photo booth in Queens NY offers branded corporate photo booth experiences perfect for business events at venues throughout Long Island City and Flushing. We specialize in interactive corporate photo booth setups that drive employee engagement and lead capture.'
+  },
+  {
+    question: 'Do you offer trade show photo booth services in Queens?',
+    answer: 'Absolutely! Our interactive trade show photo booth in Queens NY is designed for high-volume events at venues like the Queens Museum and corporate spaces in LIC. We help brands stand out with branded corporate photo booth experiences that capture qualified leads.'
+  },
+  {
     question: 'What is the pricing for AI photo booth rental in Queens?',
     answer: 'Queens AI photo booth packages typically start at $1,200 for smaller events and scale based on duration and experience type. Sports venue activations and large-scale events have custom pricing. Contact us for a detailed quote.'
   },
@@ -138,11 +146,11 @@ const faqs = [
 
 const QueensPage = () => {
   usePageMeta({
-    title: 'AI Photo Booth Queens | Citi Field, LIC & Flushing | PixelAI Pro',
-    description: 'Queens\' top AI photo booth rental for sports events, corporate parties & brand activations. Serving Citi Field, USTA, Long Island City & 20+ Queens venues. Get your free quote!',
+    title: 'Corporate Photo Booth Queens NY | Trade Show Photo Booth | PixelAI Pro',
+    description: 'Queens\' premier corporate photo booth & interactive trade show photo booth provider. Branded corporate photo booth experiences for Citi Field, USTA, Long Island City & 20+ Queens venues. Get your free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/queens',
-    keywords: 'AI photo booth Queens, photo booth rental Queens, photo booth rental Citi Field, LIC photo booth, Flushing event photographer, sports event photo booth Queens, brand activation Astoria, corporate event Queens, US Open photo booth, glam photo booth Queens, 360 photo booth Queens, corporate brand activation Queens, event activation Queens',
+    keywords: 'corporate photo booth in Queens NY, branded corporate photo booth in Queens NY, interactive trade show photo booth in Queens NY, AI photo booth Queens, photo booth rental Queens, photo booth rental Citi Field, LIC photo booth, Flushing event photographer, sports event photo booth Queens, brand activation Astoria, corporate event Queens, US Open photo booth, glam photo booth Queens, 360 photo booth Queens, corporate brand activation Queens, event activation Queens',
     schema: [
       {
         "@context": "https://schema.org",

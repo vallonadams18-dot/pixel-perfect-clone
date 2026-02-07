@@ -99,6 +99,10 @@ const faqs = [
     answer: 'Absolutely! We regularly serve Staten Island and include travel in our packages. Whether your event is at Snug Harbor, The Vanderbilt, or a private venue, we handle all logistics including ferry or bridge transport of our equipment.'
   },
   {
+    question: 'What AI-enhanced photo capture options do you offer in Staten Island?',
+    answer: 'Our AI-enhanced photo capture in Staten Island NY uses cutting-edge technology to transform ordinary photos into extraordinary memories. From professional AI headshots to creative character transformations, our technology delivers instant, high-quality results at events throughout the borough.'
+  },
+  {
     question: 'What is the pricing for AI photo booth rental in Staten Island?',
     answer: 'Staten Island AI photo booth packages start at $1,200 for smaller events and include travel. Larger events and multi-day activations have custom pricing. We offer competitive rates for Staten Island venues. Contact us for a detailed quote.'
   },
@@ -138,11 +142,11 @@ const faqs = [
 
 const StatenIslandPage = () => {
   usePageMeta({
-    title: 'AI Photo Booth Staten Island | Snug Harbor & St. George | PixelAI Pro',
-    description: 'Staten Island\'s top AI photo booth rental for weddings, galas & corporate events. Serving Snug Harbor, The Vanderbilt, Historic Richmond Town & 12+ Staten Island venues. Get your free quote!',
+    title: 'AI-Enhanced Photo Capture Staten Island NY | AI Photo Booth | PixelAI Pro',
+    description: 'Staten Island\'s premier AI-enhanced photo capture & AI photo booth provider. Serving Snug Harbor, The Vanderbilt, Historic Richmond Town & 12+ Staten Island venues. Get your free quote!',
     ogImage: '/og-image.jpg',
     canonicalPath: '/locations/staten-island',
-    keywords: 'AI photo booth Staten Island, photo booth rental Staten Island, photo booth rental St. George, Snug Harbor photo booth, corporate event Staten Island, brand activation Staten Island, photo booth Tottenville, event photographer Staten Island, glam photo booth Staten Island, 360 photo booth Staten Island, event activation Staten Island',
+    keywords: 'AI-enhanced photo capture in Staten Island NY, AI photo booth Staten Island, photo booth rental Staten Island, photo booth rental St. George, Snug Harbor photo booth, corporate event Staten Island, brand activation Staten Island, photo booth Tottenville, event photographer Staten Island, glam photo booth Staten Island, 360 photo booth Staten Island, event activation Staten Island',
     schema: [
       {
         "@context": "https://schema.org",
